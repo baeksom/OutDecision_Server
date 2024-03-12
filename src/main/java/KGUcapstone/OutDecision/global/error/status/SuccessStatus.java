@@ -1,10 +1,10 @@
-package umc.easyexcel.apiPayload.code.status;
+package KGUcapstone.OutDecision.global.error.status;
 
+import KGUcapstone.OutDecision.global.error.dto.BaseCode;
+import KGUcapstone.OutDecision.global.error.dto.ReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import umc.easyexcel.apiPayload.code.BaseCode;
-import umc.easyexcel.apiPayload.code.ReasonDTO;
 
 @Getter
 @AllArgsConstructor

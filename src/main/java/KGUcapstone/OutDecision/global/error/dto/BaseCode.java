@@ -1,4 +1,4 @@
-package umc.easyexcel.apiPayload.code;
+package KGUcapstone.OutDecision.global.error.dto;
 
 public interface BaseCode {
 

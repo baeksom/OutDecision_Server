@@ -1,10 +1,10 @@
-package umc.easyexcel.apiPayload.code.status;
+package KGUcapstone.OutDecision.global.error.status;
 
+import KGUcapstone.OutDecision.global.error.dto.BaseErrorCode;
+import KGUcapstone.OutDecision.global.error.dto.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import umc.easyexcel.apiPayload.code.BaseErrorCode;
-import umc.easyexcel.apiPayload.code.ErrorReasonDTO;
 
 @Getter
 @AllArgsConstructor
@@ -17,17 +17,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     // For test
-    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "이거는 테스트"),
-
-    // Functions
-    FUNCTION_NOT_FOUND(HttpStatus.BAD_REQUEST, "FUNCTION4001", "존재하지 않는 함수입니다."),
-
-    // ShortcutKey
-    SHORTCUTKEY_NOT_FOUND(HttpStatus.BAD_REQUEST, "SHORTCUTKEY400", "해당하는 단축키를 찾을 수 없습니다."),
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "INVALID_PARAMETER400", "잘못된 요청 파라미터입니다."),
-    INVALID_SHORTCUTKEY_CATEGORY(HttpStatus.BAD_REQUEST, "INVALID_SHORTCUTKEY_CATEGORY400", "잘못된 단축키 카테고리입니다."),
-    EMPTY_SEARCH(HttpStatus.OK, "EMPTY_SEARCH", "검색 결과가 없습니다."),
-    ;
+    TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "이거는 테스트");
 
     private final HttpStatus httpStatus;
     private final String code;

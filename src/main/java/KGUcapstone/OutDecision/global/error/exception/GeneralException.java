@@ -1,9 +1,9 @@
-package umc.easyexcel.apiPayload.exception;
+package KGUcapstone.OutDecision.global.error.exception;
 
+import KGUcapstone.OutDecision.global.error.dto.BaseErrorCode;
+import KGUcapstone.OutDecision.global.error.dto.ErrorReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import umc.easyexcel.apiPayload.code.BaseErrorCode;
-import umc.easyexcel.apiPayload.code.ErrorReasonDTO;
 
 @Getter
 @AllArgsConstructor

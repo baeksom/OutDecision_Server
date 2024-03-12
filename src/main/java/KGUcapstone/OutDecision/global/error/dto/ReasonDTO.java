@@ -1,4 +1,4 @@
-package umc.easyexcel.apiPayload.code;
+package KGUcapstone.OutDecision.global.error.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorReasonDTO {
+public class ReasonDTO {
     private String message;
     private String code;
     private Boolean isSuccess;

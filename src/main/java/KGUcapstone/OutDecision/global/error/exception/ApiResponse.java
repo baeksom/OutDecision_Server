@@ -1,12 +1,12 @@
-package umc.easyexcel.apiPayload;
+package KGUcapstone.OutDecision.global.error.exception;
 
+import KGUcapstone.OutDecision.global.error.dto.BaseCode;
+import KGUcapstone.OutDecision.global.error.status.SuccessStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import umc.easyexcel.apiPayload.code.BaseCode;
-import umc.easyexcel.apiPayload.code.status.SuccessStatus;
 
 @Getter
 @AllArgsConstructor

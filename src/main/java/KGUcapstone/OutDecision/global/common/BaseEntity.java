@@ -1,4 +1,4 @@
-package umc.easyexcel.domain.common;
+package KGUcapstone.OutDecision.global.common;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
