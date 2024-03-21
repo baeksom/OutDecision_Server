@@ -10,7 +10,8 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Date;
-impo
+import java.util.List;
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
