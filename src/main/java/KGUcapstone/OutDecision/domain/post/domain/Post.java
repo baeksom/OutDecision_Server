@@ -4,6 +4,7 @@ import KGUcapstone.OutDecision.domain.likes.domain.Likes;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
+import KGUcapstone.OutDecision.domain.user.domain.User;
 import KGUcapstone.OutDecision.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -48,4 +49,8 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Likes> likesList = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }
