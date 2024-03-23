@@ -1,18 +1,17 @@
 package KGUcapstone.OutDecision.domain.vote.domain;
 
 import KGUcapstone.OutDecision.domain.option.domain.Option;
+import KGUcapstone.OutDecision.domain.user.domain.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "vote")
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+
 
 public class Vote {
 
@@ -20,11 +19,11 @@ public class Vote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 투표 아이디
 
-    /*@OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    private User user;
+    private User user; // 유저 아이디
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")
-    private Option option;*/
+    private Option option; // 옵션 아이디
 }
