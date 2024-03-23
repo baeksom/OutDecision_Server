@@ -1,18 +1,17 @@
-package KGUcapstone.OutDecision.domain.option.domain;
+package KGUcapstone.OutDecision.domain.options.domain;
 
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "options")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 
 
-public class Option {
+public class Options {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

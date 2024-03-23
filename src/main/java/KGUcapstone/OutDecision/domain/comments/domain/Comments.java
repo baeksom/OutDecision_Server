@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.comment.domain;
+package KGUcapstone.OutDecision.domain.comments.domain;
 
 
 import KGUcapstone.OutDecision.domain.post.domain.Post;
@@ -10,14 +10,13 @@ import lombok.*;
 
 
 @Entity
-@Table(name = "comments")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 
 
-public class Comment extends BaseEntity {
+public class Comments extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

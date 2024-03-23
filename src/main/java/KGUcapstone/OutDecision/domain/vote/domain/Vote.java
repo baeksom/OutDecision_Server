@@ -1,6 +1,6 @@
 package KGUcapstone.OutDecision.domain.vote.domain;
 
-import KGUcapstone.OutDecision.domain.option.domain.Option;
+import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,5 +25,5 @@ public class Vote {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id")
-    private Option option; // 옵션 아이디
+    private Options options; // 옵션 아이디
 }
