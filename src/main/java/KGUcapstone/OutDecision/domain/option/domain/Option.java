@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "option")
+@Table(name = "options")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
