@@ -2,7 +2,7 @@ package KGUcapstone.OutDecision.domain.comments.domain;
 
 
 import KGUcapstone.OutDecision.domain.post.domain.Post;
-import KGUcapstone.OutDecision.domain.user.domain.User;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.global.common.BaseEntity;
 import jakarta.persistence.*;
 
@@ -26,8 +26,8 @@ public class Comments extends BaseEntity {
     private String body; // 내용
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user; // 유저 아이디
+    @JoinColumn(name = "member_id")
+    private Member member; // 유저 아이디
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")

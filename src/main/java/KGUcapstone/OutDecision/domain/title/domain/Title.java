@@ -1,6 +1,6 @@
 package KGUcapstone.OutDecision.domain.title.domain;
 
-import KGUcapstone.OutDecision.domain.user.domain.User;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -17,8 +17,8 @@ public class Title {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @ColumnDefault("true")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
