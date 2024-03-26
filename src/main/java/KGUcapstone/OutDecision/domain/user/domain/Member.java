@@ -47,8 +47,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Integer bumps;
 
-    //11
-    @Column(length = 11)
+    //30
+    @Column(length = 30)
     private String phone;
 
     //20
