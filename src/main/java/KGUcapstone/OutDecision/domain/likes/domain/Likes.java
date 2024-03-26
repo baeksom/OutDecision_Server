@@ -1,7 +1,7 @@
 package KGUcapstone.OutDecision.domain.likes.domain;
 
 import KGUcapstone.OutDecision.domain.post.domain.Post;
-import KGUcapstone.OutDecision.domain.user.domain.User;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +20,6 @@ public class Likes {
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "member_id")
+    private Member member;
 }
