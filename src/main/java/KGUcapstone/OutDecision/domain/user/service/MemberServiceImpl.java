@@ -2,7 +2,7 @@ package KGUcapstone.OutDecision.domain.user.service;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.MemberRequestDTO;
-import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO;
+import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO.MemberDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.global.error.handler.MemberHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
@@ -17,11 +17,11 @@ public class MemberServiceImpl implements MemberService{
     private final MemberRepository memberRepository;
 
     @Override
-    public MemberResponseDTO.MemberDTO getMemberById(Long memberId) {
+    public MemberDTO getMemberById(Long memberId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        return MemberResponseDTO.MemberDTO.builder()
+        return MemberDTO.builder()
                 .memberId(member.getId())
                 .name(member.getName())
                 .email(member.getEmail())
@@ -32,7 +32,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberResponseDTO.MemberDTO updateMemberInfo(Long memberId, MemberRequestDTO.UpdateMemberDTO request) {
+    public MemberDTO updateMemberInfo(Long memberId, MemberRequestDTO.UpdateMemberDTO request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -40,7 +40,7 @@ public class MemberServiceImpl implements MemberService{
 
         memberRepository.save(member);
 
-        return MemberResponseDTO.MemberDTO.builder()
+        return MemberDTO.builder()
                 .memberId(member.getId())
                 .name(member.getName())
                 .email(member.getEmail())
