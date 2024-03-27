@@ -1,11 +1,13 @@
 package KGUcapstone.OutDecision.domain.user.handler;
 
-import KGUcapstone.OutDecision.global.util.JwtUtil;
+import KGUcapstone.OutDecision.domain.user.dto.GeneratedToken;
+import KGUcapstone.OutDecision.domain.user.service.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -21,7 +23,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
     private final JwtUtil jwtUtil;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
         // OAuth2User로 캐스팅하여 인증된 사용자 정보를 가져온다.
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
@@ -45,7 +47,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
             log.info("jwtToken = {}", token.getAccessToken());
 
             // accessToken을 쿼리스트링에 담는 url을 만들어준다.
-            String targetUrl = UriComponentsBuilder.fromUriString("http://3.39.72.204/loginSuccess")
+            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/loginSuccess")
                     .queryParam("accessToken", token.getAccessToken())
                     .build()
                     .encode(StandardCharsets.UTF_8)
@@ -58,7 +60,7 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
         } else {
 
             // 회원이 존재하지 않을경우, 서비스 제공자와 email을 쿼리스트링으로 전달하는 url을 만들어준다.
-            String targetUrl = UriComponentsBuilder.fromUriString("http://3.39.72.204/loginSuccess")
+            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/loginSuccess")
                     .queryParam("email", (String) oAuth2User.getAttribute("email"))
                     .queryParam("provider", provider)
                     .build()

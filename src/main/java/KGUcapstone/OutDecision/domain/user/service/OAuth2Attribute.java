@@ -16,7 +16,7 @@ public class OAuth2Attribute {
     private String attributeKey; // 사용자 속성의 키 값
     private String email; // 이메일 정보
     private String name; // 이름 정보
-    private String picture; // 프로필 사진 정보
+//    private String picture; // 프로필 사진 정보
     private String provider; // 제공자 정보
 
     // 서비스에 따라 OAuth2Attribute 객체를 생성하는 메서드
@@ -69,17 +69,17 @@ public class OAuth2Attribute {
      *  Naver 로그인일 경우 사용하는 메서드, 필요한 사용자 정보가 response Map에 감싸져 있어서,
      *  한번 get() 메서드를 이용해 사용자 정보를 담고있는 Map을 꺼내야한다.
      * */
-    private static OAuth2Attribute ofNaver(String provider, String attributeKey,
-                                           Map<String, Object> attributes) {
-        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
-
-        return OAuth2Attribute.builder()
-                .email((String) response.get("email"))
-                .attributes(response)
-                .provider(provider)
-                .attributeKey(attributeKey)
-                .build();
-    }
+//    private static OAuth2Attribute ofNaver(String provider, String attributeKey,
+//                                           Map<String, Object> attributes) {
+//        Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+//
+//        return OAuth2Attribute.builder()
+//                .email((String) response.get("email"))
+//                .attributes(response)
+//                .provider(provider)
+//                .attributeKey(attributeKey)
+//                .build();
+//    }
 
 
     // OAuth2User 객체에 넣어주기 위해서 Map으로 값들을 반환해준다.

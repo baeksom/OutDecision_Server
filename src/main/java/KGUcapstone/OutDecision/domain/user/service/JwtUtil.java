@@ -1,11 +1,17 @@
-package KGUcapstone.OutDecision.global.util;
+package KGUcapstone.OutDecision.domain.user.service;
 
+import KGUcapstone.OutDecision.domain.user.dto.GeneratedToken;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
+import java.util.Date;
 
 @Slf4j
 @Service
