@@ -1,6 +1,7 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
 import KGUcapstone.OutDecision.domain.user.dto.GeneratedToken;
+import KGUcapstone.OutDecision.domain.user.properties.JwtProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
