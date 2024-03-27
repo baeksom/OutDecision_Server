@@ -17,4 +17,5 @@ public class MemberResponseDTO {
         String nickname;
         String phone;
     }
+
 }

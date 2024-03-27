@@ -59,4 +59,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '기본 이미지 URL'")
     private String userImg;
 
+    public void updateMember(String name, String nickname, String phone) {
+        this.name = name;
+        this.nickname = nickname;
+        this.phone = phone;
+    }
 }
