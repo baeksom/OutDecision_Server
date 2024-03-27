@@ -1,7 +1,7 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
-import KGUcapstone.OutDecision.domain.user.domain.User;
-import KGUcapstone.OutDecision.domain.user.repository.UserRepository;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.global.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
 
     @Override
@@ -47,15 +47,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (jwtUtil.verifyToken(atc)) {
 
             // AccessToken 내부의 payload에 있는 email로 user를 조회한다. 없다면 예외를 발생시킨다 -> 정상 케이스가 아님
-            User findUser = userRepository.findByEmail(jwtUtil.getUid(atc))
+            Member findMember = memberRepository.findByEmail(jwtUtil.getUid(atc))
                     .orElseThrow(IllegalStateException::new);
 
             // SecurityContext에 등록할 User 객체를 만들어준다.
             SecurityUserDto userDto = SecurityUserDto.builder()
-                    .memberNo(findUser.getMemberNo())
-                    .email(findUser.getEmail())
-                    .role("ROLE_".concat(findUser.getUserRole()))
-                    .nickname(findUser.getNickname())
+                    .memberNo(findMember.getMemberNo())
+                    .email(findMember.getEmail())
+                    .role("ROLE_".concat(findMember.getUserRole()))
+                    .nickname(findMember.getNickname())
                     .build();
 
             // SecurityContext에 인증 객체를 등록해준다.

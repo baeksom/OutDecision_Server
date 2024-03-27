@@ -3,6 +3,7 @@ package KGUcapstone.OutDecision.global.config.security;
 import KGUcapstone.OutDecision.domain.user.handler.MyAuthenticationFailureHandler;
 import KGUcapstone.OutDecision.domain.user.handler.MyAuthenticationSuccessHandler;
 import KGUcapstone.OutDecision.domain.user.service.CustomOAuth2UserService;
+import KGUcapstone.OutDecision.domain.user.service.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity

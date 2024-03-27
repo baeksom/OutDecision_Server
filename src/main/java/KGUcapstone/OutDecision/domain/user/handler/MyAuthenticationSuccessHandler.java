@@ -1,6 +1,5 @@
 package KGUcapstone.OutDecision.domain.user.handler;
 
-import KGUcapstone.OutDecision.domain.user.service.OAuth2User;
 import KGUcapstone.OutDecision.global.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
