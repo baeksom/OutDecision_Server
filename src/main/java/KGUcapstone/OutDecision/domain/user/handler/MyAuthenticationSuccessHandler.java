@@ -57,18 +57,33 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
             getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
 
-        } else {
+        }
+//        else {
+//
+//            // 회원이 존재하지 않을경우, 서비스 제공자와 email을 쿼리스트링으로 전달하는 url을 만들어준다.
+//            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/loginSuccess")
+//                    .queryParam("email", (String) oAuth2User.getAttribute("email"))
+//                    .queryParam("provider", provider)
+//                    .build()
+//                    .encode(StandardCharsets.UTF_8)
+//                    .toUriString();
+//            // 회원가입 페이지로 리다이렉트 시킨다.
+//            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+//        }
+        else {
+            // 회원이 존재하지 않을 경우, 회원가입 페이지로 이동하는 URI 설정
+            String registerUri = "http://localhost:8080/user/register/v1";
 
-            // 회원이 존재하지 않을경우, 서비스 제공자와 email을 쿼리스트링으로 전달하는 url을 만들어준다.
-            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/loginSuccess")
+            // 회원가입 페이지에 전달할 파라미터 설정
+            String uriBuilder = UriComponentsBuilder.fromUriString(registerUri)
                     .queryParam("email", (String) oAuth2User.getAttribute("email"))
                     .queryParam("provider", provider)
-                    .build()
-                    .encode(StandardCharsets.UTF_8)
                     .toUriString();
+
             // 회원가입 페이지로 리다이렉트 시킨다.
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+            getRedirectStrategy().sendRedirect(request, response, uriBuilder);
         }
+
     }
 
 }

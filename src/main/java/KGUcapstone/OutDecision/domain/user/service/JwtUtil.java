@@ -19,7 +19,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
     private final JwtProperties jwtProperties;
-    private final RefreshTokenService tokenService;
+    private final AccessTokenService tokenService;
     private String secretKey;
 
     @PostConstruct

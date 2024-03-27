@@ -1,6 +1,7 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.dto.SecurityUserDto;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -28,7 +29,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final MemberRepository memberRepository;
 
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // request Header에서 AccessToken을 가져온다.
@@ -48,13 +48,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // AccessToken의 값이 있고, 유효한 경우에 진행한다.
         if (jwtUtil.verifyToken(atc)) {
 
-            // AccessToken 내부의 payload에 있는 email로 user를 조회한다. 없다면 예외를 발생시킨다 -> 정상 케이스가 아님
-            Member findMember = memberRepository.findByEmail(jwtUtil.getUid(atc))
-                    .orElseThrow(IllegalStateException::new);
+            // AccessToken 내부의 payload에 있는 email로 user를 조회한다.
+            Member findMember = memberRepository.findByEmail(jwtUtil.getUid(atc));
 
             // SecurityContext에 등록할 User 객체를 만들어준다.
             SecurityUserDto userDto = SecurityUserDto.builder()
-                    .memberNo(findMember.getMemberNo())
+                    .memberId(findMember.getId())
                     .email(findMember.getEmail())
                     .role("ROLE_".concat(findMember.getUserRole()))
                     .nickname(findMember.getNickname())
@@ -68,11 +67,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-
-
     public Authentication getAuthentication(SecurityUserDto member) {
         return new UsernamePasswordAuthenticationToken(member, "",
                 List.of(new SimpleGrantedAuthority(member.getRole())));
     }
-
 }

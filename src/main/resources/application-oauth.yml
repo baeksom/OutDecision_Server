@@ -4,18 +4,17 @@ spring:
       client:
         registration:
           google:
-            client-id: ${client-id}
-            client-secret: ${client-secret}
+            client-id: ${GOOGLE-client-id}
+            client-secret: ${GOOGLE-client-secret}
             redirect-uri: "http://localhost:8080/login/oauth2/code/google"
             authorization-grant-type: authorization_code
-            scope: email
+            scope: email, profile
 
           kakao:
-            client-id: ${client-id(Rest Api key)}
+            client-id: ${KAKAO-client-id}
             redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
-            client-authentication-method: POST
             authorization-grant-type: authorization_code
-            scope: profile_nickname, profile_image, account_email
+            scope: profile_nickname, account_email
 #
 #          naver:
 #            client-id: {client-id}
