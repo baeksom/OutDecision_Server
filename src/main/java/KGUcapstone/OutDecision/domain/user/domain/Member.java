@@ -59,4 +59,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '기본 이미지 URL'")
     private String userImg;
 
+    @Column(length = 30)
+    private String userRole;
+
 }
