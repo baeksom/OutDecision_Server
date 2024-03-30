@@ -26,6 +26,7 @@ public class UserService {
                 .bumps(0)
                 .point(0)
                 .userImg("임시 저장값")
+                .userRole("ROLE_USER")
                 .build();
 
         // UserRepository를 통해 새로운 사용자를 데이터베이스에 저장

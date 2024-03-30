@@ -30,6 +30,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final MemberRepository memberRepository;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
+        return request.getRequestURI().contains("/token/");
+    }
+
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // request Header에서 AccessToken을 가져온다.
         String atc = request.getHeader("Authorization");

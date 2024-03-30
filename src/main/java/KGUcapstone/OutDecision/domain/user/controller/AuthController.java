@@ -1,10 +1,8 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
-import KGUcapstone.OutDecision.domain.user.dto.StatusResponseDto;
 import KGUcapstone.OutDecision.domain.user.dto.TokenResponseStatus;
-import KGUcapstone.OutDecision.domain.user.repository.RefreshTokenRepository;
-import KGUcapstone.OutDecision.domain.user.service.JwtUtil;
-import KGUcapstone.OutDecision.domain.user.service.RefreshTokenService;
+import KGUcapstone.OutDecision.domain.user.service.TokenService;
+import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,16 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final RefreshTokenRepository tokenRepository;
-    private final RefreshTokenService tokenService;
-    private final JwtUtil jwtUtil;
+    private final TokenService tokenService;
 
     @PostMapping("/token/logout")
-    public ResponseEntity<StatusResponseDto> logout(@RequestHeader("Authorization") final String accessToken) {
+    public ApiResponse<Object> logout(@RequestHeader("Authorization") final String accessToken) {
 
         // 엑세스 토큰으로 현재 Redis 정보 삭제
         tokenService.removeRefreshToken(accessToken);
-        return ResponseEntity.ok(StatusResponseDto.addStatus(200));
+        return ApiResponse.onSuccess(null);
     }
 
     @PostMapping("/token/refresh")
@@ -35,7 +31,7 @@ public class AuthController {
 
         String newAccessToken = tokenService.republishAccessToken(accessToken);
         if (StringUtils.hasText(newAccessToken)) {
-            return ResponseEntity.ok(TokenResponseStatus.addStatus(200, newAccessToken));
+            return ResponseEntity.ok(TokenResponseStatus.addStatus(200, null));
         }
 
         return ResponseEntity.badRequest().body(TokenResponseStatus.addStatus(400, null));

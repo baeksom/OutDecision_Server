@@ -19,7 +19,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
     private final JwtProperties jwtProperties;
-    private final AccessTokenService tokenService;
+    private final AccessTokenService accessTokenService;
     private String secretKey;
 
     @PostConstruct
@@ -34,7 +34,7 @@ public class JwtUtil {
         String accessToken = generateAccessToken(email, role);
 
         // 토큰을 Redis에 저장한다.
-        tokenService.saveTokenInfo(email, refreshToken, accessToken);
+        accessTokenService.saveTokenInfo(email, refreshToken, accessToken);
         return new GeneratedToken(accessToken, refreshToken);
     }
 
@@ -64,6 +64,7 @@ public class JwtUtil {
 
     public String generateAccessToken(String email, String role) {
         long tokenPeriod = 1000L * 60L * 30L; // 30분
+//        long tokenPeriod = 1000L * 2L;
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
 

@@ -3,14 +3,14 @@ spring:
     oauth2:
       client:
         registration:
-          google:
+          GOOGLE:
             client-id: ${GOOGLE-client-id}
             client-secret: ${GOOGLE-client-secret}
             redirect-uri: "http://localhost:8080/login/oauth2/code/google"
             authorization-grant-type: authorization_code
             scope: email, profile
 
-          kakao:
+          KAKAO:
             client-id: ${KAKAO-client-id}
             redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
             authorization-grant-type: authorization_code
@@ -25,7 +25,7 @@ spring:
 #            client-name: Naver
 
         provider:
-          kakao:
+          KAKAO:
             authorization_uri: https://kauth.kakao.com/oauth/authorize
             token_uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me

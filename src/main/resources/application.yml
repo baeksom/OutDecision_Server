@@ -20,12 +20,6 @@ spring:
   profiles:
     active: local
     include: oauth, app
-  data:
-    redis:
-#      host: ${REDIS_HOST}
-      port: 6379
-      password: ${REDIS_PASS}
-      url: ${REDIS_URL}
 
 springdoc:
   api-docs:
