@@ -32,9 +32,11 @@ public class Member extends BaseEntity {
     private String nickname;
 
     @ColumnDefault("0")
+    @Column(nullable = false)
     private Integer point;
 
     @ColumnDefault("0")
+    @Column(nullable = false)
     private Integer bumps;
 
     @Column(length = 30)
@@ -44,7 +46,7 @@ public class Member extends BaseEntity {
     private String userTitle;
 
     //default 기본이미지
-    @Column(columnDefinition = "VARCHAR(255) DEFAULT '기본 이미지 URL'")
+    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '기본 이미지 URL'")
     private String userImg;
 
     @Column(length = 30)
