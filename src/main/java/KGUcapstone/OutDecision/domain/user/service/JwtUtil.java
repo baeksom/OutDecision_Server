@@ -19,7 +19,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
     private final JwtProperties jwtProperties;
-    private final AccessTokenService accessTokenService;
+    private final TokenSaveService accessTokenService;
     private String secretKey;
 
     @PostConstruct
@@ -65,6 +65,7 @@ public class JwtUtil {
     public String generateAccessToken(String email, String role) {
         long tokenPeriod = 1000L * 60L * 30L; // 30분
 //        long tokenPeriod = 1000L * 2L;
+
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
 

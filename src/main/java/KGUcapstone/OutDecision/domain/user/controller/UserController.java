@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
+import KGUcapstone.OutDecision.domain.user.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -10,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/user/register/v1")
+@RequestMapping
 @RequiredArgsConstructor
 public class UserController {
 
-    @GetMapping
+    @GetMapping("/user/register/v1")
 //    public String showRegisterForm(@RequestParam("email") String email,
 //                                   @RequestParam("provider") String provider,
 //                                   Model model) {
@@ -30,9 +31,9 @@ public class UserController {
         return "register";
     }
 
-    private final UserService userService;
+    private final MemberService memberService;
 
-    @PostMapping
+    @PostMapping("/user/register/v1")
     public String registerUser(HttpServletRequest request,
                                @RequestParam("name") String name,
                                @RequestParam("phoneNumber") String phoneNumber
@@ -64,10 +65,16 @@ public class UserController {
         System.out.println("name = " + name);
         System.out.println("phoneNumber = " + phoneNumber);
 
-        userService.registerUser(email, provider, name, phoneNumber);
+        memberService.registerMember(email, provider, name, phoneNumber);
 
         // 회원가입 성공 페이지로 이동
         return "register-success";
     }
+
+    @GetMapping("/loginSuccess")
+    public String showSuccessLogin() {
+        return "register-success";
+    }
+
 }
 

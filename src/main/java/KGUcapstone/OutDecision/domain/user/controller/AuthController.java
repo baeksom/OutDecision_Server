@@ -1,11 +1,9 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
-import KGUcapstone.OutDecision.domain.user.dto.TokenResponseStatus;
 import KGUcapstone.OutDecision.domain.user.service.TokenService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -27,14 +25,14 @@ public class AuthController {
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<TokenResponseStatus> refresh(@RequestHeader("Authorization") final String accessToken) {
+    public ApiResponse<Object> refresh(@RequestHeader("Authorization") final String accessToken) {
 
         String newAccessToken = tokenService.republishAccessToken(accessToken);
         if (StringUtils.hasText(newAccessToken)) {
-            return ResponseEntity.ok(TokenResponseStatus.addStatus(200, null));
+            return ApiResponse.onSuccess(null);
         }
 
-        return ResponseEntity.badRequest().body(TokenResponseStatus.addStatus(400, null));
+        return ApiResponse.onFailure("400", "accessToken 발급에 실패했습니다.", null);
     }
 
 }

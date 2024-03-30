@@ -21,6 +21,3 @@ spring:
     active: local
     include: oauth, app
 
-springdoc:
-  api-docs:
-    disable-swagger-default-url: true
