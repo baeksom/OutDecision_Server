@@ -1,14 +1,9 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
 import KGUcapstone.OutDecision.domain.user.service.MemberService;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping
@@ -16,49 +11,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class UserController {
 
     @GetMapping("/user/register/v1")
-//    public String showRegisterForm(@RequestParam("email") String email,
-//                                   @RequestParam("provider") String provider,
-//                                   Model model) {
     public String showRegisterForm() {
-        // 받아온 파라미터 사용하기
-//        model.addAttribute("email", email);
-//        model.addAttribute("provider", provider);
-//
-//        System.out.println("email = " + email);
-//        System.out.println("provider = " + provider);
-
-        // 회원가입 폼 페이지로 이동
         return "register";
     }
 
     private final MemberService memberService;
 
     @PostMapping("/user/register/v1")
-    public String registerUser(HttpServletRequest request,
+    public String registerUser(@CookieValue(name = "email", required = false) String email,
+                               @CookieValue(name = "provider", required = false) String provider,
                                @RequestParam("name") String name,
                                @RequestParam("phoneNumber") String phoneNumber
                                ) {
-//        System.out.println("email = " + email);
-//        System.out.println("provider = " + provider);
-        String email=null;
-        String provider=null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("email")) {
-                    email = cookie.getValue();
-                    break; // 원하는 쿠키를 찾았으므로 반복문 종료
-                }
-            }
-        }
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("provider")) {
-                    provider = cookie.getValue();
-                    break; // 원하는 쿠키를 찾았으므로 반복문 종료
-                }
-            }
-        }
 
         System.out.println("email = " + email);
         System.out.println("provider = " + provider);

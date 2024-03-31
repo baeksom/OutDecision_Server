@@ -1,13 +1,12 @@
 package KGUcapstone.OutDecision.domain.user.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
+@NoArgsConstructor
 @Getter
+@ToString
 @AllArgsConstructor
-@Builder @ToString
+@Builder
 public class GeneratedToken {
 
     private String accessToken;
