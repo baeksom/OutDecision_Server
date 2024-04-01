@@ -23,15 +23,15 @@ public class MemberRestController {
 
     @GetMapping("/{memberId}/edit")
     @Operation(summary = "마이페이지 개인정보수정 조회 API", description = "마이페이지 개인정보수정 페이지에서 개인정보를 조회합니다.")
-    public ApiResponse<MemberDTO> getMemberInfo(@PathVariable("memberId") Long memberId) {
-        MemberDTO memberDTO = memberService.getMemberById(memberId);
+    public ApiResponse<MemberInfoDTO> getMemberInfo(@PathVariable("memberId") Long memberId) {
+        MemberInfoDTO memberDTO = memberService.getMemberById(memberId);
         return ApiResponse.onSuccess(memberDTO);
     }
 
     @PatchMapping("/{memberId}/edit")
     @Operation(summary = "마이페이지 개인정보수정 API", description = "마이페이지 개인정보수정 페이지에서 개인정보를 수정합니다.")
-    public ApiResponse<MemberDTO> updateMemberInfo(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateMemberDTO request) {
-        MemberDTO updateMemberDTO = memberService.updateMemberInfo(memberId, request);
+    public ApiResponse<MemberInfoDTO> updateMemberInfo(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateMemberDTO request) {
+        MemberInfoDTO updateMemberDTO = memberService.updateMemberInfo(memberId, request);
         return ApiResponse.onSuccess(updateMemberDTO);
     }
 
