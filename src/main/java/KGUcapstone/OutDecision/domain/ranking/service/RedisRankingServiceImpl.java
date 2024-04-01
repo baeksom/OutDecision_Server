@@ -1,6 +1,7 @@
 package KGUcapstone.OutDecision.domain.ranking.service;
 
-import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO;
+import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO.RankingDTO;
+import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO.RankingListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -29,27 +30,27 @@ public class RedisRankingServiceImpl implements RankingService {
     @Scheduled(fixedRate = 3600000) // 1시간(60분)은 3600000밀리초
     public void updateRanking() {
         // MySQL 데이터베이스에서 데이터 가져오기
-        List<RankingResponseDTO.RankingDTO> memberList = getDataFromMySQL();
+        List<RankingDTO> memberList = getDataFromMySQL();
 
         // Redis에 업데이트된 데이터 저장
         saveOrUpdateRanking(memberList);
     }
 
-    public List<RankingResponseDTO.RankingDTO> getDataFromMySQL() {
+    public List<RankingDTO> getDataFromMySQL() {
         // MySQL에서 id와 point 가져와서 List로 저장
         String sqlQuery = "SELECT id, point from member";
         return jdbcTemplate.query(sqlQuery, (rs, rowNum) ->
-                RankingResponseDTO.RankingDTO.builder()
+                RankingDTO.builder()
                         .memberId(rs.getLong("id"))
                         .point(rs.getInt("point"))
                         .build());
     }
 
-    private void saveOrUpdateRanking(List<RankingResponseDTO.RankingDTO> memberList) {
+    private void saveOrUpdateRanking(List<RankingDTO> memberList) {
         ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
         Set<String> existingId = zSetOperations.range(RANKING_KEY + ":point", 0, -1);
 
-        for (RankingResponseDTO.RankingDTO rankingDTO : memberList) {
+        for (RankingDTO rankingDTO : memberList) {
             Long id = rankingDTO.getMemberId();
             int point = rankingDTO.getPoint();
             String memberId = String.valueOf(id);
@@ -69,7 +70,7 @@ public class RedisRankingServiceImpl implements RankingService {
 
     // 상위 100위권 Ranking
     @Override
-    public RankingResponseDTO.RankingListDTO getTop100Rankings() {
+    public RankingListDTO getTop100Rankings() {
 
         ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
 
@@ -77,7 +78,7 @@ public class RedisRankingServiceImpl implements RankingService {
         Set<ZSetOperations.TypedTuple<String>> topRankings = zSetOperations.reverseRangeWithScores(RANKING_KEY + ":point", 0, -1);
 
         // 100위까지의 랭킹 정보만 가져와서 반환
-        List<RankingResponseDTO.RankingDTO> rankingDTOList = new ArrayList<>();
+        List<RankingDTO> rankingDTOList = new ArrayList<>();
         int rank = 1;
         int prevScore = Integer.MAX_VALUE;
         int sameRankCount = 0;
@@ -98,16 +99,16 @@ public class RedisRankingServiceImpl implements RankingService {
                 break; // 100위 이후의 데이터는 처리하지 않음
             }
 
-            RankingResponseDTO.RankingDTO rankingDTO = new RankingResponseDTO.RankingDTO(rank, memberId, nickname, point);
+            RankingDTO rankingDTO = new RankingDTO(rank, memberId, nickname, point);
             rankingDTOList.add(rankingDTO);
             prevScore = point;
         }
 
-        return new RankingResponseDTO.RankingListDTO(rankingDTOList, rankingDTOList.size());
+        return new RankingListDTO(rankingDTOList, rankingDTOList.size());
     }
 
     @Override
-    public RankingResponseDTO.RankingDTO memberRankingDTO(Long memberId) {
+    public RankingDTO memberRankingDTO(Long memberId) {
         ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
         // 랭킹 정보 가져오기
         Set<ZSetOperations.TypedTuple<String>> topRankings = zSetOperations.reverseRangeWithScores(RANKING_KEY + ":point", 0, -1);
@@ -117,7 +118,7 @@ public class RedisRankingServiceImpl implements RankingService {
         int rank = 1;
         int prevScore = Integer.MAX_VALUE;
         int sameRankCount = 0;
-        RankingResponseDTO.RankingDTO rankingDTO = null;
+        RankingDTO rankingDTO = null;
         for (ZSetOperations.TypedTuple<String> tuple : topRankings) {
             String id = tuple.getValue();
             int point = tuple.getScore().intValue();
@@ -131,7 +132,7 @@ public class RedisRankingServiceImpl implements RankingService {
             }
 
             if (reqId.equals(id)) {
-                rankingDTO = new RankingResponseDTO.RankingDTO(rank, memberId, nickname, point);
+                rankingDTO = new RankingDTO(rank, memberId, nickname, point);
                 break;
             }
         }
