@@ -1,7 +1,7 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
-import KGUcapstone.OutDecision.domain.user.dto.PasswordRequestDTO.UpdatePasswordDTO;
-import KGUcapstone.OutDecision.domain.user.dto.PasswordResponseDTO.UpdatePasswordResultDTO;
+import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdatePasswordDTO;
+import KGUcapstone.OutDecision.domain.user.dto.UpdateResponseDTO.UpdatePasswordResultDTO;
 
 
 public interface PasswordService {

@@ -61,6 +61,10 @@ public class Member extends BaseEntity {
         this.phone = phone;
     }
 
+    public void updateUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
     public void updatePassword(String password) {
         this.password = password;
     }

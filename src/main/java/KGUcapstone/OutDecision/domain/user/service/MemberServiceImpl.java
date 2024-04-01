@@ -1,8 +1,8 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.dto.MemberRequestDTO;
-import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO.MemberInfoDTO;
+import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO;
+import KGUcapstone.OutDecision.domain.user.dto.UpdateResponseDTO.MemberInfoDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.global.error.handler.MemberHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
@@ -27,12 +27,14 @@ public class MemberServiceImpl implements MemberService{
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .phone(member.getPhone())
+                .socialType(member.getSocialType())
+                .userImg(member.getUserImg())
                 .build();
 
     }
 
     @Override
-    public MemberInfoDTO updateMemberInfo(Long memberId, MemberRequestDTO.UpdateMemberDTO request) {
+    public MemberInfoDTO updateMemberInfo(Long memberId, UpdateRequestDTO.UpdateMemberDTO request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -46,6 +48,8 @@ public class MemberServiceImpl implements MemberService{
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .phone(member.getPhone())
+                .socialType(member.getSocialType())
+                .userImg(member.getUserImg())
                 .build();
     }
 }
