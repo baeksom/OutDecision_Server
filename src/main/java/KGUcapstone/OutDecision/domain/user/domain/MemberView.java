@@ -34,7 +34,12 @@ public class MemberView implements Serializable {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MemberViewId implements Serializable {
-        private Long memberId;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "member_id")
+        private Member member;
+
+        @Column(nullable = false)
+        @Enumerated(EnumType.STRING)
         private Category category;
     }
 }
