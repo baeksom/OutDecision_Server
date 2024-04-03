@@ -5,6 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -52,4 +55,6 @@ public class Member extends BaseEntity {
     @Column(length = 30)
     private String userRole;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<MemberView> memberViewList = new ArrayList<>();
 }
