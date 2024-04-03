@@ -1,6 +1,7 @@
-package KGUcapstone.OutDecision.domain.user.service;
+package KGUcapstone.OutDecision.domain.user.service.OAuth;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -19,18 +19,16 @@ public class MemberService {
         return Optional.ofNullable(memberRepository.findByEmail(email));
     }
 
-    public void registerMember(String email, String provider, String name, String phoneNumber) {
+    public void registerMember(String email, String provider, String nickname, String userImg) {
         // 사용자 정보를 이용하여 User 객체 생성
         Member newMember = Member.builder()
                 .email(email)
-                .name(name)
-                .phone(phoneNumber)
-                .nickname("임시값")
+                .nickname(nickname)
                 .userRole("ROLE_USER")
                 .socialType(provider)
                 .bumps(0)
                 .point(0)
-                .userImg("기본 url")
+                .userImg(userImg)
                 .build();
 
         // UserRepository를 통해 새로운 사용자를 데이터베이스에 저장

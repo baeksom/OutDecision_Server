@@ -1,8 +1,10 @@
 package KGUcapstone.OutDecision.domain.user.handler;
 
 import KGUcapstone.OutDecision.domain.user.dto.GeneratedToken;
-import KGUcapstone.OutDecision.domain.user.service.CookieUtil;
-import KGUcapstone.OutDecision.domain.user.service.JwtUtil;
+import KGUcapstone.OutDecision.global.util.CookieUtil;
+import KGUcapstone.OutDecision.global.util.JwtConstants;
+import KGUcapstone.OutDecision.global.util.JwtUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +13,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
@@ -48,20 +48,30 @@ public class MyAuthenticationSuccessHandler extends SimpleUrlAuthenticationSucce
             GeneratedToken token = jwtUtil.generateToken(email, role);
             log.info("jwtToken = {}", token.getAccessToken());
 
-            // accessToken을 쿼리스트링에 담는 url을 만들어준다.
-            String targetUrl = UriComponentsBuilder.fromUriString("http://localhost:8080/loginSuccess")
-                    .queryParam("accessToken", token.getAccessToken())
-                    .build()
-                    .encode(StandardCharsets.UTF_8)
-                    .toUriString();
-            log.info("redirect 준비");
+//            // accessToken을 쿼리스트링에 담는 url을 만들어준다.
+//            String targetUrl = UriComponentsBuilder.fromUriString("/loginSuccess")
+//                    .queryParam("accessToken", token.getAccessToken())
+//                    .build()
+//                    .encode(StandardCharsets.UTF_8)
+//                    .toUriString();
+
+            // 헤더로 accessToken 전달
+            response.addHeader(JwtConstants.JWT_HEADER, JwtConstants.JWT_TYPE + token.getAccessToken());
+            // Refresh Token 은 Cookie 에 담아서 전달하되, XSS 공격 방어를 위해 HttpOnly 를 설정한다
+            Cookie cookie = new Cookie(JwtConstants.REFRESH, token.getRefreshToken());
+            cookie.setMaxAge(60*5);     // 5분 설정
+            cookie.setHttpOnly(true);
+            response.addCookie(cookie);
+
+            log.info("소셜 로그인 redirect 준비");
+            log.info("ResponseHeader Authorization : " + response.getHeader(JwtConstants.JWT_HEADER));
             // 로그인 확인 페이지로 리다이렉트 시킨다.
-            getRedirectStrategy().sendRedirect(request, response, targetUrl);
+            getRedirectStrategy().sendRedirect(request, response, "/loginSuccess");
         }
         else {
-            cookieUtil.addCookie(response, "email", email, 60*60, "/user");
-            cookieUtil.addCookie(response, "provider", provider, 60*60, "/user");
-            getRedirectStrategy().sendRedirect(request, response, "http://localhost:8080/user/register/v1");
+            cookieUtil.addCookie(response, "email", email, 60*5);
+            cookieUtil.addCookie(response, "provider", provider, 60*5);  // 5분
+            getRedirectStrategy().sendRedirect(request, response, "/user/register/v1");
         }
     }
 }

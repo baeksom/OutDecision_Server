@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Success</title>
+</head>
+<body>
+<h2>Login Success</h2>
+<div id="accessToken"></div>
+
+<script>
+    // 서버로부터 받은 AccessToken을 추출하여 처리하는 함수
+    function handleAccessToken(response) {
+        // 서버로부터 받은 응답에서 AccessToken 추출
+        const accessToken = response.headers.get('Authorization');
+        if (accessToken) {
+            // 추출한 AccessToken을 로컬 스토리지에 저장
+            localStorage.setItem('accessToken', accessToken);
+            console.log('AccessToken 저장 완료:', accessToken);
+        } else {
+            console.error('AccessToken을 찾을 수 없습니다.');
+        }
+    }
+
+    // 로그인 버튼 클릭 시 호출되는 함수
+    function login() {
+        fetch('/login', {
+            method: 'POST',
+            body: JSON.stringify({ username: '사용자명', password: '비밀번호' }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                // 서버로부터 받은 응답 처리
+                handleAccessToken(response);
+                // 이후에 필요한 작업을 수행할 수 있습니다.
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+
+</script>
+</body>
+</html>

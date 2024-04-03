@@ -1,7 +1,8 @@
-package KGUcapstone.OutDecision.domain.user.service;
+package KGUcapstone.OutDecision.global.util;
 
 import KGUcapstone.OutDecision.domain.user.dto.GeneratedToken;
 import KGUcapstone.OutDecision.domain.user.properties.JwtProperties;
+import KGUcapstone.OutDecision.domain.user.service.TokenSaveService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -63,8 +64,8 @@ public class JwtUtil {
 
 
     public String generateAccessToken(String email, String role) {
-        long tokenPeriod = 1000L * 60L * 30L; // 30분
-//        long tokenPeriod = 1000L * 2L;
+//        long tokenPeriod = 1000L * 60L * 30L; // 30분
+        long tokenPeriod = 1000L * 2L;
 
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);

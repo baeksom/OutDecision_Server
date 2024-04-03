@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.service;
+package KGUcapstone.OutDecision.global.util;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +9,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CookieUtil {
 
-    public void addCookie(HttpServletResponse response, String name, String value, int maxAge, String path) {
+    public void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         ResponseCookie cookie = ResponseCookie.from(name, value)
-                .path(path)
+                .path("/")
+                .sameSite("None")
                 .httpOnly(true)
                 .secure(true)
                 .maxAge(maxAge)

@@ -2,6 +2,7 @@ package KGUcapstone.OutDecision.domain.user.service;
 
 import KGUcapstone.OutDecision.domain.user.dto.RefreshToken;
 import KGUcapstone.OutDecision.domain.user.repository.TokenRepository;
+import KGUcapstone.OutDecision.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
