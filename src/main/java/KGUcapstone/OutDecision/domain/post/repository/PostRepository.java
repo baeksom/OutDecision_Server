@@ -7,8 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByMember(Member member, PageRequest pageRequest);
 
     Page<Post> findAllByMemberAndStatus(Member member, Status status, PageRequest of);
+
+    Page<Post> findAllByIdIn(List<Long> likedPostIds, PageRequest of);
+
+    Page<Post> findAllByIdInAndStatus(List<Long> likedPostIds, Status status, PageRequest of);
 }

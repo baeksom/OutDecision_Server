@@ -39,4 +39,32 @@ public class ActivityResponseDTO {
         Boolean isFirst;
         Boolean isLast;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikedPostDTO{
+        Long postId;
+        String title;
+        Category category;
+        Status status;
+        LocalDateTime createdAt;
+        Date deadline;
+        List<String> optionsList;
+        Integer commentsCnt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LikedPostListDTO{
+        List<LikedPostDTO> likedPostList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
 }
