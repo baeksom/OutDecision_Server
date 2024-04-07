@@ -1,5 +1,8 @@
 package KGUcapstone.OutDecision.domain.user.domain;
 
+import KGUcapstone.OutDecision.domain.comments.domain.Comments;
+import KGUcapstone.OutDecision.domain.likes.domain.Likes;
+import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,10 +22,9 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
     private String email;
-
-    @Column(length = 20)
+    
     private String password;
 
     @Column(length = 20)
@@ -72,4 +74,12 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberView> memberViewList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Post> postList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Comments> commentsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Likes> likesList = new ArrayList<>();
 }

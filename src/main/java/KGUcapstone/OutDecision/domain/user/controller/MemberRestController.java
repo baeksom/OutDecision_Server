@@ -7,9 +7,11 @@ import KGUcapstone.OutDecision.domain.user.service.MemberService;
 import KGUcapstone.OutDecision.domain.user.service.PasswordService;
 import KGUcapstone.OutDecision.domain.user.service.UserImgService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
+import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import static KGUcapstone.OutDecision.domain.user.dto.UpdateResponseDTO.*;
@@ -32,9 +34,13 @@ public class MemberRestController {
 
     @PatchMapping("/{memberId}/edit")
     @Operation(summary = "마이페이지 개인정보수정 API", description = "마이페이지 개인정보수정 페이지에서 개인정보를 수정합니다.")
-    public ApiResponse<MemberInfoDTO> updateMemberInfo(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateMemberDTO request) {
-        MemberInfoDTO updateMemberDTO = memberService.updateMemberInfo(memberId, request);
-        return ApiResponse.onSuccess(updateMemberDTO);
+    public ApiResponse<Object> updateMemberInfo(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateMemberDTO request) {
+        try {
+            memberService.updateMemberInfo(memberId, request);
+            return ApiResponse.onSuccess("개인정보가 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            return ApiResponse.onFailure("COMMON500", "개인정보 수정에 실패하였습니다.", null);
+        }
     }
 
     @PatchMapping("/{memberId}/edit/password")

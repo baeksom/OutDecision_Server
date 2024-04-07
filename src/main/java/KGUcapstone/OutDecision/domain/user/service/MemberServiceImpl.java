@@ -34,7 +34,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberInfoDTO updateMemberInfo(Long memberId, UpdateRequestDTO.UpdateMemberDTO request) {
+    public boolean updateMemberInfo(Long memberId, UpdateRequestDTO.UpdateMemberDTO request) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
@@ -42,14 +42,6 @@ public class MemberServiceImpl implements MemberService{
 
         memberRepository.save(member);
 
-        return MemberInfoDTO.builder()
-                .memberId(member.getId())
-                .name(member.getName())
-                .email(member.getEmail())
-                .nickname(member.getNickname())
-                .phone(member.getPhone())
-                .socialType(member.getSocialType())
-                .userImg(member.getUserImg())
-                .build();
+        return true;
     }
 }
