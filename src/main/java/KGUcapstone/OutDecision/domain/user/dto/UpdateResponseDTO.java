@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 public class UpdateResponseDTO {
 
-    // 마이페이지 개인정보수정에서 사용되는 개인정보 DTO
+    // 마이페이지 개인정보수정 조회에서 사용되는 개인정보 DTO
     @Builder
     @Getter
     @NoArgsConstructor
@@ -20,21 +20,5 @@ public class UpdateResponseDTO {
         String phone;
         String socialType;
         String userImg;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UpdatePasswordResultDTO{
-        String message;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class UpdateUserImgResultDTO{
-        String newImg;
     }
 }
