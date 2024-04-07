@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.dto;
+package KGUcapstone.OutDecision.domain.user.security.dto;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Getter
-public class CustomUser implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private final Member member;
 

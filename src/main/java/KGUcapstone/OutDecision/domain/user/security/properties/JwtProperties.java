@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.properties;
+package KGUcapstone.OutDecision.domain.user.security.properties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

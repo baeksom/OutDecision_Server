@@ -1,6 +1,6 @@
-package KGUcapstone.OutDecision.domain.user.controller;
+package KGUcapstone.OutDecision.domain.user.security.controller;
 
-import KGUcapstone.OutDecision.domain.user.service.TokenService;
+import KGUcapstone.OutDecision.domain.user.security.service.TokenService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-public class AuthController {
+public class TokenController {
 
     private final TokenService tokenService;
 
@@ -35,10 +35,10 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ApiResponse.onFailure("TOKEN400", "Access Token 발급에 실패했습니다.", null));
     }
 
-    // 토큰 만료를 확인하기 위한 테스트 컨트롤러
-    @PostMapping("/test")
-    public ApiResponse<Object> test() {
-        return ApiResponse.onSuccess(null);
-    }
+//    // 토큰 만료를 확인하기 위한 테스트 컨트롤러
+//    @PostMapping("/test")
+//    public ApiResponse<Object> test() {
+//        return ApiResponse.onSuccess(null);
+//    }
 
 }

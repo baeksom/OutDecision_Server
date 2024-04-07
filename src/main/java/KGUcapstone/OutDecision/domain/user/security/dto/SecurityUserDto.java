@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.dto;
+package KGUcapstone.OutDecision.domain.user.security.dto;
 
 import lombok.*;
 

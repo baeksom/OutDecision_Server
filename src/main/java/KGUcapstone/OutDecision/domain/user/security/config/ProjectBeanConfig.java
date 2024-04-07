@@ -1,8 +1,8 @@
-package KGUcapstone.OutDecision.global.config.security;
+package KGUcapstone.OutDecision.domain.user.security.config;
 
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
-import KGUcapstone.OutDecision.domain.user.service.MemberService;
-import KGUcapstone.OutDecision.domain.user.service.UserService;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.user.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ProjectBeanConfig {
 
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
+    private final FindMemberService findMemberService;
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
@@ -26,18 +26,13 @@ public class ProjectBeanConfig {
         return provider;
     }
 
-    /*@Bean
-    public AuthenticationProvider authenticationProvider(){
-        return new CustomAuthenticationProvider(userService(), passwordEncoder());
-    }*/
-
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public UserService userService() {
-        return new UserService(memberService, passwordEncoder(), memberRepository);
+    public CustomUserDetailsService userService() {
+        return new CustomUserDetailsService(findMemberService, passwordEncoder(), memberRepository);
     }
 }

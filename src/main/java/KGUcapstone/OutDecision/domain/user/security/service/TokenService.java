@@ -1,6 +1,6 @@
-package KGUcapstone.OutDecision.domain.user.service;
+package KGUcapstone.OutDecision.domain.user.security.service;
 
-import KGUcapstone.OutDecision.domain.user.dto.RefreshToken;
+import KGUcapstone.OutDecision.domain.user.security.dto.RefreshToken;
 import KGUcapstone.OutDecision.domain.user.repository.TokenRepository;
 import KGUcapstone.OutDecision.global.util.JwtUtil;
 import lombok.RequiredArgsConstructor;

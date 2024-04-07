@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.filter;
+package KGUcapstone.OutDecision.domain.user.security.filter;
 
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;

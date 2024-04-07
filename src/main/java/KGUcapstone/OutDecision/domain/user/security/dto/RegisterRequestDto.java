@@ -1,9 +1,9 @@
-package KGUcapstone.OutDecision.domain.user.dto;
+package KGUcapstone.OutDecision.domain.user.security.dto;
 
 import lombok.*;
 
 @Getter
-public class SignUpRequestDto {
+public class RegisterRequestDto {
     private String name;
     private String nickname;
     private String email;

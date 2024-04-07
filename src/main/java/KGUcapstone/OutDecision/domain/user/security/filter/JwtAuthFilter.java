@@ -1,7 +1,7 @@
-package KGUcapstone.OutDecision.domain.user.filter;
+package KGUcapstone.OutDecision.domain.user.security.filter;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.dto.SecurityUserDto;
+import KGUcapstone.OutDecision.domain.user.security.dto.SecurityUserDto;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.global.util.JwtUtil;
 import jakarta.servlet.FilterChain;

@@ -1,8 +1,8 @@
 package KGUcapstone.OutDecision.global.util;
 
-import KGUcapstone.OutDecision.domain.user.dto.GeneratedToken;
-import KGUcapstone.OutDecision.domain.user.properties.JwtProperties;
-import KGUcapstone.OutDecision.domain.user.service.TokenSaveService;
+import KGUcapstone.OutDecision.domain.user.security.dto.GeneratedToken;
+import KGUcapstone.OutDecision.domain.user.security.properties.JwtProperties;
+import KGUcapstone.OutDecision.domain.user.security.service.SaveTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -20,7 +20,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
     private final JwtProperties jwtProperties;
-    private final TokenSaveService accessTokenService;
+    private final SaveTokenService accessTokenService;
     private String secretKey;
 
     @PostConstruct
@@ -64,8 +64,7 @@ public class JwtUtil {
 
 
     public String generateAccessToken(String email, String role) {
-//        long tokenPeriod = 1000L * 60L * 30L; // 30분
-        long tokenPeriod = 1000L * 2L;
+        long tokenPeriod = 1000L * 60L * 30L; // 30분
 
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);

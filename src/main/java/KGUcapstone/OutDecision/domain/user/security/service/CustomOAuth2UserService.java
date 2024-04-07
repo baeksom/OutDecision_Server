@@ -1,7 +1,8 @@
-package KGUcapstone.OutDecision.domain.user.service.OAuth;
+package KGUcapstone.OutDecision.domain.user.security.service;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.service.MemberService;
+import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,6 +10,7 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
@@ -23,7 +25,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-        private final MemberService memberService;
+        private final FindMemberService findMemberService;
+        private final MemberRepository memberRepository;
+
         @Override
         public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
             // 기본 OAuth2UserService 객체 생성
@@ -48,7 +52,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             // 사용자 email(또는 id) 정보를 가져온다.
             String email = (String) memberAttribute.get("email");
             // 이메일로 가입된 회원인지 조회한다.
-            Optional<Member> findMember = memberService.findByEmail(email);
+            Optional<Member> findMember = findMemberService.findByEmail(email);
 
             if (findMember.isEmpty()) {
                 // 회원이 존재하지 않을경우, memberAttribute의 exist 값을 false로 넣어준다.
@@ -58,6 +62,11 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                         Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
                         memberAttribute, "email");
             }
+            else if (!registrationId.equals(findMember.get().getSocialType())) {
+                // 회원이 존재하지만, 같은 아이디의 다른 소셜타입인 경우
+                log.info("이미 다른 소셜로 가입된 이메일입니다.");
+                throw new OAuth2AuthenticationException(new OAuth2Error("registration_failure", "Trying to register with different social type for same email.", null));
+            }
 
             // 회원이 존재할경우, memberAttribute의 exist 값을 true로 넣어준다.
             memberAttribute.put("exist", true);
@@ -66,5 +75,21 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_".concat(findMember.get().getUserRole()))),
                     memberAttribute, "email");
 
+        }
+
+        public void registerSocialMember(String email, String provider, String nickname, String userImg) {
+            // 사용자 정보를 이용하여 User 객체 생성
+            Member newMember = Member.builder()
+                    .email(email)
+                    .nickname(nickname)
+                    .userRole("USER")
+                    .socialType(provider)
+                    .bumps(0)
+                    .point(0)
+                    .userImg(userImg)
+                    .build();
+
+            // UserRepository를 통해 새로운 사용자를 데이터베이스에 저장
+            memberRepository.save(newMember);
         }
 }
