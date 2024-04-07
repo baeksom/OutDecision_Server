@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 @RestController
-public class PosApiController {
+public class PostApiController {
     private final PostService postService;
 
     /* 등록 */
