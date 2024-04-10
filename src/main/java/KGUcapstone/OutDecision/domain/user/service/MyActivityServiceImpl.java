@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
+import KGUcapstone.OutDecision.domain.comments.repository.CommentsRepository;
 import KGUcapstone.OutDecision.domain.likes.repository.LikesRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
@@ -28,6 +29,7 @@ public class MyActivityServiceImpl implements MyActivityService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final LikesRepository likesRepository;
+    private final CommentsRepository commentsRepository;
 
     // 작성한 글
     @Override

@@ -67,4 +67,31 @@ public class ActivityResponseDTO {
         Boolean isFirst;
         Boolean isLast;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyCommentDTO{
+        Long postId;
+        String title;
+        String body;
+        Category category;
+        Status status;
+        LocalDateTime createdAt;
+        Integer commentsCnt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyCommentListDTO{
+        List<MyCommentDTO> myCommentList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
 }
