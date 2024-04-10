@@ -3,6 +3,7 @@ package KGUcapstone.OutDecision.domain.ranking.service;
 import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO.RankingDTO;
 import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO.RankingListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,8 +27,6 @@ public class RedisRankingServiceImpl implements RankingService {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-//    @Scheduled(fixedRate = 60000)   // 60초 TEST용
-    @Scheduled(fixedRate = 3600000) // 1시간(60분)은 3600000밀리초
     public void updateRanking() {
         // MySQL 데이터베이스에서 데이터 가져오기
         List<RankingDTO> memberList = getDataFromMySQL();
@@ -65,12 +64,19 @@ public class RedisRankingServiceImpl implements RankingService {
     // 멤버 id로 닉네임 가져오기
     private String getNicknameById(Long id) {
         // MySQL에서 멤버의 닉네임 조회
-        return jdbcTemplate.queryForObject("SELECT nickname FROM member WHERE id = ?", String.class, id);
+        try {
+            return jdbcTemplate.queryForObject("SELECT nickname FROM member WHERE id = ?", String.class, id);
+        } catch (EmptyResultDataAccessException e) {
+            // 해당 ID에 해당하는 레코드가 없는 경우
+            return null; // 또는 다른 기본값을 반환할 수도 있습니다.
+        }
     }
 
     // 상위 100위권 Ranking
     @Override
     public RankingListDTO getTop100Rankings() {
+
+        updateRanking();
 
         ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
 
@@ -85,6 +91,9 @@ public class RedisRankingServiceImpl implements RankingService {
         for (ZSetOperations.TypedTuple<String> tuple : topRankings) {
             String id = tuple.getValue();
             int point = tuple.getScore().intValue();
+            if (id == null) {
+                break; // id가 null인 경우 반복문을 종료합니다.
+            }
             long memberId = Long.parseLong(id);
             String nickname = getNicknameById(memberId);
 
