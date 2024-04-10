@@ -1,6 +1,8 @@
 package KGUcapstone.OutDecision.domain.post.domain;
 
+import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.likes.domain.Likes;
+import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
@@ -53,4 +55,10 @@ public class Post extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comments> commentsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Options> optionsList = new ArrayList<>();
 }

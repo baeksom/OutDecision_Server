@@ -48,4 +48,15 @@ public class Title {
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean greedy;
 
+    @ColumnDefault("false")
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean first;
+
+    @ColumnDefault("false")
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean second;
+
+    @ColumnDefault("false")
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean third;
 }
