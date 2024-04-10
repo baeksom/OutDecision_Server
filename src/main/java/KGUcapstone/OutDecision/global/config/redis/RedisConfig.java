@@ -15,11 +15,11 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 @RequiredArgsConstructor
 public class RedisConfig {
 
-    @Value("${spring.redis.host}")
+    @Value("${REDIS_HOST}")
     private String redisHost;
-    @Value("${spring.redis.port}")
+    @Value("${REDIS_PORT}")
     private int redisPort;
-    @Value("${spring.redis.password}")
+    @Value("${REDIS_PASS}")
     private String redisPassword;
 
     @Bean
