@@ -14,7 +14,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByMemberAndStatus(Member member, Status status, PageRequest of);
 
-    Page<Post> findAllByIdIn(List<Long> likedPostIds, PageRequest of);
+    Page<Post> findAllByIdIn(List<Long> postIds, PageRequest of);
 
-    Page<Post> findAllByIdInAndStatus(List<Long> likedPostIds, Status status, PageRequest of);
+    Page<Post> findAllByIdInAndStatus(List<Long> postIds, Status status, PageRequest of);
 }

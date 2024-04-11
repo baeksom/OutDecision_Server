@@ -16,7 +16,7 @@ public class ActivityResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MyPostDTO{
+    public static class PostDTO{
         Long postId;
         String title;
         Category category;
@@ -31,8 +31,8 @@ public class ActivityResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MyPostListDTO{
-        List<MyPostDTO> myPostList;
+    public static class PostListDTO{
+        List<PostDTO> postList;
         Integer listSize;
         Integer totalPage;
         Long totalElements;
@@ -40,58 +40,4 @@ public class ActivityResponseDTO {
         Boolean isLast;
     }
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class LikedPostDTO{
-        Long postId;
-        String title;
-        Category category;
-        Status status;
-        LocalDateTime createdAt;
-        Date deadline;
-        List<String> optionsList;
-        Integer commentsCnt;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class LikedPostListDTO{
-        List<LikedPostDTO> likedPostList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MyCommentDTO{
-        Long postId;
-        String title;
-        String body;
-        Category category;
-        Status status;
-        LocalDateTime createdAt;
-        Integer commentsCnt;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class MyCommentListDTO{
-        List<MyCommentDTO> myCommentList;
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
-    }
 }
