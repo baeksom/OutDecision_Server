@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
-    @Query("SELECT v.options.post.id FROM Vote v WHERE v.member.id = :memberId")
+    @Query("SELECT DISTINCT vo.options.post.id FROM Vote v JOIN v.voteToOptionsList vo WHERE v.member.id = :memberId")
     List<Long> findPostIdsByMemberId(Long memberId);
 }
