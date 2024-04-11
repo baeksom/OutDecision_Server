@@ -1,6 +1,5 @@
 package KGUcapstone.OutDecision.domain.vote.domain;
 
-//import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
