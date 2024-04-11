@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.*;
 
+
+//임시용
 public class RecommendSystem {
 
     private static final Logger logger = Logger.getLogger(RecommendSystem.class.getName());

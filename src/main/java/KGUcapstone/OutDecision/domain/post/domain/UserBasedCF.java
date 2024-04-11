@@ -60,7 +60,7 @@ public class UserBasedCF {
         Map<Long, Double> topNSimilarMembers = new HashMap<>();
         memberSimilarity.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))  // 유사도가 높은 순서대로 정렬
-                .limit(topN)  // 상위 topN개의 유사 사용자만 선택
+                .limit(topN)  // 상위 topN개의 유사 사용자만 선택함
                 .forEach(entry -> topNSimilarMembers.put(entry.getKey(), entry.getValue()));
         return topNSimilarMembers;
     }
