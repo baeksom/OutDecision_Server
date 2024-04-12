@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 public class ActivityResponseDTO {
@@ -24,7 +22,7 @@ public class ActivityResponseDTO {
         boolean pluralVoting;
         String createdAt;
         String deadline;
-        List<optionsDTO> optionsList;
+        List<OptionsDTO> optionsList;
         Integer participationCnt;
         Integer likesCnt;
         Integer commentsCnt;
@@ -35,9 +33,10 @@ public class ActivityResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class optionsDTO{
+    public static class OptionsDTO{
         String body;
         String imgUrl;
+        Integer votePercentage;
     }
 
     @Builder

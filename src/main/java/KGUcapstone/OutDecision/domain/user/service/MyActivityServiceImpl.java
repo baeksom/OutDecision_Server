@@ -6,6 +6,7 @@ import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO;
+import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostListDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
@@ -80,17 +81,29 @@ public class MyActivityServiceImpl implements MyActivityService {
     // 게시글
     @Override
     public PostDTO post(Post post) {
-        List<ActivityResponseDTO.optionsDTO> optionsDTOList = post.getOptionsList().stream()
-                .map(option -> new ActivityResponseDTO.optionsDTO(option.getBody(), option.getPhotoUrl()))
-                .collect(Collectors.toList());
-
-        // 참여자수 구하기
         int participationCnt = post.getOptionsList().stream()
                 .flatMap(option -> option.getVoteToOptionsList().stream())
                 .map(voteToOptions -> voteToOptions.getVote().getMember())
                 .distinct() // 멤버 중복 제거
                 .collect(Collectors.counting()) // 참여자 수 계산
                 .intValue();
+
+        // 총 투표 수 계산
+        long totalVoteCnt = post.getOptionsList().stream()
+                .flatMap(option -> option.getVoteToOptionsList().stream())
+                .count();
+
+        List<ActivityResponseDTO.OptionsDTO> optionsDTOList = post.getOptionsList().stream()
+                .map(option -> {
+                    // 해당 option의 투표 수 계산
+                    long optionVoteCnt = option.getVoteToOptionsList().stream().count();
+
+                    // 투표 결과 퍼센트 계산 (소수점 없음)
+                    int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
+
+                    return new ActivityResponseDTO.OptionsDTO(option.getBody(), option.getPhotoUrl(), votePercentage);
+                })
+                .collect(Collectors.toList());
 
         return PostDTO.builder()
                 .postId(post.getId())
