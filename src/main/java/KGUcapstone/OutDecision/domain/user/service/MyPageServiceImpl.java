@@ -47,6 +47,7 @@ public class MyPageServiceImpl implements MyPageService{
                 .memberId(memberId)
                 .nickname(member.getNickname())
                 .userImg(member.getUserImg())
+                .memberTitle(member.getUserTitle())
                 .titleCnt(titleCnt)
                 .point(member.getPoint())
                 .postList(latestPostDTOList)

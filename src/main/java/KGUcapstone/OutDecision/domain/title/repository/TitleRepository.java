@@ -18,4 +18,22 @@ public interface TitleRepository extends JpaRepository<Title, Long> {
             "SUM(CASE WHEN t.third = true THEN 1 ELSE 0 END) " +
             "FROM Title t WHERE t.member.id = :memberId")
     int countTrueColumnsForMember(Long memberId);
+
+    @Query("SELECT " +
+            "GROUP_CONCAT(" +
+            "   CASE WHEN t.ceo = true THEN '사장' ELSE '' END, " +
+            "   CASE WHEN t.fashionista = true THEN ',패셔니스타' ELSE '' END, " +
+            "   CASE WHEN t.foodie = true THEN ',미식가' ELSE '' END, " +
+            "   CASE WHEN t.greedy = true THEN ',욕심쟁이' ELSE '' END, " +
+            "   CASE WHEN t.romantist = true THEN ',로맨티스트' ELSE '' END, " +
+            "   CASE WHEN t.sprout = true THEN ',새싹' ELSE '' END, " +
+            "   CASE WHEN t.traveler = true THEN ',트래블러' ELSE '' END, " +
+            "   CASE WHEN t.first = true THEN ',1위' ELSE '' END, " +
+            "   CASE WHEN t.second = true THEN ',2위' ELSE '' END, " +
+            "   CASE WHEN t.third = true THEN ',3위' ELSE '' END " +
+            ") AS true_titles " +
+            "FROM Title t " +
+            "WHERE t.member.id = :memberId " +
+            "GROUP BY t.member.id")
+    String findTrueColumByMemberId(Long memberId);
 }

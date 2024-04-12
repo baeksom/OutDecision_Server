@@ -17,6 +17,7 @@ public class MemberResponseDTO {
         Long memberId;
         String nickname;
         String userImg;
+        String memberTitle;
         Integer titleCnt;
         Integer point;
         List<PostDTO> postList;
