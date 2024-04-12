@@ -5,6 +5,7 @@ import KGUcapstone.OutDecision.domain.post.dto.PostRequestDto;
 import KGUcapstone.OutDecision.domain.post.dto.PostResponseDto;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
+    @Autowired
     private final PostRepository postRepository;
 
     /* 등록 */
@@ -19,7 +21,8 @@ public class PostService {
     public Long save(PostRequestDto dto) {
         //Member의 id 가져와서 Post의 member_id에 저장필요 => 어떤 사람이 했는지 알기위해??
         Post post = dto.toEntity();
-        return postRepository.save(post).getId();
+        postRepository.save(post);
+        return post.getId();
     }
 
     /* 조회 */
@@ -32,10 +35,12 @@ public class PostService {
 
     /* 수정 */
     @Transactional
-    public void update(Long id, PostRequestDto dto) {
+    public Long update(Long id, PostRequestDto dto) {
         Post post = postRepository.findById(id).orElseThrow(()
                 ->new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id = " + id) );
         post.update(dto.getTitle(), dto.getContent());
+
+        return id;
     }
 
     /* 삭제 */
