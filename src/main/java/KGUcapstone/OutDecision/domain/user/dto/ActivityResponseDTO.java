@@ -21,10 +21,23 @@ public class ActivityResponseDTO {
         String title;
         Category category;
         Status status;
-        LocalDateTime createdAt;
-        Date deadline;
-        List<String> optionsList;
+        boolean pluralVoting;
+        String createdAt;
+        String deadline;
+        List<optionsDTO> optionsList;
+        Integer participationCnt;
+        Integer likesCnt;
         Integer commentsCnt;
+        Integer views;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class optionsDTO{
+        String body;
+        String imgUrl;
     }
 
     @Builder

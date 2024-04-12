@@ -1,11 +1,11 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
 import KGUcapstone.OutDecision.domain.likes.repository.LikesRepository;
-import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostListDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
@@ -13,9 +13,15 @@ import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,10 +40,11 @@ public class MyActivityServiceImpl implements MyActivityService {
     public Page<Post> getMyPostListByStatus(Long memberId, Status status, Integer page) {
         Member member = memberRepository.findById(memberId).get();
         Page<Post> postPage;
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // createdAt으로 내림차순 정렬
         if (status == null) {
-            postPage = postRepository.findAllByMember(member, PageRequest.of(page, 10));
+            postPage = postRepository.findAllByMember(member, PageRequest.of(page, 10, sort));
         } else {
-            postPage = postRepository.findAllByMemberAndStatus(member, status, PageRequest.of(page, 10));
+            postPage = postRepository.findAllByMemberAndStatus(member, status, PageRequest.of(page, 10, sort));
         }
         return postPage;
     }
@@ -47,10 +54,11 @@ public class MyActivityServiceImpl implements MyActivityService {
     public Page<Post> getLikedPostListByStatus(Long memberId, Status status, Integer page) {
         List<Long> likedPostIds = likesRepository.findPostIdsByMemberId(memberId);
         Page<Post> likedPosts;
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // createdAt으로 내림차순 정렬
         if (status == null) {
-            likedPosts = postRepository.findAllByIdIn(likedPostIds, PageRequest.of(page, 10));
+            likedPosts = postRepository.findAllByIdIn(likedPostIds, PageRequest.of(page, 10, sort));
         } else {
-            likedPosts = postRepository.findAllByIdInAndStatus(likedPostIds, status, PageRequest.of(page, 10));
+            likedPosts = postRepository.findAllByIdInAndStatus(likedPostIds, status, PageRequest.of(page, 10, sort));
         }
         return likedPosts;
     }
@@ -60,10 +68,11 @@ public class MyActivityServiceImpl implements MyActivityService {
     public Page<Post> getVotedPostListByStatus(Long memberId, Status status, Integer page) {
         List<Long> votedPostIds = voteRepository.findPostIdsByMemberId(memberId);
         Page<Post> votedPosts;
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // createdAt으로 내림차순 정렬
         if (status == null) {
-            votedPosts = postRepository.findAllByIdIn(votedPostIds, PageRequest.of(page, 10));
+            votedPosts = postRepository.findAllByIdIn(votedPostIds, PageRequest.of(page, 10, sort));
         } else {
-            votedPosts = postRepository.findAllByIdInAndStatus(votedPostIds, status, PageRequest.of(page, 10));
+            votedPosts = postRepository.findAllByIdInAndStatus(votedPostIds, status, PageRequest.of(page, 10, sort));
         }
         return votedPosts;
     }
@@ -71,20 +80,49 @@ public class MyActivityServiceImpl implements MyActivityService {
     // 게시글
     @Override
     public PostDTO post(Post post) {
-        List<String> optionsListDTOS = post.getOptionsList().stream()
-                .map(Options::getBody)
+        List<ActivityResponseDTO.optionsDTO> optionsDTOList = post.getOptionsList().stream()
+                .map(option -> new ActivityResponseDTO.optionsDTO(option.getBody(), option.getPhotoUrl()))
                 .collect(Collectors.toList());
+
+        // 참여자수 구하기
+        int participationCnt = post.getOptionsList().stream()
+                .flatMap(option -> option.getVoteToOptionsList().stream())
+                .map(voteToOptions -> voteToOptions.getVote().getMember())
+                .distinct() // 멤버 중복 제거
+                .collect(Collectors.counting()) // 참여자 수 계산
+                .intValue();
 
         return PostDTO.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
-                .createdAt(post.getCreatedAt())
                 .category(post.getCategory())
-                .deadline(post.getDeadline())
                 .status(post.getStatus())
-                .optionsList(optionsListDTOS)
+                .pluralVoting(post.getPluralVoting())
+                .createdAt(formatCreatedAt(post, post.getCreatedAt()))
+                .deadline(formatDeadline(post.getDeadline()))
+                .optionsList(optionsDTOList)
+                .participationCnt(participationCnt)
+                .likesCnt(post.getLikesList().size())
                 .commentsCnt(post.getCommentsList().size())
+                .views(post.getViews())
                 .build();
+    }
+
+    // 마감일 형식 수정하여 반환
+    private String formatDeadline(Date dateTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+        return sdf.format(dateTime);
+    }
+
+    // 작성일 형식 수정하여 반환
+    private String formatCreatedAt(Post post, LocalDateTime createdAt) {
+        if (post.getCreatedAt().toLocalDate().isEqual(LocalDate.now())) {
+            // 오늘이라면 HH:mm 시간만 표시
+            return post.getCreatedAt().format(DateTimeFormatter.ofPattern("HH:mm"));
+        } else {
+            // 오늘이 아니라면 MM-dd 형식으로 표시
+            return post.getCreatedAt().format(DateTimeFormatter.ofPattern("MM-dd"));
+        }
     }
 
     // 게시글 list
