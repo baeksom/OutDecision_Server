@@ -10,6 +10,7 @@ import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,6 +41,10 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "DATETIME")
     private Date deadline;
+
+    @ColumnDefault("false")
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean pluralVoting;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(15) DEFAULT 'VOTING'")
