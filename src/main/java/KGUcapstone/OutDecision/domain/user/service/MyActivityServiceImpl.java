@@ -5,7 +5,6 @@ import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostListDTO;
@@ -93,7 +92,7 @@ public class MyActivityServiceImpl implements MyActivityService {
                 .flatMap(option -> option.getVoteToOptionsList().stream())
                 .count();
 
-        List<ActivityResponseDTO.OptionsDTO> optionsDTOList = post.getOptionsList().stream()
+        List<OptionsDTO> optionsDTOList = post.getOptionsList().stream()
                 .map(option -> {
                     // 해당 option의 투표 수 계산
                     long optionVoteCnt = option.getVoteToOptionsList().stream().count();
@@ -101,7 +100,7 @@ public class MyActivityServiceImpl implements MyActivityService {
                     // 투표 결과 퍼센트 계산 (소수점 없음)
                     int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
 
-                    return new ActivityResponseDTO.OptionsDTO(option.getBody(), option.getPhotoUrl(), votePercentage);
+                    return new OptionsDTO(option.getBody(), option.getPhotoUrl(), votePercentage);
                 })
                 .collect(Collectors.toList());
 
