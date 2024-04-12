@@ -3,6 +3,8 @@ package KGUcapstone.OutDecision.domain.post.dto;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
+import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import lombok.*;
 
 import java.util.Date;
@@ -21,6 +23,9 @@ public class PostRequestDto {
     private Category category;
     private Date deadline;
     private Gender gender;
+    private Status status;
+    private Integer views;
+//    private Long member;
 
     /* Dto -> Entity */
     public Post toEntity() {
@@ -30,6 +35,9 @@ public class PostRequestDto {
                 .category(category)
                 .deadline(deadline)
                 .gender(gender)
+                .status(status)
+                .views(views)
+//                .member(member)
                 .build();
 
     }
