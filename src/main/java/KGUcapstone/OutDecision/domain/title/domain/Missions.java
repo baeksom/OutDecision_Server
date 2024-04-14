@@ -48,4 +48,7 @@ public class Missions {
     @Column(nullable = false)
     private Integer greedy_cnt;
 
+    public void setGreedy_cnt(Integer greedy_cnt) {
+        this.greedy_cnt = greedy_cnt;
+    }
 }

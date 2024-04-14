@@ -17,6 +17,7 @@ public class MissionsResponseDTO {
         TitleMissionsDTO traveler;
         TitleMissionsDTO ceo;
         TitleMissionsDTO romantist;
+        TitleMissionsDTO hobbyist;
         TitleMissionsDTO greedy;
     }
 
