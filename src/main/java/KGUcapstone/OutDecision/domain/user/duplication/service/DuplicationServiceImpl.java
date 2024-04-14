@@ -19,8 +19,4 @@ public class DuplicationServiceImpl implements DuplicationService {
         return Optional.ofNullable(memberRepository.findByNickname(request)).isPresent();
     }
 
-    public boolean checkPhoneExist(String request) {
-        return Optional.ofNullable(memberRepository.findByPhone(request)).isPresent();
-    }
-
 }

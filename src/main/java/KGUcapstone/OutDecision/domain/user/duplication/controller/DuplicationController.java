@@ -28,10 +28,4 @@ public class DuplicationController {
         if(duplicateService.checkNicknameExist(request.getRequest())) return ApiResponse.onFailure("400", "이미 존재하는 닉네임 입니다.", null);
         else return ApiResponse.onSuccess(null);
     }
-
-    @PostMapping("/phone")
-    public ApiResponse<Object> phoneDuplicationCheck(@RequestBody @Valid DuplicationRequestDto.CheckDto request) {
-        if(duplicateService.checkPhoneExist(request.getRequest())) return ApiResponse.onFailure("400", "이미 존재하는 번호 입니다.", null);
-        else return ApiResponse.onSuccess(null);
-    }
 }
