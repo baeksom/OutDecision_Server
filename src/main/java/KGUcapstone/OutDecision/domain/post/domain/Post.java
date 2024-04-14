@@ -47,6 +47,9 @@ public class Post extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean pluralVoting;
 
+    @Column(columnDefinition = "TINYINT(1)")
+    private Boolean hot;
+
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime bumpsTime;
 

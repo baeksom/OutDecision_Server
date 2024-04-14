@@ -45,9 +45,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Integer bumps;
 
-    @Column(length = 30)
-    private String phone;
-
     @Column(length = 20)
     private String userTitle;
 
