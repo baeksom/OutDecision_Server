@@ -8,6 +8,5 @@ public class RegisterRequestDto {
     private String nickname;
     private String email;
     private String password;
-    private String phone;
     private String userImg;
 }
