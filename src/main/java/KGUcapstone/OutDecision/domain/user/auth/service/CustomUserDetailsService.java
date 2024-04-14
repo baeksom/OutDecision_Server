@@ -37,7 +37,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .nickname(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .phone(request.getPhone())
                 .userImg(request.getUserImg())
                 .userRole("USER")
                 .point(0)
