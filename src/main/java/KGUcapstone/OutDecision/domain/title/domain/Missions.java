@@ -42,6 +42,10 @@ public class Missions {
 
     @ColumnDefault("0")
     @Column(nullable = false)
+    private Integer hobbyist_cnt;
+
+    @ColumnDefault("0")
+    @Column(nullable = false)
     private Integer greedy_cnt;
 
 }
