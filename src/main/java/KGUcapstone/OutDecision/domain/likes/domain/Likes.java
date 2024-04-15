@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"post_id", "member_id"}))
 public class Likes {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
