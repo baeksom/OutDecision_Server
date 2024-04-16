@@ -3,6 +3,7 @@ package KGUcapstone.OutDecision.domain.user.auth.controller;
 import KGUcapstone.OutDecision.domain.user.auth.dto.RegisterRequestDto;
 import KGUcapstone.OutDecision.domain.user.auth.service.CustomUserDetailsService;
 import KGUcapstone.OutDecision.domain.user.auth.service.CustomOAuth2UserService;
+import KGUcapstone.OutDecision.domain.user.service.MemberService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import KGUcapstone.OutDecision.global.common.util.AESUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,13 +28,13 @@ public class RegisterController {
                                     @RequestParam("nickname") String nickname,
                                     @RequestParam("userImg") String userImg
                                ) {
-        customOAuth2UserService.registerSocialMember(email, provider, nickname, userImg);
+        customOAuth2UserService.saveSocialMember(email, provider, nickname, userImg);
         return ApiResponse.onSuccess(null);
     }
 
     @PostMapping("/register/v2")
     public ApiResponse<Object> registerNormalUser(@RequestBody @Valid RegisterRequestDto request) {
-        customUserDetailsService.saveMember(request);
+        customUserDetailsService.saveCommonMember(request);
         return ApiResponse.onSuccess(null);
     }
 

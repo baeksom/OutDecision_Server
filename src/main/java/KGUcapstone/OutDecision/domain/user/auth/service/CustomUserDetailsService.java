@@ -4,7 +4,7 @@ import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.auth.dto.CustomUserDetails;
 import KGUcapstone.OutDecision.domain.user.auth.dto.RegisterRequestDto;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
-import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.user.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,14 +15,14 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    private final FindMemberService findMemberService;
+    private final MemberService memberService;
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 사용자를 데이터베이스 등에서 찾는 코드
-        Optional<Member> member = findMemberService.findByEmail(username);
+        Optional<Member> member = memberService.findByEmail(username);
 
         // 사용자가 없는 경우 예외 처리
         if (member.isPresent()) {
@@ -31,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         throw new UsernameNotFoundException("User not found with email: " + username);
     }
 
-    public void saveMember(RegisterRequestDto request){
+    public void saveCommonMember(RegisterRequestDto request){
         Member member = Member.builder()
                 .name(request.getName())
                 .nickname(request.getNickname())

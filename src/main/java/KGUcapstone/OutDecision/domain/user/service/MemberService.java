@@ -11,11 +11,15 @@ import java.util.Optional;
 @Service
 @Transactional(readOnly = false)
 @RequiredArgsConstructor
-public class FindMemberService {
+public class MemberService {
 
     private final MemberRepository memberRepository;
 
     public Optional<Member> findByEmail(String email) {
         return Optional.ofNullable(memberRepository.findByEmail(email));
+    }
+
+    public void deleteMember(Member member){
+        memberRepository.delete(member);
     }
 }

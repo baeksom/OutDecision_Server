@@ -2,10 +2,12 @@ package KGUcapstone.OutDecision.domain.user.auth.service;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
-import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.user.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -14,6 +16,9 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+
 
 import java.util.Collections;
 import java.util.Map;
@@ -25,9 +30,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-        private final FindMemberService findMemberService;
+        private final MemberService memberService;
         private final MemberRepository memberRepository;
 
+        private final ClientRegistrationRepository clientRegistrationRepository;
+        private final OAuth2AuthorizedClientService authorizedClientService;
         @Override
         public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
             // 기본 OAuth2UserService 객체 생성
@@ -52,7 +59,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             // 사용자 email(또는 id) 정보를 가져온다.
             String email = (String) memberAttribute.get("email");
             // 이메일로 가입된 회원인지 조회한다.
-            Optional<Member> findMember = findMemberService.findByEmail(email);
+            Optional<Member> findMember = memberService.findByEmail(email);
 
             if (findMember.isEmpty()) {
                 // 회원이 존재하지 않을경우, memberAttribute의 exist 값을 false로 넣어준다.
@@ -77,7 +84,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         }
 
-        public void registerSocialMember(String email, String provider, String nickname, String userImg) {
+        public void saveSocialMember(String email, String provider, String nickname, String userImg) {
             // 사용자 정보를 이용하여 User 객체 생성
             Member newMember = Member.builder()
                     .email(email)

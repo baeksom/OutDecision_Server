@@ -1,8 +1,11 @@
 package KGUcapstone.OutDecision.domain.user.auth.controller;
 
+import KGUcapstone.OutDecision.global.common.util.AESUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Slf4j
@@ -29,8 +32,8 @@ public class PageController {
 
 //    @GetMapping("/register/v1")
 //    public String showSocialRegisterForm(HttpServletRequest request,
-//                                                      @CookieValue(name = "email", required = true) String email,
-//                                                      @CookieValue(name = "provider", required = true) String provider) throws Exception {
+//                                         @CookieValue(name = "email", required = true) String email,
+//                                         @CookieValue(name = "provider", required = true) String provider) throws Exception {
 //        System.out.println("controller joinSecret = " + joinSecret);
 //
 //        String join_token = request.getParameter("join_token");
