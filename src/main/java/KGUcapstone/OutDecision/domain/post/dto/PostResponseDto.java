@@ -9,6 +9,7 @@ import KGUcapstone.OutDecision.domain.user.domain.Member;
 import lombok.Getter;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class PostResponseDto {
     private final Gender gender;
     private final Status status;
     private final Integer views;
+    private final LocalDateTime bumpsTime;
+    private final boolean pluralVoting;
+
 //    private final Member member;
 
     public PostResponseDto(Post post) {
@@ -36,6 +40,9 @@ public class PostResponseDto {
         this.gender = post.getGender();
         this.status = post.getStatus();
         this.views = post.getViews();
+        this.bumpsTime = post.getBumpsTime();
+        this.pluralVoting = post.getPluralVoting();
+
 
     }
 

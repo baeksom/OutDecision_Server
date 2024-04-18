@@ -7,6 +7,7 @@ import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 
@@ -26,6 +27,8 @@ public class PostRequestDto {
     private Status status;
     private Integer views;
 //    private Long member;
+    private boolean pluralVoting;
+    private LocalDateTime bumpsTime;
 
     /* Dto -> Entity */
     public Post toEntity() {
@@ -37,6 +40,7 @@ public class PostRequestDto {
                 .gender(gender)
                 .status(status)
                 .views(views)
+                .bumpsTime(bumpsTime)
 //                .member(member)
                 .build();
 
