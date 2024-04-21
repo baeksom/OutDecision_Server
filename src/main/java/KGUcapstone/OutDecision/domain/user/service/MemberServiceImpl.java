@@ -23,7 +23,6 @@ public class MemberServiceImpl implements MemberService{
                 .name(member.getName())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
-                .phone(member.getPhone())
                 .socialType(member.getSocialType())
                 .userImg(member.getUserImg())
                 .build();
@@ -34,7 +33,7 @@ public class MemberServiceImpl implements MemberService{
     public boolean updateMemberInfo(Long memberId, UpdateRequestDTO.UpdateMemberDTO request) {
         Member member = memberRepository.findById(memberId).get();
 
-        member.updateMember(request.getName(), request.getNickname(), request.getPhone());
+        member.updateMember(request.getName(), request.getNickname());
 
         memberRepository.save(member);
 
