@@ -45,9 +45,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Integer bumps;
 
-    @Column(length = 30)
-    private String phone;
-
     @Column(length = 20)
     private String userTitle;
 
@@ -57,6 +54,19 @@ public class Member extends BaseEntity {
 
     @Column(length = 30)
     private String userRole;
+
+    public void updateMember(String name, String nickname) {
+        this.name = name;
+        this.nickname = nickname;
+    }
+
+    public void updateUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberView> memberViewList = new ArrayList<>();
