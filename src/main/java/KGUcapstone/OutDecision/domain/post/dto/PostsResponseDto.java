@@ -20,6 +20,7 @@ public class PostsResponseDto {
     public static class PostDTO {
         Long postId;
         String title;
+        String content;
         Category category;
         Status stats;
         Long userId;

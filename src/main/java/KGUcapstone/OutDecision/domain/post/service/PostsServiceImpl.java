@@ -19,10 +19,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -56,30 +53,36 @@ public class PostsServiceImpl implements PostsService{
                                        String keyword,
                                        String searchType,
                                        Map<String, String> filters){
-        // 초기 default는 최신순(latest) 정렬
-        List<Post> posts = postRepository.findByOrderByCreatedAtDesc();
 
-        if (sort.equals("views")) {
-            // 조회수 내림차순 정렬
-            posts = postRepository.findByOrderByViewsDesc();
-        } else /*if (sort.equals("likes"))*/ {
-            // 좋아요수 내림차순 정렬
-            posts = postRepository.findByOrderByLikesDesc();
-        }
+        List<Post> posts = postRepository.findAll();
 
         // searchType - 제목, 내용, 제목+내용
-        if (keyword != null) {
+        if (keyword != null && !keyword.trim().isEmpty()) {
             // 키워드가 있다면 == 사용자가 키워드 검색을 했다면
-            if (searchType.equals("title")){
-                // 제목에서 키워드 찾기
-                posts = postRepository.findByTitleContaining(keyword);
-            } else if (searchType.equals("content")) {
-                // 내용에서 키워드 찾기
-                posts = postRepository.findByContentContaining(keyword);
-            } else {
-                // 제목+내용에서 키워드 찾기
-                posts = postRepository.findByTitleContainingOrContentContaining(keyword, keyword);
+            String[] keywords = keyword.split("\\s+"); // 공백을 기준으로 단어를 분리
+            Set<Post> tempMatches = new HashSet<>(); // set으로 중복 방지
+
+            for (String word : keywords) {
+                List<Post> matches;
+                if (searchType.equals("title")) {
+                    matches = postRepository.findByTitleContaining(word);
+                } else if (searchType.equals("content")) {
+                    matches = postRepository.findByContentContaining(word);
+                } else {
+                    List<Post> titleMatches = postRepository.findByTitleContaining(word);
+                    List<Post> contentMatches = postRepository.findByContentContaining(word);
+                    // 중복 방지
+                    Set<Post> temp = new HashSet<>(titleMatches);
+                    temp.addAll(contentMatches);
+                    matches = new ArrayList<>(temp);
+                }
+                if (tempMatches.isEmpty()) {
+                    tempMatches.addAll(matches);
+                } else {
+                    tempMatches.retainAll(matches);
+                }
             }
+            posts = new ArrayList<>(tempMatches);
         }
 
         // 필터 적용 - category, mode, gender, vote
@@ -108,6 +111,19 @@ public class PostsServiceImpl implements PostsService{
                 }
             }
         }
+
+        if (sort.equals("latest")) {
+            // 초기 default는 최신순(latest) 정렬
+            posts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+        }
+        else if (sort.equals("views")) {
+            // 조회수 내림차순 정렬
+            posts.sort(Comparator.comparing(Post::getViews).reversed());
+        } else {
+            // 좋아요수 내림차순 정렬
+            posts.sort(Comparator.comparing(Post::getLikes).reversed());
+        }
+
         return posts;
     }
 
@@ -172,6 +188,7 @@ public class PostsServiceImpl implements PostsService{
         return PostDTO.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
+                .content(post.getContent())
                 .category(post.getCategory())
                 .stats(post.getStatus())
                 .userId(post.getMember().getId())
