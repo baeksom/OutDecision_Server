@@ -55,6 +55,20 @@ public class Member extends BaseEntity {
     @Column(length = 30)
     private String userRole;
 
+    public void updateMember(String name, String nickname, String phone) {
+        this.name = name;
+        this.nickname = nickname;
+        this.phone = phone;
+    }
+
+    public void updateUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberView> memberViewList = new ArrayList<>();
 
