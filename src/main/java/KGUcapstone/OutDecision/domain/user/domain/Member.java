@@ -82,4 +82,8 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Vote> voteList = new ArrayList<>();
+
+    public void updateUserTitle(String userTitle) {
+        this.userTitle = userTitle;
+    }
 }

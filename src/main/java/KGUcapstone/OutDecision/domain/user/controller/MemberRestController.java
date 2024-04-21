@@ -2,11 +2,15 @@ package KGUcapstone.OutDecision.domain.user.controller;
 
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
-import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostListDTO;
 import KGUcapstone.OutDecision.domain.user.service.MyActivityService;
+import KGUcapstone.OutDecision.domain.user.service.MyPageService;
+import KGUcapstone.OutDecision.domain.user.service.TitleService;
+import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostListDTO;
+import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO.MyPageDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateMemberDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdatePasswordDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateUserImgDTO;
+import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateTitleDTO;
 import KGUcapstone.OutDecision.domain.user.service.MemberService;
 import KGUcapstone.OutDecision.domain.user.service.PasswordService;
 import KGUcapstone.OutDecision.domain.user.service.UserImgService;
@@ -14,8 +18,9 @@ import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import org.springframework.data.domain.Page;
 
 import static KGUcapstone.OutDecision.domain.user.dto.UpdateResponseDTO.*;
 
@@ -28,6 +33,8 @@ public class MemberRestController {
     private final MemberService memberService;
     private final PasswordService passwordService;
     private final UserImgService userImgService;
+    private final MyPageService myPageService;
+    private final TitleService titleService;
 
     @GetMapping("/{memberId}/posting")
     @Operation(summary = "마이페이지 작성글 API", description = "사용자가 작성한 글을 게시판 보드로 조회하는 API이며, 페이징을 포함합니다.")
@@ -102,5 +109,28 @@ public class MemberRestController {
         boolean success = userImgService.deleteUserImg(memberId);
         if (success) return ApiResponse.onSuccess("프로필 사진이 성공적으로 삭제되었습니다.");
         else return ApiResponse.onFailure("400", "프로필 사진 삭제에 실패하였습니다.", null);
+    }
+
+    @GetMapping("/{memberId}")
+    @Operation(summary = "마이페이지 홈 API", description = "마이페이지 홈을 조회하는 API입니다.")
+    public ApiResponse<MyPageDTO> getMyPostList(
+            @PathVariable(name = "memberId") Long memberId,
+            @RequestParam(name = "posts", required = false) String posts) {
+        return ApiResponse.onSuccess(myPageService.getMyPage(memberId, posts));
+    }
+
+    @GetMapping("/{memberId}/title")
+    @Operation(summary = "마이페이지 칭호 조회 API", description = "마이페이지에서 보유 칭호를 조회하는 API입니다.")
+    public ApiResponse<List<String>> updateTitle(@PathVariable("memberId") Long memberId) {
+        List<String> myTitlesDTO = titleService.myTitlesDTO(memberId);
+        return ApiResponse.onSuccess(myTitlesDTO);
+    }
+
+    @PutMapping("/{memberId}/title")
+    @Operation(summary = "마이페이지 칭호 변경 API", description = "마이페이지 홈에서 칭호를 변경하는 API입니다.")
+    public ApiResponse<Object> updateTitle(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateTitleDTO request) {
+        boolean success = titleService.updateUserTitle(memberId, request);
+        if (success) return ApiResponse.onSuccess("칭호가 성공적으로 변경되었습니다.");
+        else return ApiResponse.onFailure("400", "칭호 변경에 실패하였습니다.", null);
     }
 }

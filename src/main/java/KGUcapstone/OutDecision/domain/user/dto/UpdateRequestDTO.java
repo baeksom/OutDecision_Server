@@ -20,4 +20,10 @@ public class UpdateRequestDTO {
     public static class UpdateUserImgDTO{
         String newImg;
     }
+
+    @Getter
+    public static class UpdateTitleDTO{
+        String title;
+    }
+  
 }
