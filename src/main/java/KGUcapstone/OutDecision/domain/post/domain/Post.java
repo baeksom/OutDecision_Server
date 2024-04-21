@@ -36,6 +36,9 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "integer default 0")
     private Integer views;
 
+    @Column(columnDefinition = "integer default 0")
+    private Integer likes;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -46,6 +49,9 @@ public class Post extends BaseEntity {
     @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean pluralVoting;
+
+    @Column(columnDefinition = "TINYINT(1)")
+    private Boolean hot;
 
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime bumpsTime;
