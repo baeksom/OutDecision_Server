@@ -17,7 +17,6 @@ public class UpdateResponseDTO {
         String name;
         String email;
         String nickname;
-        String phone;
         String socialType;
         String userImg;
     }

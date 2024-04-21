@@ -7,7 +7,6 @@ public class UpdateRequestDTO {
     public static class UpdateMemberDTO{
         String name;
         String nickname;
-        String phone;
     }
 
     @Getter

@@ -55,10 +55,9 @@ public class Member extends BaseEntity {
     @Column(length = 30)
     private String userRole;
 
-    public void updateMember(String name, String nickname, String phone) {
+    public void updateMember(String name, String nickname) {
         this.name = name;
         this.nickname = nickname;
-        this.phone = phone;
     }
 
     public void updateUserImg(String userImg) {
