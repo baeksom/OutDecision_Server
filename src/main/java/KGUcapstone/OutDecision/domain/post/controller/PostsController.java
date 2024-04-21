@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.post.controller;
 
+import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDto;
 import KGUcapstone.OutDecision.domain.post.service.PostsService;
 import KGUcapstone.OutDecision.domain.post.service.PostsServiceImpl;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDto.*;
+
 @RestController
 @RequiredArgsConstructor
 public class PostsController {
@@ -24,23 +27,40 @@ public class PostsController {
 
     @GetMapping("/posts/{category}")
     @Operation(summary = "게시판 조회 API", description = "필터링 및 검색 기능을 포함한 게시글을 조회합니다.")
-    public ApiResponse<Page<PostsResponseDto.PostDto>> getPosts (@PathVariable String category,
-                                                                 @RequestParam String mode,
-//                          @RequestParam String type,
-                                                                 @RequestParam Integer page,
-                                                                 @RequestParam(required = false) String gender,
-                                                                 @RequestParam(required = false) String vote,
-                                                                 @RequestParam(required = false) String search,
-                                                                 @RequestParam(name = "search-type", required = false) String searchType,
-                                                                 @RequestParam String sort) {
+    public ApiResponse<PostListDTO> getPosts (@PathVariable String category,
+                                                @RequestParam String mode,
+                                                @RequestParam Integer page,
+                                                @RequestParam(required = false) String gender,
+                                                @RequestParam(required = false) String vote,
+                                                @RequestParam(required = false) String search,
+                                                @RequestParam(name = "search-type", required = false) String searchType,
+                                                @RequestParam String sort) {
         Map<String, String> filters = new HashMap<>();
         filters.put("category", category);
         filters.put("mode", mode);
         filters.put("gender", gender);
         filters.put("vote", vote);
 
-        Page<PostsResponseDto.PostDto> postDtoPage = postsService.getPosts(sort, search, searchType, filters, page-1, 10);
-        return ApiResponse.onSuccess(postDtoPage);
+        Page<Post> postPage = postsService.getPosts(sort, search, searchType, filters, page-1, 6);
+        return ApiResponse.onSuccess(postsService.toPostListDTO(postPage));
+    }
+
+    @GetMapping("/posts")
+    @Operation(summary = "전체 게시판 조회 API", description = "필터링 및 검색 기능을 포함한 전체 게시글을 조회합니다.")
+    public ApiResponse<PostListDTO> getAllPosts (@RequestParam String mode,
+                                              @RequestParam Integer page,
+                                              @RequestParam(required = false) String gender,
+                                              @RequestParam(required = false) String vote,
+                                              @RequestParam(required = false) String search,
+                                              @RequestParam(name = "search-type", required = false) String searchType,
+                                              @RequestParam String sort) {
+        Map<String, String> filters = new HashMap<>();
+        filters.put("mode", mode);
+        filters.put("gender", gender);
+        filters.put("vote", vote);
+
+        Page<Post> postPage = postsService.getPosts(sort, search, searchType, filters, page-1, 6);
+        return ApiResponse.onSuccess(postsService.toPostListDTO(postPage));
     }
 
 }

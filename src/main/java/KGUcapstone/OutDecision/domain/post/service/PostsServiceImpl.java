@@ -6,6 +6,7 @@ import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDto;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -14,40 +15,47 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDto.*;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class PostsServiceImpl implements PostsService{
 
     private final PostRepository postRepository;
 
     @Override
-    public Page<PostsResponseDto.PostDto> getPosts(String sort,
-                                                   String keyword,
-                                                   String searchType,
-                                                   Map<String, String> filters,
-                                                   Integer page,
-                                                   Integer size) {
+    public Page<Post> getPosts(String sort,
+                              String keyword,
+                              String searchType,
+                              Map<String, String> filters,
+                              Integer page,
+                              Integer size) {
         // 필터링 적용
-        List<PostsResponseDto.PostDto> filteredPosts = applyFilters(sort, keyword, searchType, filters);
+        List<Post> filteredPosts = applyFilters(sort, keyword, searchType, filters);
 
         // 페이징 적용
         Pageable pageable = PageRequest.of(page, size);
         int start = (int)pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), filteredPosts.size());
         return new PageImpl<>(filteredPosts.subList(start, end), pageable, filteredPosts.size());
-
     }
 
-    public List<PostsResponseDto.PostDto> applyFilters (String sort,
-                          String keyword,
-                          String searchType,
-                          Map<String, String> filters){
+    private List<Post> applyFilters (String sort,
+                                       String keyword,
+                                       String searchType,
+                                       Map<String, String> filters){
         // 초기 default는 최신순(latest) 정렬
         List<Post> posts = postRepository.findByOrderByCreatedAtDesc();
 
@@ -100,17 +108,10 @@ public class PostsServiceImpl implements PostsService{
                 }
             }
         }
-
-        // dto 생성
-        List<PostsResponseDto.PostDto> postDtoList = new ArrayList<>();
-        for (Post post : posts) {
-            postDtoList.add(toPostDto(post));
-        }
-
-        return postDtoList;
+        return posts;
     }
 
-    public List<Post> findByFilter (List<Post> posts, Predicate<Post> condition) {
+    private List<Post> findByFilter (List<Post> posts, Predicate<Post> condition) {
         List<Post> filterPosts = new ArrayList<>();
         for (Post post : posts){
             if (condition.test(post)) {
@@ -120,19 +121,86 @@ public class PostsServiceImpl implements PostsService{
         return filterPosts;
     }
 
-    public PostsResponseDto.PostDto toPostDto(Post post) {
-        return PostsResponseDto.PostDto.builder()
-                .id(post.getId())
-                .postTitle(post.getTitle())
+    // 마감일 형식 수정하여 반환
+    private String formatDeadline(Date dateTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm");
+        return sdf.format(dateTime);
+    }
+
+    // 작성일 형식 수정하여 반환
+    private String formatCreatedAt(LocalDateTime createdAt) {
+        if (createdAt.toLocalDate().isEqual(LocalDate.now())) {
+            // 오늘이라면 HH:mm 시간만 표시
+            return createdAt.format(DateTimeFormatter.ofPattern("HH:mm"));
+        } else {
+            // 오늘이 아니라면 MM-dd 형식으로 표시
+            return createdAt.format(DateTimeFormatter.ofPattern("MM-dd"));
+        }
+    }
+
+    @Override
+    // PostDTO 생성
+    public PostDTO toPostDTO(Post post) {
+        int participationCnt = ((Long) post.getOptionsList().stream()
+                .flatMap(option -> option.getVoteToOptionsList().stream())
+                .map(voteToOptions -> voteToOptions.getVote().getMember())
+                .distinct() // 멤버 중복 제거
+                .count()) // 참여자 수 계산
+                .intValue();
+
+        // 총 투표 수 계산
+        long totalVoteCnt = post.getOptionsList().stream()
+                .mapToLong(option -> option.getVoteToOptionsList().size())
+                .sum();
+
+        List<OptionsDTO> optionsDtoList = post.getOptionsList().stream()
+                .map(option -> {
+                    // 해당 option의 투표 수 계산
+                    long optionVoteCnt = option.getVoteToOptionsList().size();
+
+                    // 투표 결과 퍼센트 계산 (소수점 없음)
+                    int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
+
+                    return OptionsDTO.builder()
+                            .body(option.getBody())
+                            .imgUrl(option.getPhotoUrl())
+                            .votePercentage(votePercentage)
+                            .build();
+                })
+                .toList();
+
+        return PostDTO.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
                 .category(post.getCategory())
                 .stats(post.getStatus())
                 .userId(post.getMember().getId())
                 .nickname(post.getMember().getNickname())
-                .likes(post.getLikes())
+                .pluralVoting(post.getPluralVoting())
+                .createdAt(formatCreatedAt(post.getCreatedAt()))
+                .deadline(formatDeadline(post.getDeadline()))
+                .participationCnt(participationCnt)
+                .likesCnt(post.getLikes())
+                .commentsCnt(post.getCommentsList().size())
                 .views(post.getViews())
-                .comments(post.getCommentsList().size())
-                .createAt(post.getCreatedAt())
+                .optionsList(optionsDtoList)
                 .build();
     }
 
+    // PostListDTO 생성
+    @Override
+    public PostListDTO toPostListDTO(Page<Post> postList) {
+        List<PostDTO> postDTOList = postList.stream()
+                .map(this::toPostDTO)
+                .collect(Collectors.toList());
+
+        return PostListDTO.builder()
+                .postList(postDTOList)
+                .listSize(postDTOList.size())
+                .totalPage(postList.getTotalPages())
+                .totalElements(postList.getTotalElements())
+                .isFirst(postList.isFirst())
+                .isLast(postList.isLast())
+                .build();
+    }
 }
