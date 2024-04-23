@@ -36,6 +36,9 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "integer default 0")
     private Integer views;
 
+    @Column(columnDefinition = "integer default 0")
+    private Integer likes;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Category category;

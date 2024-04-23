@@ -49,14 +49,18 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/")
                 .permitAll();
 
+//        http
+//            .authorizeRequests() // 요청에 대한 인증 설정
+//                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
+//                .requestMatchers("/token/**").permitAll() // 토큰 발급을 위한 경로는 모두 허용
+//                .requestMatchers("/register/**").permitAll()
+//                .requestMatchers("/loginSuccess").permitAll()
+//                .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
+//                .anyRequest().authenticated(); // 그 외의 모든 요청은 인증이 필요하다.
+
         http
-            .authorizeRequests() // 요청에 대한 인증 설정
-                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-                .requestMatchers("/token/**").permitAll() // 토큰 발급을 위한 경로는 모두 허용
-                .requestMatchers("/register/**").permitAll()
-                .requestMatchers("/loginSuccess").permitAll()
-                .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
-                .anyRequest().authenticated(); // 그 외의 모든 요청은 인증이 필요하다.
+                .authorizeHttpRequests()
+                .anyRequest().permitAll();
 
         http
                 .exceptionHandling()
