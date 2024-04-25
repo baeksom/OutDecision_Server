@@ -21,6 +21,7 @@ public class PasswordServiceImpl implements PasswordService{
         // 현재 비밀번호와 불일치
         
         // 현재 비밀번호와 새 비밀번호 일치
+        if(request.getCurrentPassword().equals(request.getNewPassword())) return false;
 
         // 새 비밀번호와 새 비밀번호 불일치
         if(!request.getNewPassword().equals(request.getConfirmNewPassword())) return false;

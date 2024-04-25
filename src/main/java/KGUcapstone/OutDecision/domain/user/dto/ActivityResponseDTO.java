@@ -17,6 +17,7 @@ public class ActivityResponseDTO {
     public static class PostDTO{
         Long postId;
         String title;
+        String content;
         Category category;
         Status status;
         boolean pluralVoting;

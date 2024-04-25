@@ -107,6 +107,7 @@ public class MyActivityServiceImpl implements MyActivityService {
         return PostDTO.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
+                .content(post.getContent())
                 .category(post.getCategory())
                 .status(post.getStatus())
                 .pluralVoting(post.getPluralVoting())
@@ -114,7 +115,7 @@ public class MyActivityServiceImpl implements MyActivityService {
                 .deadline(formatDeadline(post.getDeadline()))
                 .optionsList(optionsDTOList)
                 .participationCnt(participationCnt)
-                .likesCnt(post.getLikesList().size())
+                .likesCnt(post.getLikes())
                 .commentsCnt(post.getCommentsList().size())
                 .views(post.getViews())
                 .build();
