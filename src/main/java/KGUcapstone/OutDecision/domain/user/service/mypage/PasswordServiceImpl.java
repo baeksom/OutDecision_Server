@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.service;
+package KGUcapstone.OutDecision.domain.user.service.mypage;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdatePasswordDTO;
