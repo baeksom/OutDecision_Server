@@ -1,6 +1,6 @@
 package KGUcapstone.OutDecision.domain.main.dto;
 
-import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostDTO;
+import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

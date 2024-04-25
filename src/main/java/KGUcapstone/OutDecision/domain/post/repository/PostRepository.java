@@ -8,11 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
-@Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByTitleContaining(String keyword);
     List<Post> findByContentContaining(String keyword);
@@ -23,5 +20,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByIdIn(List<Long> postIds, PageRequest of);
     Page<Post> findAllByIdInAndStatus(List<Long> postIds, Status status, PageRequest of);
     List<Post> findByHotTrue(Pageable p);
-    List<Post> findTopNByStatusOrderByCreatedAtDesc(Status status, Pageable p);
+    List<Post> findTop5ByStatusOrderByCreatedAtDesc(Status status, Pageable p);
 }
