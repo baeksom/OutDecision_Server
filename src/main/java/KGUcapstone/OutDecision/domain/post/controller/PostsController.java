@@ -1,11 +1,9 @@
 package KGUcapstone.OutDecision.domain.post.controller;
 
+import KGUcapstone.OutDecision.domain.post.converter.PostConverter;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
-import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDto;
 import KGUcapstone.OutDecision.domain.post.service.PostsService;
-import KGUcapstone.OutDecision.domain.post.service.PostsServiceImpl;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
-import io.swagger.models.auth.In;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
-import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDto.*;
+import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,7 +40,7 @@ public class PostsController {
         filters.put("vote", vote);
 
         Page<Post> postPage = postsService.getPosts(sort, search, searchType, filters, page-1, 6);
-        return ApiResponse.onSuccess(postsService.toPostListDTO(postPage));
+        return ApiResponse.onSuccess(PostConverter.toPostListDTO(postPage));
     }
 
     @GetMapping("/posts")
@@ -60,7 +58,7 @@ public class PostsController {
         filters.put("vote", vote);
 
         Page<Post> postPage = postsService.getPosts(sort, search, searchType, filters, page-1, 6);
-        return ApiResponse.onSuccess(postsService.toPostListDTO(postPage));
+        return ApiResponse.onSuccess(PostConverter.toPostListDTO(postPage));
     }
 
 }

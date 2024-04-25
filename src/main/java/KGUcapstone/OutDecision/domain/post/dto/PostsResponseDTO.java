@@ -1,6 +1,5 @@
 package KGUcapstone.OutDecision.domain.post.dto;
 
-import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import lombok.AllArgsConstructor;
@@ -8,10 +7,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-public class PostsResponseDto {
+public class PostsResponseDTO {
 
     @Builder
     @Getter
@@ -22,7 +20,7 @@ public class PostsResponseDto {
         String title;
         String content;
         Category category;
-        Status stats;
+        Status status;
         Long userId;
         String nickname;
         boolean pluralVoting;

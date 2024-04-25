@@ -1,19 +1,20 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
+import KGUcapstone.OutDecision.domain.post.converter.PostConverter;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
-import KGUcapstone.OutDecision.domain.user.service.MyActivityService;
-import KGUcapstone.OutDecision.domain.user.service.MyPageService;
-import KGUcapstone.OutDecision.domain.user.service.TitleService;
-import KGUcapstone.OutDecision.domain.user.dto.ActivityResponseDTO.PostListDTO;
+import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostListDTO;
+import KGUcapstone.OutDecision.domain.user.service.mypage.MyActivityService;
+import KGUcapstone.OutDecision.domain.user.service.mypage.MyPageService;
+import KGUcapstone.OutDecision.domain.user.service.mypage.TitleService;
 import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO.MyPageDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateMemberDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdatePasswordDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateUserImgDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateTitleDTO;
-import KGUcapstone.OutDecision.domain.user.service.MemberService;
-import KGUcapstone.OutDecision.domain.user.service.PasswordService;
-import KGUcapstone.OutDecision.domain.user.service.UserImgService;
+import KGUcapstone.OutDecision.domain.user.service.mypage.MemberService;
+import KGUcapstone.OutDecision.domain.user.service.mypage.PasswordService;
+import KGUcapstone.OutDecision.domain.user.service.mypage.UserImgService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -45,7 +46,7 @@ public class MemberRestController {
         // 페이지 번호를 1부터 시작하도록 변환
         Integer adjustedPage = page - 1;
         Page<Post> myPostPage = myActivityService.getMyPostListByStatus(memberId, status, adjustedPage);
-        return ApiResponse.onSuccess(myActivityService.postList(myPostPage));
+        return ApiResponse.onSuccess(PostConverter.toPostListDTO(myPostPage));
     }
 
     @GetMapping("/{memberId}/liked")
@@ -57,7 +58,7 @@ public class MemberRestController {
         // 페이지 번호를 1부터 시작하도록 변환
         Integer adjustedPage = page - 1;
         Page<Post> likedPostPage = myActivityService.getLikedPostListByStatus(memberId, status, adjustedPage);
-        return ApiResponse.onSuccess(myActivityService.postList(likedPostPage));
+        return ApiResponse.onSuccess(PostConverter.toPostListDTO(likedPostPage));
     }
 
     @GetMapping("/{memberId}/vote")
@@ -69,7 +70,7 @@ public class MemberRestController {
         // 페이지 번호를 1부터 시작하도록 변환
         Integer adjustedPage = page - 1;
         Page<Post> votedPostPage = myActivityService.getVotedPostListByStatus(memberId, status, adjustedPage);
-        return ApiResponse.onSuccess(myActivityService.postList(votedPostPage));
+        return ApiResponse.onSuccess(PostConverter.toPostListDTO(votedPostPage));
     }
 
     @GetMapping("/{memberId}/edit")
