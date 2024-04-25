@@ -14,20 +14,14 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-
+    List<Post> findByTitleContaining(String keyword);
+    List<Post> findByContentContaining(String keyword);
     List<Post> findAllByMemberId(Long memberId, Sort createdAt);
-
     List<Post> findAllByIdIn(List<Long> ids, Sort sort);
-
     Page<Post> findAllByMember(Member member, PageRequest pageRequest);
-
     Page<Post> findAllByMemberAndStatus(Member member, Status status, PageRequest of);
-
     Page<Post> findAllByIdIn(List<Long> postIds, PageRequest of);
-
     Page<Post> findAllByIdInAndStatus(List<Long> postIds, Status status, PageRequest of);
-
     List<Post> findByHotTrue(Pageable p);
-
     List<Post> findTopNByStatusOrderByCreatedAtDesc(Status status, Pageable p);
 }
