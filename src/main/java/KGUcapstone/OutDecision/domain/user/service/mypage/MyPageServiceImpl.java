@@ -45,6 +45,7 @@ public class MyPageServiceImpl implements MyPageService{
                 .memberTitle(member.getUserTitle())
                 .titleCnt(titleCnt)
                 .point(member.getPoint())
+                .bumps(member.getBumps())
                 .postList(latestPostDTOList)
                 .build();
     }

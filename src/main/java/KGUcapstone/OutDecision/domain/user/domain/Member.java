@@ -86,4 +86,8 @@ public class Member extends BaseEntity {
     public void updateUserTitle(String userTitle) {
         this.userTitle = userTitle;
     }
+
+    public void updateBumps(int bumps) {
+        this.bumps = bumps;
+    }
 }

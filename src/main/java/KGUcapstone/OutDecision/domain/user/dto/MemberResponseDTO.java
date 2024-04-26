@@ -20,6 +20,7 @@ public class MemberResponseDTO {
         String memberTitle;
         Integer titleCnt;
         Integer point;
+        Integer bumps;
         List<PostDTO> postList;
     }
 
