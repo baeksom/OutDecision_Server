@@ -42,6 +42,13 @@ public class Missions {
 
     @ColumnDefault("0")
     @Column(nullable = false)
+    private Integer hobbyist_cnt;
+
+    @ColumnDefault("0")
+    @Column(nullable = false)
     private Integer greedy_cnt;
 
+    public void setGreedy_cnt(Integer greedy_cnt) {
+        this.greedy_cnt = greedy_cnt;
+    }
 }

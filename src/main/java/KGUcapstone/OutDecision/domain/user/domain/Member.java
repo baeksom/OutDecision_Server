@@ -55,6 +55,19 @@ public class Member extends BaseEntity {
     @Column(length = 30)
     private String userRole;
 
+    public void updateMember(String name, String nickname) {
+        this.name = name;
+        this.nickname = nickname;
+    }
+
+    public void updateUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberView> memberViewList = new ArrayList<>();
 
@@ -69,4 +82,12 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Vote> voteList = new ArrayList<>();
+
+    public void updateUserTitle(String userTitle) {
+        this.userTitle = userTitle;
+    }
+
+    public void updateBumps(int bumps) {
+        this.bumps = bumps;
+    }
 }
