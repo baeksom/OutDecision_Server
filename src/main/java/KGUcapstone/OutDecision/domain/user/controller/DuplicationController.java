@@ -1,7 +1,7 @@
-package KGUcapstone.OutDecision.domain.user.duplication.controller;
+package KGUcapstone.OutDecision.domain.user.controller;
 
-import KGUcapstone.OutDecision.domain.user.duplication.dto.DuplicationRequestDto;
-import KGUcapstone.OutDecision.domain.user.duplication.service.DuplicationService;
+import KGUcapstone.OutDecision.domain.user.dto.DuplicationRequestDto;
+import KGUcapstone.OutDecision.domain.user.service.duplication.DuplicationService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

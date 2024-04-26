@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.duplication.service;
+package KGUcapstone.OutDecision.domain.user.service.duplication;
 
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.duplication.service;
+package KGUcapstone.OutDecision.domain.user.service.duplication;
 
 public interface DuplicationService {
     public boolean checkEmailExist(String request);
