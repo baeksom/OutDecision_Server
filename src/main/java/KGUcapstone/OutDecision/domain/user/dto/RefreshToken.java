@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.auth.dto;
+package KGUcapstone.OutDecision.domain.user.dto;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;

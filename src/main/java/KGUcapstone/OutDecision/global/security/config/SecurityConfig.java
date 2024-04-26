@@ -5,7 +5,7 @@ import KGUcapstone.OutDecision.global.security.filter.JwtExceptionFilter;
 import KGUcapstone.OutDecision.global.security.handler.CustomLoginSuccessHandler;
 import KGUcapstone.OutDecision.global.security.handler.CustomAuthenticationFailureHandler;
 import KGUcapstone.OutDecision.global.security.handler.CustomAuthenticationSuccessHandler;
-import KGUcapstone.OutDecision.domain.user.auth.service.CustomOAuth2UserService;
+import KGUcapstone.OutDecision.domain.user.service.auth.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

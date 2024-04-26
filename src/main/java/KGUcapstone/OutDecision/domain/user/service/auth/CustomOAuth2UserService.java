@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.auth.service;
+package KGUcapstone.OutDecision.domain.user.service.auth;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;

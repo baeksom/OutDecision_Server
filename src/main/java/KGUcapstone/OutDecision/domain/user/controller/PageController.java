@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.auth.controller;
+package KGUcapstone.OutDecision.domain.user.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

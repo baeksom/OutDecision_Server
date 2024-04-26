@@ -1,7 +1,7 @@
 package KGUcapstone.OutDecision.global.security.handler;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.auth.dto.CustomUserDetails;
+import KGUcapstone.OutDecision.domain.user.dto.CustomUserDetails;
 import KGUcapstone.OutDecision.global.security.dto.GeneratedToken;
 import KGUcapstone.OutDecision.global.common.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;

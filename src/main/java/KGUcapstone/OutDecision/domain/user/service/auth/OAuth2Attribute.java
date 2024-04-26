@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.auth.service;
+package KGUcapstone.OutDecision.domain.user.service.auth;
 
 import lombok.AccessLevel;
 import lombok.Builder;

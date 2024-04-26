@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.auth.controller;
+package KGUcapstone.OutDecision.domain.user.controller;
 
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;

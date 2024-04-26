@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.auth.dto;
+package KGUcapstone.OutDecision.domain.user.dto;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import lombok.Getter;

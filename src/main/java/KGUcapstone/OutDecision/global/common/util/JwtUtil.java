@@ -2,7 +2,7 @@ package KGUcapstone.OutDecision.global.common.util;
 
 import KGUcapstone.OutDecision.global.security.dto.GeneratedToken;
 import KGUcapstone.OutDecision.global.common.properties.JwtProperties;
-import KGUcapstone.OutDecision.domain.user.auth.service.SaveTokenService;
+import KGUcapstone.OutDecision.domain.user.service.auth.SaveTokenService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;

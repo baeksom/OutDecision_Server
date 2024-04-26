@@ -1,8 +1,8 @@
-package KGUcapstone.OutDecision.domain.user.auth.service;
+package KGUcapstone.OutDecision.domain.user.service.auth;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.auth.dto.CustomUserDetails;
-import KGUcapstone.OutDecision.domain.user.auth.dto.RegisterRequestDto;
+import KGUcapstone.OutDecision.domain.user.dto.CustomUserDetails;
+import KGUcapstone.OutDecision.domain.user.dto.RegisterRequestDto;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
-package KGUcapstone.OutDecision.domain.user.auth.controller;
+package KGUcapstone.OutDecision.domain.user.controller;
 
-import KGUcapstone.OutDecision.domain.user.auth.service.TokenService;
+import KGUcapstone.OutDecision.domain.user.service.auth.TokenService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

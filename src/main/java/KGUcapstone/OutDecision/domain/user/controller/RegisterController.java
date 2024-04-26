@@ -1,8 +1,8 @@
-package KGUcapstone.OutDecision.domain.user.auth.controller;
+package KGUcapstone.OutDecision.domain.user.controller;
 
-import KGUcapstone.OutDecision.domain.user.auth.dto.RegisterRequestDto;
-import KGUcapstone.OutDecision.domain.user.auth.service.CustomUserDetailsService;
-import KGUcapstone.OutDecision.domain.user.auth.service.CustomOAuth2UserService;
+import KGUcapstone.OutDecision.domain.user.dto.RegisterRequestDto;
+import KGUcapstone.OutDecision.domain.user.service.auth.CustomUserDetailsService;
+import KGUcapstone.OutDecision.domain.user.service.auth.CustomOAuth2UserService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import KGUcapstone.OutDecision.global.common.util.AESUtil;
 import jakarta.servlet.http.HttpServletRequest;

@@ -2,7 +2,7 @@ package KGUcapstone.OutDecision.global.security.config;
 
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
-import KGUcapstone.OutDecision.domain.user.auth.service.CustomUserDetailsService;
+import KGUcapstone.OutDecision.domain.user.service.auth.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
