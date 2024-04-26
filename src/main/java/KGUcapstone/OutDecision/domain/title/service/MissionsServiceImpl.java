@@ -5,8 +5,6 @@ import KGUcapstone.OutDecision.domain.title.domain.Missions;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.MemberMissionsDTO;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.TitleMissionsDTO;
 import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
-import KGUcapstone.OutDecision.global.error.handler.MemberHandler;
-import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,9 +44,6 @@ public class MissionsServiceImpl implements MissionsService{
     @Override
     public TitleMissionsDTO getTitleByCategory(Long memberId, Category category) {
         Missions missions = missionsRepository.findAllByMemberId(memberId);
-        if (missions == null) {
-            throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
-        }
         String title;
         int missionCnt = 0;
         int greedyCnt = missions.getGreedy_cnt();
