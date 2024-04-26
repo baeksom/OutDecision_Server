@@ -1,4 +1,4 @@
-package KGUcapstone.OutDecision.domain.user.dto;
+package KGUcapstone.OutDecision.domain.post.dto;
 
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
@@ -9,24 +9,28 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class ActivityResponseDTO {
+public class PostsResponseDTO {
+
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PostDTO{
+    public static class PostDTO {
         Long postId;
         String title;
+        String content;
         Category category;
         Status status;
+        Long userId;
+        String nickname;
         boolean pluralVoting;
         String createdAt;
         String deadline;
-        List<OptionsDTO> optionsList;
         Integer participationCnt;
         Integer likesCnt;
         Integer commentsCnt;
         Integer views;
+        List<OptionsDTO> optionsList;
     }
 
     @Builder
@@ -51,5 +55,4 @@ public class ActivityResponseDTO {
         Boolean isFirst;
         Boolean isLast;
     }
-
 }
