@@ -28,6 +28,8 @@ public class MainServiceImpl implements MainService{
 
         Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
 
+        //추천 게시물 리스트
+        List<PostDTO> recommendPostDTOList = mapToDTO(postRepository.findRecommend(pageable));
         // HOT 게시물 리스트
         List<PostDTO> hotPostDTOList = mapToDTO(postRepository.findByHotTrue(pageable));
         // 최신 게시물 리스트
@@ -36,6 +38,7 @@ public class MainServiceImpl implements MainService{
         List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop5ByStatusOrderByCreatedAtDesc(Status.CLOSING, pageable));
 
         return PostListDTO.builder()
+                .recommendPostList(recommendPostDTOList)
                 .hotPostList(hotPostDTOList)
                 .latestPostList(latestPostDTOList)
                 .closedPostList(closedPostDTOList)
