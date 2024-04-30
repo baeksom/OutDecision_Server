@@ -1,7 +1,7 @@
 package KGUcapstone.OutDecision.domain.options.domain;
 
 import KGUcapstone.OutDecision.domain.post.domain.Post;
-import KGUcapstone.OutDecision.domain.vote.domain.VoteToOptions;
+import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,5 +32,6 @@ public class Options {
     private Post post; // 게시글 아이디
 
     @OneToMany(mappedBy = "options", cascade = CascadeType.ALL)
-    private List<VoteToOptions> voteToOptionsList = new ArrayList<>();
+    private List<Vote> voteList = new ArrayList<>();
+
 }
