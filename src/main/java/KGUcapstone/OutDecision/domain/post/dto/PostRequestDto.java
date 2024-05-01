@@ -26,7 +26,7 @@ public class PostRequestDto {
     private Gender gender;
     private Status status;
     private Integer views;
-//    private Long member;
+    private Member user_id;
     private boolean pluralVoting;
     private LocalDateTime bumpsTime;
 
@@ -41,7 +41,7 @@ public class PostRequestDto {
                 .status(status)
                 .views(views)
                 .bumpsTime(bumpsTime)
-//                .member(member)
+                .member(user_id)
                 .build();
 
     }

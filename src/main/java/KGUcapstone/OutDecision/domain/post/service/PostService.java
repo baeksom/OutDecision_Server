@@ -4,6 +4,8 @@ import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.dto.PostRequestDto;
 import KGUcapstone.OutDecision.domain.post.dto.PostResponseDto;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,40 +17,47 @@ public class PostService {
 
     @Autowired
     private final PostRepository postRepository;
+    private final MemberRepository memberRepository;
 
     /* 등록 */
     @Transactional
-    public Long save(PostRequestDto dto) {
-        //Member의 id 가져와서 Post의 member_id에 저장필요 => 어떤 사람이 했는지 알기위해??
+    public boolean save(PostRequestDto dto) {
+//        Member member = memberRepository.findByNickname(nickname);
+
         Post post = dto.toEntity();
         postRepository.save(post);
-        return post.getId();
+
+        return true;
     }
 
     /* 조회 */
     @Transactional
-    public PostResponseDto findById(Long id) {
+    public PostResponseDto get(Long id) {
         Post post = postRepository.findById(id).orElseThrow(()
                 ->new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id = " + id) );
+        post.incrementViews();
+        postRepository.save(post);
         return new PostResponseDto(post);
     }
 
     /* 수정 */
     @Transactional
-    public Long update(Long id, PostRequestDto dto) {
+    public boolean update(Long id, PostRequestDto dto) {
         Post post = postRepository.findById(id).orElseThrow(()
                 ->new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id = " + id) );
         post.update(dto.getTitle(), dto.getContent());
+        postRepository.save(post);
 
-        return id;
+        return true;
     }
 
     /* 삭제 */
     @Transactional
-    public void delete(Long id) {
+    public boolean delete(Long id) {
         Post post = postRepository.findById(id).orElseThrow(()
                 ->new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id = " + id) );
         postRepository.delete(post);
+        return true;
     }
 
 }

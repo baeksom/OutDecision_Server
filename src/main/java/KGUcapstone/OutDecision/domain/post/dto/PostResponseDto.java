@@ -26,9 +26,10 @@ public class PostResponseDto {
     private final Status status;
     private final Integer views;
     private final LocalDateTime bumpsTime;
+    private final String nickname;
     private final boolean pluralVoting;
+    private final Long user_id;
 
-//    private final Member member;
 
     public PostResponseDto(Post post) {
 
@@ -41,7 +42,9 @@ public class PostResponseDto {
         this.status = post.getStatus();
         this.views = post.getViews();
         this.bumpsTime = post.getBumpsTime();
+        this.nickname = post.getMember().getNickname();
         this.pluralVoting = post.getPluralVoting();
+        this.user_id = post.getMember().getId();
 
 
     }
