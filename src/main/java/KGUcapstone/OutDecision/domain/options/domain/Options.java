@@ -1,8 +1,12 @@
 package KGUcapstone.OutDecision.domain.options.domain;
 
 import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,4 +30,8 @@ public class Options {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post; // 게시글 아이디
+
+    @OneToMany(mappedBy = "options", cascade = CascadeType.ALL)
+    private List<Vote> voteList = new ArrayList<>();
+
 }

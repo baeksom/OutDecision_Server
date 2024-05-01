@@ -6,24 +6,23 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "vote")
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-
-
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "options_id"}))
 public class Vote {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 투표 아이디
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member; // 유저 아이디
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "option_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "options_id")
     private Options options; // 옵션 아이디
+
 }

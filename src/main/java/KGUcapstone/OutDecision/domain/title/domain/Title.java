@@ -46,6 +46,10 @@ public class Title {
 
     @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
+    private Boolean hobbyist;
+
+    @ColumnDefault("false")
+    @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean greedy;
 
     @ColumnDefault("false")

@@ -3,6 +3,7 @@ package KGUcapstone.OutDecision.domain.user.domain;
 import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.likes.domain.Likes;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,9 +45,6 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Integer bumps;
 
-    @Column(length = 30)
-    private String phone;
-
     @Column(length = 20)
     private String userTitle;
 
@@ -56,6 +54,19 @@ public class Member extends BaseEntity {
 
     @Column(length = 30)
     private String userRole;
+
+    public void updateMember(String name, String nickname) {
+        this.name = name;
+        this.nickname = nickname;
+    }
+
+    public void updateUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberView> memberViewList = new ArrayList<>();
@@ -68,4 +79,15 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Likes> likesList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Vote> voteList = new ArrayList<>();
+
+    public void updateUserTitle(String userTitle) {
+        this.userTitle = userTitle;
+    }
+
+    public void updateBumps(int bumps) {
+        this.bumps = bumps;
+    }
 }
