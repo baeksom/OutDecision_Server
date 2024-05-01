@@ -13,6 +13,7 @@ public class RankingResponseDTO {
     public static class RankingDTO{
         Integer rank;
         Long memberId;
+        String userImg;
         String nickname;
         Integer point;
     }

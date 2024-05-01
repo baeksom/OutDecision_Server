@@ -174,6 +174,7 @@ public class RedisRankingServiceImpl implements RankingService {
             int point = tuple.getScore().intValue();
             long memberId = Long.parseLong(id);
             String nickname = memberRepository.findNicknameById(memberId);
+            String userImg = memberRepository.findUserImgById(memberId);
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -186,7 +187,7 @@ public class RedisRankingServiceImpl implements RankingService {
                 break; // 100위 이후의 데이터는 처리하지 않음
             }
 
-            RankingDTO rankingDTO = new RankingDTO(rank, memberId, nickname, point);
+            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
             rankingDTOList.add(rankingDTO);
             prevScore = point;
         }
@@ -211,6 +212,7 @@ public class RedisRankingServiceImpl implements RankingService {
             String id = tuple.getValue();
             int point = tuple.getScore().intValue();
             String nickname = memberRepository.findNicknameById(memberId);
+            String userImg = memberRepository.findUserImgById(memberId);
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -220,7 +222,7 @@ public class RedisRankingServiceImpl implements RankingService {
             }
 
             if (reqId.equals(id)) {
-                rankingDTO = new RankingDTO(rank, memberId, nickname, point);
+                rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
                 break;
             }
         }

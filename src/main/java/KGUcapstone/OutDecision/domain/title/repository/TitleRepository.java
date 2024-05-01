@@ -2,22 +2,16 @@ package KGUcapstone.OutDecision.domain.title.repository;
 
 import KGUcapstone.OutDecision.domain.title.domain.Title;
 import org.springframework.data.jpa.repository.JpaRepository;
-<<<<<<< HEAD
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface TitleRepository extends JpaRepository<Title, Long> {
     List<Title> findByFirstTrue();
-
     List<Title> findBySecondTrue();
-
     List<Title> findByThirdTrue();
-
     Title findByMemberId(long memberId);
-=======
-import org.springframework.data.jpa.repository.Query;
 
-public interface TitleRepository extends JpaRepository<Title, Long> {
     @Query("SELECT " +
             "SUM(CASE WHEN t.ceo = true THEN 1 ELSE 0 END) + " +
             "SUM(CASE WHEN t.fashionista = true THEN 1 ELSE 0 END) + " +
@@ -49,5 +43,4 @@ public interface TitleRepository extends JpaRepository<Title, Long> {
             "WHERE t.member.id = :memberId " +
             "GROUP BY t.member.id")
     String findTrueColumByMemberId(Long memberId);
->>>>>>> develop
 }
