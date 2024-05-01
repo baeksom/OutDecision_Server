@@ -4,6 +4,7 @@ import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO.RankingDTO;
 import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO.RankingListDTO;
 import KGUcapstone.OutDecision.domain.title.domain.Title;
 import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -12,10 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -173,8 +171,11 @@ public class RedisRankingServiceImpl implements RankingService {
             String id = tuple.getValue();
             int point = tuple.getScore().intValue();
             long memberId = Long.parseLong(id);
-            String nickname = memberRepository.findNicknameById(memberId);
-            String userImg = memberRepository.findUserImgById(memberId);
+            Member member = memberRepository.findById(memberId).get();
+            String nickname = member.getNickname();
+            String userImg = member.getUserImg();
+//            String nickname = memberRepository.findNicknameById(memberId);
+//            String userImg = memberRepository.findUserImgById(memberId);
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -211,8 +212,9 @@ public class RedisRankingServiceImpl implements RankingService {
         for (ZSetOperations.TypedTuple<String> tuple : topRankings) {
             String id = tuple.getValue();
             int point = tuple.getScore().intValue();
-            String nickname = memberRepository.findNicknameById(memberId);
-            String userImg = memberRepository.findUserImgById(memberId);
+            Member member = memberRepository.findById(memberId).get();
+            String nickname = member.getNickname();
+            String userImg = member.getUserImg();
 
             if (point != prevScore) {
                 rank += sameRankCount;
