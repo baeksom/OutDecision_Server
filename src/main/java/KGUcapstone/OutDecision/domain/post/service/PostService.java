@@ -21,9 +21,9 @@ public class PostService {
 
     /* 등록 */
     @Transactional
-    public boolean save(PostRequestDto dto) {
-//        Member member = memberRepository.findByNickname(nickname);
-
+    public boolean save(PostRequestDto dto, String accessToken) {
+        Member member = memberRepository.findByNickname(accessToken);
+        dto.setMember(member);
         Post post = dto.toEntity();
         postRepository.save(post);
 

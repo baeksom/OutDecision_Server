@@ -4,11 +4,12 @@ import KGUcapstone.OutDecision.domain.post.dto.PostRequestDto;
 import KGUcapstone.OutDecision.domain.post.dto.PostResponseDto;
 import KGUcapstone.OutDecision.domain.post.service.PostService;
 
+import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/posts")
@@ -21,9 +22,9 @@ public class PostApiController {
 
     @PostMapping("")
     @Operation(summary = "게시글 등록", description = "게시글을 작성하고 등록합니다.")
-    public ApiResponse<Object> savePost(@RequestBody PostRequestDto request) {
-        boolean success = postService.save(request);
-        if(success) return ApiResponse.onSuccess("게시글이 등록되었습니다.");
+    public ApiResponse<Object> savePost(@RequestBody PostRequestDto request, @CookieValue(name = "accessToken", required = true) String accessToken, HttpServletResponse response) {
+        boolean success = postService.save(request, accessToken);
+        if(success) return ApiResponse.onSuccess("등록");
         else return ApiResponse.onFailure("400", "게시글 등록에 실패하였습니다.", null);
 
     }

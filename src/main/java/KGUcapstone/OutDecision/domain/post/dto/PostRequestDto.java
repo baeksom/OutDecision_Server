@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 
-@Getter
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 
 public class PostRequestDto {
 
@@ -26,7 +27,7 @@ public class PostRequestDto {
     private Gender gender;
     private Status status;
     private Integer views;
-    private Member user_id;
+    private Member member;
     private boolean pluralVoting;
     private LocalDateTime bumpsTime;
 
@@ -41,8 +42,9 @@ public class PostRequestDto {
                 .status(status)
                 .views(views)
                 .bumpsTime(bumpsTime)
-                .member(user_id)
+                .member(member)
                 .build();
+
 
     }
 
