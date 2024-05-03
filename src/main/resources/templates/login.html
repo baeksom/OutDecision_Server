@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Please Log In</title>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
 </head>
 <body>
 <h1>Please Log In</h1>
@@ -21,25 +22,8 @@
 
 <h3>Social Logins</h3>
 <div>
-    <!-- 카카오 로그인 버튼 -->
-    <a id="kakaoLoginButton" class="kakao-login">카카오 로그인</a>
-
-    <!-- 구글 로그인 버튼 -->
-    <a id="googleLoginButton" class="google-login">구글 로그인</a>
+    <a th:href="${kakaoRedirectUri}" class="kakao-login">카카오 로그인</a>
+    <a th:href="${googleRedirectUri}" class="google-login">구글 로그인</a>
 </div>
-
-<script>
-    // 카카오 리다이렉트 URI 가져오기
-    var kakaoRedirectUri = "${KAKAO-redirect-uri}";
-
-    // 구글 리다이렉트 URI 가져오기
-    var googleRedirectUri = "${GOOGLE-redirect-uri}";
-
-    // 카카오 로그인 버튼에 리다이렉트 URI 설정
-    document.getElementById("kakaoLoginButton").setAttribute("href", kakaoRedirectUri);
-
-    // 구글 로그인 버튼에 리다이렉트 URI 설정
-    document.getElementById("googleLoginButton").setAttribute("href", googleRedirectUri);
-</script>
 </body>
 </html>
