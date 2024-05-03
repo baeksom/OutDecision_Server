@@ -10,16 +10,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-    @Value("${KAKAO_REDIRECT_URI}")
-    private String kakaoRedirectUri;
-
-    @Value("${GOOGLE_REDIRECT_URI}")
-    private String googleRedirectUri;
+    @Value("${REDIS_HOST}")
+    private String ip;
 
     @GetMapping("/login")
     public String loginForm(Model model) {
-        model.addAttribute("kakaoRedirectUri", kakaoRedirectUri);
-        model.addAttribute("googleRedirectUri", googleRedirectUri);
+        model.addAttribute("ip", ip);
         return "login"; // login.html 파일을 참조
     }
 
