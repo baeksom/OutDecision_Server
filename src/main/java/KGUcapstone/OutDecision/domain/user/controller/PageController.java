@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-    @Value("${KAKAO_redirect_uri}")
+    @Value("${KAKAO_REDIRECT_URI}")
     private String kakaoRedirectUri;
 
-    @Value("${GOOGLE_redirect_uri}")
+    @Value("${GOOGLE_REDIRECT_URI}")
     private String googleRedirectUri;
 
     @GetMapping("/login")
