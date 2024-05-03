@@ -63,6 +63,16 @@ jobs:
           REDIS_HOST=${{ secrets.REDIS_HOST }}
           REDIS_PASS=${{ secrets.REDIS_PASS }}
           REDIS_PORT=${{ secrets.REDIS_PORT }}
+          JOIN_SECRET=${{ secrets.JOIN_SECRET }}
+          GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI=${{ secrets.GOOGLE_REDIRECT_URI }}
+          KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}
+          KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}
+          NCP_ACCESS_KEY=${{ secrets.NCP_ACCESS_KEY }}
+          NCP_SECRET_KEY=${{ secrets.NCP_SECRET_KEY }}
+          BUCKET_NAME=${{ secrets.BUCKET_NAME }}
+          
 
   pull_from_registry:
     name: Connect server ssh and pull from container registry
