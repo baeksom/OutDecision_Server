@@ -174,8 +174,6 @@ public class RedisRankingServiceImpl implements RankingService {
             Member member = memberRepository.findById(memberId).get();
             String nickname = member.getNickname();
             String userImg = member.getUserImg();
-//            String nickname = memberRepository.findNicknameById(memberId);
-//            String userImg = memberRepository.findUserImgById(memberId);
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -229,5 +227,48 @@ public class RedisRankingServiceImpl implements RankingService {
             }
         }
         return rankingDTO;
+    }
+
+    // 상위 10위권 Ranking
+    @Override
+    public RankingListDTO getTop10Rankings() {
+
+        updateRanking();
+
+        ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
+
+        // 랭킹 정보 가져오기
+        Set<ZSetOperations.TypedTuple<String>> topRankings = zSetOperations.reverseRangeWithScores(RANKING_KEY + ":point", 0, -1);
+
+        // 10위까지의 랭킹 정보만 가져와서 반환
+        List<RankingDTO> rankingDTOList = new ArrayList<>();
+        int rank = 1;
+        int prevScore = Integer.MAX_VALUE;
+        int sameRankCount = 0;
+        for (ZSetOperations.TypedTuple<String> tuple : topRankings) {
+            String id = tuple.getValue();
+            int point = tuple.getScore().intValue();
+            long memberId = Long.parseLong(id);
+            Member member = memberRepository.findById(memberId).get();
+            String nickname = member.getNickname();
+            String userImg = member.getUserImg();
+
+            if (point != prevScore) {
+                rank += sameRankCount;
+                sameRankCount = 1;
+            } else {
+                sameRankCount++;
+            }
+
+            if (rank > 10) {
+                break; // 10위 이후의 데이터는 처리하지 않음
+            }
+
+            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
+            rankingDTOList.add(rankingDTO);
+            prevScore = point;
+        }
+
+        return new RankingListDTO(rankingDTOList, rankingDTOList.size());
     }
 }
