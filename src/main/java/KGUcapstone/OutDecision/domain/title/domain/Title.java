@@ -63,4 +63,16 @@ public class Title {
     @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean third;
+
+    public void setFirst(Boolean first) {
+        this.first = first;
+    }
+
+    public void setSecond(Boolean second) {
+        this.second = second;
+    }
+
+    public void setThird(Boolean third) {
+        this.third = third;
+    }
 }
