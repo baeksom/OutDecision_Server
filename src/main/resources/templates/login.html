@@ -22,8 +22,8 @@
 
 <h3>Social Logins</h3>
 <div>
-    <a th:href="login/oauth2/code/kakao" class="kakao-login">카카오 로그인</a>
-    <a th:href="login/oauth2/code/google" class="google-login">구글 로그인</a>
+    <a th:href="${kakaoRedirectUri}" class="kakao-login">카카오 로그인</a>
+    <a th:href="${googleRedirectUri}" class="google-login">구글 로그인</a>
 </div>
 </body>
 </html>
