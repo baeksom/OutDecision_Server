@@ -76,4 +76,8 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Options> optionsList = new ArrayList<>();
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }
