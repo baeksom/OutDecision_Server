@@ -6,13 +6,13 @@ spring:
           GOOGLE:
             client-id: ${GOOGLE-client-id}
             client-secret: ${GOOGLE-client-secret}
-            redirect-uri: "http://localhost:8080/login/oauth2/code/google"
+            redirect-uri: ${GOOGLE-redirect-uri}
             authorization-grant-type: authorization_code
             scope: email, profile
 
           KAKAO:
             client-id: ${KAKAO-client-id}
-            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao"
+            redirect-uri: ${KAKAO-redirect-uri}
             authorization-grant-type: authorization_code
             scope: profile_nickname, account_email
 #
