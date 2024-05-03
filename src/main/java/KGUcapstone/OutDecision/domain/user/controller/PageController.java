@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-    @Value("${JOIN_SECRET}")
-    String joinSecret;
-
     @GetMapping("/register/success")
     public String showSuccessRegister() {
         return "register-success";
