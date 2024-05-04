@@ -39,7 +39,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public void saveMember(RegisterRequestDto request, MultipartFile userImg){
         String profileImage = "";
-        if (userImg.isEmpty()) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
+        if (userImg == null) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
         else profileImage = s3Service.uploadFile(userImg, "profile");
 
         Member member = Member.builder()

@@ -85,7 +85,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         public void registerSocialMember(String email, String provider, String nickname, MultipartFile userImg) {
             String profileImage = "";
-            if (userImg.isEmpty()) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
+            if (userImg == null) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
             else profileImage = s3Service.uploadFile(userImg, "profile");
 
             // 사용자 정보를 이용하여 User 객체 생성
