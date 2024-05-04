@@ -23,9 +23,9 @@ public class OAuth2Attribute {
     static OAuth2Attribute of(String provider, String attributeKey,
                               Map<String, Object> attributes) {
         switch (provider) {
-            case "GOOGLE":
+            case "google":
                 return ofGoogle(provider, attributeKey, attributes);
-            case "KAKAO":
+            case "kakao":
                 return ofKakao(provider,"email", attributes);
 //            case "naver":
 //                return ofNaver(provider, "id", attributes);
