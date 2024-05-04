@@ -14,7 +14,7 @@ import java.io.IOException;
 @Slf4j
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
-    @Value("${REDIS_HOST}")
+    @Value("${IP}")
     private String ip;
 
     @Override
