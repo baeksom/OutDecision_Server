@@ -57,7 +57,6 @@ public class S3Service {
         }
 
         s3file = uploadFileUrl;
-
         return s3file;
     }
 
