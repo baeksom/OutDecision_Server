@@ -94,7 +94,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                     .nickname(nickname)
                     .userRole("USER")
                     .socialType(provider)
-                    .bumps(0)
+                    .bumps(3)
                     .point(0)
                     .userImg(profileImage)
                     .build();

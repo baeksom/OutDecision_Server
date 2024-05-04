@@ -50,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .userImg(profileImage)
                 .userRole("USER")
                 .point(0)
-                .bumps(0)
+                .bumps(3)
                 .build();
         memberRepository.save(member);
 
