@@ -48,8 +48,7 @@ public class Member extends BaseEntity {
     @Column(length = 20)
     private String userTitle;
 
-    //default 기본이미지
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '기본 이미지 URL'")
+    @Column(nullable = false)
     private String userImg;
 
     @Column(length = 30)

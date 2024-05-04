@@ -10,7 +10,6 @@ import KGUcapstone.OutDecision.domain.user.service.mypage.TitleService;
 import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO.MyPageDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateMemberDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdatePasswordDTO;
-import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateUserImgDTO;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateTitleDTO;
 import KGUcapstone.OutDecision.domain.user.service.mypage.MemberService;
 import KGUcapstone.OutDecision.domain.user.service.mypage.PasswordService;
@@ -22,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.springframework.data.domain.Page;
+import org.springframework.web.multipart.MultipartFile;
 
 import static KGUcapstone.OutDecision.domain.user.dto.UpdateResponseDTO.*;
 
@@ -96,10 +96,10 @@ public class MemberRestController {
         else return ApiResponse.onFailure("400", "비밀번호 변경에 실패하였습니다.", null);
     }
 
-    @PatchMapping("/{memberId}/edit/profile")
+    @PatchMapping(value = "/{memberId}/edit/profile", consumes = "multipart/form-data")
     @Operation(summary = "마이페이지 프로필 사진 변경", description = "프로필 사진을 변경합니다.")
-    public ApiResponse<Object> updateUserImg(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateUserImgDTO request) {
-        boolean success = userImgService.updateUserImg(memberId, request);
+    public ApiResponse<Object> updateUserImg(@PathVariable("memberId") Long memberId, @RequestPart(value = "userImg") MultipartFile userImg) {
+        boolean success = userImgService.updateUserImg(memberId, userImg);
         if (success) return ApiResponse.onSuccess("프로필 사진이 성공적으로 변경되었습니다.");
         else return ApiResponse.onFailure("400", "프로필 사진 변경에 실패하였습니다.", null);
     }

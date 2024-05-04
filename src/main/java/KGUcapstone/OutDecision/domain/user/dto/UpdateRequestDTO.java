@@ -17,11 +17,6 @@ public class UpdateRequestDTO {
     }
 
     @Getter
-    public static class UpdateUserImgDTO{
-        String newImg;
-    }
-
-    @Getter
     public static class UpdateTitleDTO{
         String title;
     }
