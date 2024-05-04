@@ -72,6 +72,7 @@ jobs:
           NCP_ACCESS_KEY=${{ secrets.NCP_ACCESS_KEY }}
           NCP_SECRET_KEY=${{ secrets.NCP_SECRET_KEY }}
           BUCKET_NAME=${{ secrets.BUCKET_NAME }}
+          IP=${{ secrets.IP }}
           
 
   pull_from_registry:
