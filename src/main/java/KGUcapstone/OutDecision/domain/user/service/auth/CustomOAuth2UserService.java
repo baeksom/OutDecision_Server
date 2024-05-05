@@ -1,8 +1,11 @@
 package KGUcapstone.OutDecision.domain.user.service.auth;
 
+import KGUcapstone.OutDecision.domain.title.domain.Title;
+import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -14,6 +17,7 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
 import java.util.Map;
@@ -27,6 +31,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         private final FindMemberService findMemberService;
         private final MemberRepository memberRepository;
+        private final TitleRepository titleRepository;
+        private final S3Service s3Service;
 
         @Override
         public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -77,19 +83,41 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
         }
 
-        public void registerSocialMember(String email, String provider, String nickname, String userImg) {
+        public void registerSocialMember(String email, String provider, String nickname, MultipartFile userImg) {
+            String profileImage = "";
+            if (userImg == null) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
+            else profileImage = s3Service.uploadFile(userImg, "profile");
+
             // 사용자 정보를 이용하여 User 객체 생성
             Member newMember = Member.builder()
                     .email(email)
                     .nickname(nickname)
                     .userRole("USER")
                     .socialType(provider)
-                    .bumps(0)
+                    .bumps(3)
                     .point(0)
-                    .userImg(userImg)
+                    .userImg(profileImage)
                     .build();
 
             // UserRepository를 통해 새로운 사용자를 데이터베이스에 저장
             memberRepository.save(newMember);
+            
+            // 칭호 튜플 생성 후 member 연결
+            Title title = Title.builder()
+                    .member(newMember)
+                    .ceo(false)
+                    .fashionista(false)
+                    .foodie(false)
+                    .hobbyist(false)
+                    .romantist(false)
+                    .sprout(true)
+                    .traveler(false)
+                    .greedy(false)
+                    .first(false)
+                    .second(false)
+                    .third(false)
+                    .build();
+            titleRepository.save(title);
+
         }
 }

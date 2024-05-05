@@ -4,6 +4,7 @@ import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostListDTO;
+import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -15,22 +16,21 @@ import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.formatDeadl
 public class PostConverter {
 
     public static PostDTO toPostDTO(Post post) {
-        int participationCnt = ((Long) post.getOptionsList().stream()
-                .flatMap(option -> option.getVoteToOptionsList().stream())
-                .map(voteToOptions -> voteToOptions.getVote().getMember())
+        int participationCnt = post.getOptionsList().stream()
+                .flatMap(option -> option.getVoteList().stream())
+                .map(Vote::getMember)
                 .distinct() // 멤버 중복 제거
-                .count()) // 참여자 수 계산
-                .intValue();
+                .toList().size();
 
         // 총 투표 수 계산
         long totalVoteCnt = post.getOptionsList().stream()
-                .mapToLong(option -> option.getVoteToOptionsList().size())
+                .mapToLong(option -> option.getVoteList().size())
                 .sum();
 
         List<OptionsDTO> optionsDtoList = post.getOptionsList().stream()
                 .map(option -> {
                     // 해당 option의 투표 수 계산
-                    long optionVoteCnt = option.getVoteToOptionsList().size();
+                    long optionVoteCnt = option.getVoteList().size();
 
                     // 투표 결과 퍼센트 계산 (소수점 없음)
                     int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);

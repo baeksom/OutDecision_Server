@@ -3,14 +3,21 @@ package KGUcapstone.OutDecision.domain.user.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Slf4j
 @Controller
 public class PageController {
 
-    @Value("${JOIN_SECRET}")
-    String joinSecret;
+    @Value("${IP}")
+    private String ip;
+
+    @GetMapping("/login")
+    public String loginForm(Model model) {
+        model.addAttribute("ip", ip);
+        return "login"; // login.html 파일을 참조
+    }
 
     @GetMapping("/register/success")
     public String showSuccessRegister() {
@@ -22,10 +29,6 @@ public class PageController {
         return "normal-register";
     }
 
-    @GetMapping("/login")
-    public String loginForm() {
-        return "login";
-    }
 
 //    @GetMapping("/register/v1")
 //    public String showSocialRegisterForm(HttpServletRequest request,

@@ -4,7 +4,14 @@ import KGUcapstone.OutDecision.domain.title.domain.Title;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface TitleRepository extends JpaRepository<Title, Long> {
+    List<Title> findByFirstTrue();
+    List<Title> findBySecondTrue();
+    List<Title> findByThirdTrue();
+    Title findByMemberId(long memberId);
+
     @Query("SELECT " +
             "SUM(CASE WHEN t.ceo = true THEN 1 ELSE 0 END) + " +
             "SUM(CASE WHEN t.fashionista = true THEN 1 ELSE 0 END) + " +
