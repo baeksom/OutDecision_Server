@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+</head>
+<body>
+<h2>User Registration</h2>
+<form id="registrationForm">
+    <label for="userImg">Profile Image URL:</label><br>
+    <input type="text" id="userImg" name="userImg" required><br>
+
+    <label for="name">Full Name:</label><br>
+    <input type="text" id="name" name="name"><br>
+
+    <label for="nickname">Nickname:</label><br>
+    <input type="text" id="nickname" name="nickname" required><br>
+
+    <label for="email">Email:</label><br>
+    <input type="email" id="email" name="email" required><br>
+
+    <label for="password">Password:</label><br>
+    <input type="password" id="password" name="password"><br><br>
+
+    <input type="submit" value="Register">
+</form>
+
+<script>
+    document.getElementById("registrationForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // 기본 폼 제출 동작 막기
+
+        var formData = new FormData(this);
+        var jsonObject = {};
+        formData.forEach(function(value, key){
+            jsonObject[key] = value;
+        });
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/register/v2");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                window.location.href = "/register/success";
+            } else {
+                alert("Error registering user");
+            }
+        };
+        xhr.send(JSON.stringify(jsonObject));
+    });
+</script>
+</body>
+</html>
