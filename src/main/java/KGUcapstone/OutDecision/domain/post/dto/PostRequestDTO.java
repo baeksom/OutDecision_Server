@@ -13,7 +13,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class PostRequestDto {
+public class PostRequestDTO {
 
 
     private String title;
