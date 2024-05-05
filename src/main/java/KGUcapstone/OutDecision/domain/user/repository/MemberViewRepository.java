@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface MemberViewRepository extends JpaRepository<MemberView, Long> {
 
-    @Query("SELECT mv FROM MemberView mv WHERE mv.member.id = :memberId")
+    @Query("SELECT mv FROM MemberView mv WHERE mv.member = :memberId")
     List<MemberView> findMemberViewsByMemberId(Long memberId);
 }

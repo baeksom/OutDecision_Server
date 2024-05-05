@@ -7,7 +7,6 @@ import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.MemberView;
 import KGUcapstone.OutDecision.domain.user.repository.MemberViewRepository;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -131,7 +130,8 @@ public class PostsServiceImpl implements PostsService{
         }
         return filterPosts;
     }
-    public List<Post> RecommendPost(Pageable p,Long memberId) {
+    public List<Post> recommendPost(Long memberId) {
+
         // 사용자의 조회 기록 가져오기
         List<MemberView> viewList = memberViewRepository.findMemberViewsByMemberId(memberId);
 
@@ -142,14 +142,14 @@ public class PostsServiceImpl implements PostsService{
 
         // 모든 게시글 가져오기
         List<Post> allPosts = postRepository.findAll();
-         // 게시글을 추천 점수를 기준으로 내림차순으로 정렬하여 상위 10개 게시글 선택
+        // 게시글을 추천 점수를 기준으로 내림차순으로 정렬하여 상위 10개 게시글 선택
         allPosts.sort((post1, post2) -> {
             double score1 = calculateScore(post1, recommendations);
             double score2 = calculateScore(post2, recommendations);
             return Double.compare(score2, score1); // 내림차순 정렬
         });
 
-        // 상위 10개의 게시글 추천 리스트에 추가
+        // 상위 5개의 게시글 추천 리스트에 추가
         List<Post> recommendPosts = new ArrayList<>();
         int count = 0;
         for (Post post : allPosts) {
@@ -157,25 +157,13 @@ public class PostsServiceImpl implements PostsService{
             if (!Double.isNaN(score)) {
                 recommendPosts.add(post);
                 count++;
-                if (count >= 10) {
+                if (count >= 5) {
                     break;
                 }
             }
         }
-
-        int pageSize = p.getPageSize();
-        int currentPage = p.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<Post> pageContent;
-        if (recommendPosts.size() < startItem) {
-            pageContent = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, recommendPosts.size());
-            pageContent = recommendPosts.subList(startItem, toIndex);
-        }
-
         // 추천된 게시글 반환
-        return pageContent;
+        return recommendPosts;
     }
 
     // 게시글의 총점을 계산하는 메소드
@@ -187,5 +175,4 @@ public class PostsServiceImpl implements PostsService{
         // 총점 계산
         return categoryScore + likesScore + totalViews;
     }
-
 }

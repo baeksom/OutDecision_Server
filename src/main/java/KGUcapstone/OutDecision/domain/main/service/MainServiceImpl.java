@@ -32,8 +32,9 @@ public class MainServiceImpl implements MainService{
 
         Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
 
+
         //추천 게시물 리스트
-        List<PostDTO> recommendPostDTOList = mapToDTO(postRepository.findRecommend(pageable));
+        //List<PostDTO> recommendPostDTOList = mapToDTO(postRepository.recommendPost(memberId));
         // HOT 게시물 리스트
         List<PostDTO> hotPostDTOList = mapToDTO(postRepository.findByHotTrue(pageable));
         // 최신 게시물 리스트
@@ -44,7 +45,7 @@ public class MainServiceImpl implements MainService{
         RankingResponseDTO.RankingListDTO top10Rankings = rankingService.getTop10Rankings();
 
         return PostListDTO.builder()
-                .recommendPostList(recommendPostDTOList)
+                //.recommendPostList(recommendPostDTOList)
                 .hotPostList(hotPostDTOList)
                 .latestPostList(latestPostDTOList)
                 .closedPostList(closedPostDTOList)
