@@ -83,7 +83,7 @@ public class Post extends BaseEntity {
             this.content = content;
     }
 
-    public void setViews(Integer views) {
-        this.views = views;
+    public void incrementViews() {
+        views++;
     }
 }

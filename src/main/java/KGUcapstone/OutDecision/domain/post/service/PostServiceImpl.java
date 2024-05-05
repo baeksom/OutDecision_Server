@@ -37,7 +37,7 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDTO viewPost(Long postId) {
         Post post = postRepository.findById(postId).get();
-        post.setViews(post.getViews()+1);
+        post.incrementViews();
         postRepository.save(post);
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .map(comments -> {
@@ -89,13 +89,6 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         postRepository.delete(post);
         return true;
-    }
-
-    @Transactional
-    public void delete(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(()
-                ->new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id = " + id) );
-        postRepository.delete(post);
     }
 
     // 참여자 수 계산
