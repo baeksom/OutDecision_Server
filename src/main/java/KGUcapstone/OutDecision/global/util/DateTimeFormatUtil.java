@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.global.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,5 +26,12 @@ public class DateTimeFormatUtil {
 
     public static String formatCreatedAt2(LocalDateTime createdAt) {
         return createdAt.format(DateTimeFormatter.ofPattern("yy.MM.dd HH:mm"));
+    }
+
+    public static Date parseStringToDate(String date){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yy.MM.dd HH:mm");
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {return new Date();}
     }
 }

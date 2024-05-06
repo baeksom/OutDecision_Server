@@ -1,31 +1,32 @@
 package KGUcapstone.OutDecision.domain.post.controller;
 
-import KGUcapstone.OutDecision.domain.post.dto.PostRequestDTO;
+import KGUcapstone.OutDecision.domain.post.dto.PostRequestDTO.UploadPostDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.post.service.PostServiceImpl;
 
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/post")
-public class PostApiController {
+public class PostRestController {
 
     private final PostServiceImpl postServiceImpl;
 
     /* 등록 */
-//    @PostMapping("")
-//    @Operation(summary = "게시글 등록", description = "게시글을 작성하고 등록합니다.")
-//    public ApiResponse<Object> savePost(@RequestBody PostRequestDTO request, @CookieValue(name = "accessToken", required = true) String accessToken, HttpServletResponse response) {
-//        boolean success = postServiceImpl.save(request, accessToken);
-//        if(success) return ApiResponse.onSuccess("등록");
-//        else return ApiResponse.onFailure("400", "게시글 등록에 실패하였습니다.", null);
-//
-//    }
+    @PostMapping(value = "", consumes = "multipart/form-data")
+    @Operation(summary = "게시글 등록 API", description = "게시글을 작성하고 등록합니다.")
+    public ApiResponse<Object> uploadPost(@RequestPart UploadPostDTO request,
+                                        @RequestPart List<String> optionNames,
+                                        @RequestPart(required = false) List<MultipartFile> optionImages) {
+        return ApiResponse.onSuccess(postServiceImpl.uploadPost(request, optionNames, optionImages));
+    }
 
     /* 조회 */
     @GetMapping("/{postId}")

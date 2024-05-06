@@ -86,4 +86,8 @@ public class Post extends BaseEntity {
     public void incrementViews() {
         views++;
     }
+
+    public void setOptionsList(List<Options> optionsList) {
+    }
+
 }
