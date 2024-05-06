@@ -50,6 +50,8 @@ public class JwtUtil {
         // 현재 시간과 날짜를 가져온다.
         Date now = new Date();
 
+        System.out.println("토큰 생성 - 이메일: " + email + ", 역할: " + role);
+
         return Jwts.builder()
                 // Payload를 구성하는 속성들을 정의한다.
                 .setClaims(claims)
@@ -86,15 +88,30 @@ public class JwtUtil {
 
 
     public boolean verifyToken(String token) {
+        token = token.replace("Bearer ", "");
         try {
             Jws<Claims> claims = Jwts.parser()
                     .setSigningKey(secretKey) // 비밀키를 설정하여 파싱한다.
                     .parseClaimsJws(token);  // 주어진 토큰을 파싱하여 Claims 객체를 얻는다.
-            // 토큰의 만료 시간과 현재 시간비교
-            return claims.getBody()
-                    .getExpiration()
-                    .after(new Date());  // 만료 시간이 현재 시간 이후인지 확인하여 유효성 검사 결과를 반환
+
+            // 로그: 토큰 파싱 성공
+            System.out.println("토큰 파싱 성공");
+
+            // 토큰의 만료 시간과 현재 시간 비교하여 유효성 검사 결과 반환
+            boolean isValid = claims.getBody().getExpiration().after(new Date());
+
+            // 로그: 유효성 검사 결과
+            System.out.println("토큰 유효성 검사 결과: " + isValid);
+
+            return isValid;
         } catch (Exception e) {
+            // 로그: 예외 발생
+            System.out.println("토큰 만료 확인 예외 처리 구간");
+            System.out.println("token = " + token);
+
+            // 예외 상세 정보 출력
+            e.printStackTrace();
+
             return false;
         }
     }
@@ -102,12 +119,12 @@ public class JwtUtil {
 
     // 토큰에서 Email을 추출한다.
     public String getUid(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token.replace("Bearer ", "")).getBody().getSubject();
     }
 
     // 토큰에서 ROLE(권한)만 추출한다.
     public String getRole(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("role", String.class);
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token.replace("Bearer ", "")).getBody().get("role", String.class);
     }
 
 }
