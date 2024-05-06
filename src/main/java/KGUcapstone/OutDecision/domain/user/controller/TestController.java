@@ -18,9 +18,11 @@ public class TestController {
 
     private final FindMemberService findMemberService;
     @GetMapping("/test")
-    public ApiResponse<?> test() throws BadRequestException {
+    public ApiResponse<?> test() {
         Long id = findMemberService.findLoginMemberId();
-        return ApiResponse.onSuccess(id);
-
+        if (id != 0L) {
+            return ApiResponse.onSuccess(id);
+        }
+        return ApiResponse.onFailure("400", "사용자가 없습니다.", id);
     }
 }

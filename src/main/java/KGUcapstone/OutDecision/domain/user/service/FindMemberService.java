@@ -25,7 +25,7 @@ public class FindMemberService {
     }
 
     // 로그인한 사용자 id 찾기
-    public Long findLoginMemberId() throws BadRequestException {
+    public Long findLoginMemberId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //        System.out.println("authentication = " + authentication);
 //        System.out.println("Principal 객체: " + authentication.getPrincipal());
@@ -37,7 +37,6 @@ public class FindMemberService {
             Long memberId = member.getId();
             return memberId;
         }
-
-        throw new BadRequestException();
+        else return 0L;
     }
 }
