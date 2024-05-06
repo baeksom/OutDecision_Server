@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-
 public class PostResponseDTO {
 
     @Builder
