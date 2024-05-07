@@ -1,8 +1,8 @@
-package KGUcapstone.OutDecision.domain.user.help.controller;
+package KGUcapstone.OutDecision.domain.user.controller;
 
-import KGUcapstone.OutDecision.domain.user.help.dto.InquiryRequestDto;
-import KGUcapstone.OutDecision.domain.user.help.dto.InquiryResponseDto;
-import KGUcapstone.OutDecision.domain.user.help.service.InquiryService;
+import KGUcapstone.OutDecision.domain.user.dto.InquiryRequestDto;
+import KGUcapstone.OutDecision.domain.user.dto.InquiryResponseDto;
+import KGUcapstone.OutDecision.domain.user.service.help.InquiryService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

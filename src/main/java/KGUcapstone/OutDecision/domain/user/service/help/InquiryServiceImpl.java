@@ -1,8 +1,8 @@
-package KGUcapstone.OutDecision.domain.user.help.service;
+package KGUcapstone.OutDecision.domain.user.service.help;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.help.dto.InquiryRequestDto;
-import KGUcapstone.OutDecision.domain.user.help.dto.InquiryResponseDto;
+import KGUcapstone.OutDecision.domain.user.dto.InquiryRequestDto;
+import KGUcapstone.OutDecision.domain.user.dto.InquiryResponseDto;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
