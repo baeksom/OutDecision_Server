@@ -3,6 +3,8 @@ package KGUcapstone.OutDecision.domain.user.domain;
 import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.likes.domain.Likes;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.title.domain.Missions;
+import KGUcapstone.OutDecision.domain.title.domain.Title;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -25,7 +27,7 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
-    
+
     private String password;
 
     @Column(length = 20)
@@ -81,6 +83,12 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Vote> voteList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Missions missions;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Title title;
 
     public void updateUserTitle(String userTitle) {
         this.userTitle = userTitle;
