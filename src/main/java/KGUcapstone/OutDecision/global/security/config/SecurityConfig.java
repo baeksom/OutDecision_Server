@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .accessDeniedPage("/error");
 
         http
-            .oauth2Login() // OAuth2 로그인 설정시작
+                .oauth2Login() // OAuth2 로그인 설정시작
                 .loginPage("/login")
                 .userInfoEndpoint().userService(customOAuth2UserService) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
                 .and()

@@ -24,10 +24,10 @@ public class RegisterController {
 
     @PostMapping(value = "/register/v1", consumes = "multipart/form-data")
     public ApiResponse<Object> registerSocialUser(@CookieValue(name = "email", required = false) String email,
-                                    @CookieValue(name = "provider", required = false) String provider,
-                                    @RequestParam("nickname") String nickname,
-                                    @RequestPart(value = "userImg", required = false) MultipartFile userImg
-                               ) {
+                                                  @CookieValue(name = "provider", required = false) String provider,
+                                                  @RequestParam("nickname") String nickname,
+                                                  @RequestPart(value = "userImg", required = false) MultipartFile userImg
+    ) {
         customOAuth2UserService.registerSocialMember(email, provider, nickname, userImg);
         return ApiResponse.onSuccess(null);
     }
@@ -54,4 +54,3 @@ public class RegisterController {
         return ApiResponse.onSuccess(join_token);
     }
 }
-
