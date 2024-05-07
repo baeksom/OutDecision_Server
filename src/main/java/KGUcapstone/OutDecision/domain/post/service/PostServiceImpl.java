@@ -58,13 +58,16 @@ public class PostServiceImpl implements PostService{
         postRepository.save(post);
         List<String> optionImgsList = new ArrayList<>();
         if (optionNames == null) return false;
-        if (optionImages != null) optionImgsList = s3Service.uploadFiles(optionImages, "options");
+        for (MultipartFile multipartFile:optionImages) {
+            if (!multipartFile.isEmpty()) optionImgsList.add(s3Service.uploadFile(multipartFile, "options"));
+            else optionImgsList.add(null);
+        }
 
         List<Options> optionsList = new ArrayList<>();
         for (int i = 0; i < optionNames.size(); i++) {
             Options options = Options.builder()
                     .body(optionNames.get(i))
-                    .photoUrl((optionImgsList != null && i < optionImgsList.size()) ? optionImgsList.get(i) : null)
+                    .photoUrl(optionImgsList.get(i))
                     .post(post)
                     .build();
             optionsRepository.save(options);
