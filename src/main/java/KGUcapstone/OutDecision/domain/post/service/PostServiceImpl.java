@@ -134,8 +134,13 @@ public class PostServiceImpl implements PostService{
     /* 삭제 */
     @Override
     public boolean deletePost(Long postId) {
+        Long memberId = 2024L;
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+        if (!memberId.equals(post.getMember().getId())) {
+            return false;
+        }
+
         for (Options options:post.getOptionsList()) {
             if (options.getPhotoUrl() != null) {
                 s3Service.deleteImage(options.getPhotoUrl());
