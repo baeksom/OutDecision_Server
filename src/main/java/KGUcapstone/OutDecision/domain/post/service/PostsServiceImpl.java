@@ -107,8 +107,8 @@ public class PostsServiceImpl implements PostsService{
         }
 
         if (sort.equals("latest")) {
-            // 초기 default는 최신순(latest) 정렬
-            posts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+            // 초기 default는 최신순(끌어올리기 순) 정렬
+            posts.sort(Comparator.comparing(Post::getBumpsTime).reversed());
         }
         else if (sort.equals("views")) {
             // 조회수 내림차순 정렬
