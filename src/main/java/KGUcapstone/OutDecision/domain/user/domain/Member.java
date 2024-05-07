@@ -34,7 +34,7 @@ public class Member extends BaseEntity {
     @Column(length = 10)
     private String socialType;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String nickname;
 
     @ColumnDefault("0")
@@ -48,12 +48,24 @@ public class Member extends BaseEntity {
     @Column(length = 20)
     private String userTitle;
 
-    //default 기본이미지
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '기본 이미지 URL'")
+    @Column(nullable = false)
     private String userImg;
 
     @Column(length = 30)
     private String userRole;
+
+    public void updateMember(String name, String nickname) {
+        this.name = name;
+        this.nickname = nickname;
+    }
+
+    public void updateUserImg(String userImg) {
+        this.userImg = userImg;
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberView> memberViewList = new ArrayList<>();
@@ -69,4 +81,12 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Vote> voteList = new ArrayList<>();
+
+    public void updateUserTitle(String userTitle) {
+        this.userTitle = userTitle;
+    }
+
+    public void updateBumps(int bumps) {
+        this.bumps = bumps;
+    }
 }

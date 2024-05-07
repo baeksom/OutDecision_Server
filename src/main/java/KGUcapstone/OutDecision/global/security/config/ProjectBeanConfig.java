@@ -1,8 +1,10 @@
 package KGUcapstone.OutDecision.global.security.config;
 
+import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
-import KGUcapstone.OutDecision.domain.user.service.MemberService;
-import KGUcapstone.OutDecision.domain.user.auth.service.CustomUserDetailsService;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.user.service.S3Service;
+import KGUcapstone.OutDecision.domain.user.service.auth.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,17 +12,15 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.InMemoryOAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
 @Configuration
 @RequiredArgsConstructor
 public class ProjectBeanConfig {
 
     private final MemberRepository memberRepository;
-    private final MemberService memberService;
-    private final ClientRegistrationRepository clientRegistrationRepository;
+    private final FindMemberService findMemberService;
+    private final TitleRepository titleRepository;
+    private final S3Service s3Service;
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
@@ -37,11 +37,6 @@ public class ProjectBeanConfig {
 
     @Bean
     public CustomUserDetailsService userService() {
-        return new CustomUserDetailsService(memberService, passwordEncoder(), memberRepository);
-    }
-
-    @Bean
-    public OAuth2AuthorizedClientService authorizedClientService() {
-        return new InMemoryOAuth2AuthorizedClientService(clientRegistrationRepository);
+        return new CustomUserDetailsService(findMemberService, passwordEncoder(), memberRepository, titleRepository, s3Service);
     }
 }

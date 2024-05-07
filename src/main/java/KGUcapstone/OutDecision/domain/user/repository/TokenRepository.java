@@ -1,6 +1,6 @@
 package KGUcapstone.OutDecision.domain.user.repository;
 
-import KGUcapstone.OutDecision.domain.user.auth.dto.RefreshToken;
+import KGUcapstone.OutDecision.domain.user.dto.RefreshToken;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 public class MemberView {
     
-//복합키 단순키로 변경
+    //사용자 조회기록 id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,5 +25,5 @@ public class MemberView {
     private Category category;
 
     @Column(columnDefinition = "integer default 0")
-    private Integer viewsCount;
+    private Integer views;
 }
