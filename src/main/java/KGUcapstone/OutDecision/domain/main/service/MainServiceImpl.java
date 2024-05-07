@@ -6,9 +6,12 @@ import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
+import KGUcapstone.OutDecision.domain.post.service.PostsService;
+import KGUcapstone.OutDecision.domain.post.service.PostsServiceImpl;
 import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO;
 import KGUcapstone.OutDecision.domain.ranking.service.RankingService;
 import KGUcapstone.OutDecision.domain.ranking.service.RedisRankingServiceImpl;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,15 +29,19 @@ public class MainServiceImpl implements MainService{
 
     private final PostRepository postRepository;
     private final RankingService rankingService;
+    private final PostsServiceImpl postsService;
+    private final FindMemberService findMemberService;
 
     @Override
     public PostListDTO getMain() {
 
         Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
 
+        Long memberId = findMemberService.findLoginMemberId();
+        List<Post> recommendPosts = postsService.recommendPost(memberId);
 
         //추천 게시물 리스트
-        //List<PostDTO> recommendPostDTOList = mapToDTO(postRepository.recommendPost(memberId));
+        List<PostDTO> recommendPostDTOList = mapToDTO(recommendPosts);
         // HOT 게시물 리스트
         List<PostDTO> hotPostDTOList = mapToDTO(postRepository.findByHotTrue(pageable));
         // 최신 게시물 리스트
@@ -45,7 +52,7 @@ public class MainServiceImpl implements MainService{
         RankingResponseDTO.RankingListDTO top10Rankings = rankingService.getTop10Rankings();
 
         return PostListDTO.builder()
-                //.recommendPostList(recommendPostDTOList)
+                .recommendPostList(recommendPostDTOList)
                 .hotPostList(hotPostDTOList)
                 .latestPostList(latestPostDTOList)
                 .closedPostList(closedPostDTOList)

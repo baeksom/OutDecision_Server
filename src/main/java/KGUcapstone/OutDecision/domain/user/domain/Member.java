@@ -34,7 +34,7 @@ public class Member extends BaseEntity {
     @Column(length = 10)
     private String socialType;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String nickname;
 
     @ColumnDefault("0")
