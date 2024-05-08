@@ -53,6 +53,7 @@ public class PostConverter {
                 .nickname(post.getMember().getNickname())
                 .pluralVoting(post.getPluralVoting())
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
+                .bumpsTime(formatCreatedAt(post.getBumpsTime()))
                 .deadline(formatDeadline(post.getDeadline()))
                 .participationCnt(participationCnt)
                 .likesCnt(post.getLikes())
