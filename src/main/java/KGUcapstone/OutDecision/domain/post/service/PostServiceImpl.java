@@ -18,6 +18,7 @@ import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -28,6 +29,7 @@ import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.*;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PostServiceImpl implements PostService{
 
     private final PostRepository postRepository;
@@ -129,18 +131,17 @@ public class PostServiceImpl implements PostService{
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         if (!memberId.equals(post.getMember().getId())) return false;
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        post.updatePost(request.getTitle(), request.getContent(), request.getCategory(),
-                parseStringToDate(request.getDeadline()), request.isPluralVoting(), request.getGender());
-
-        // 옵션 및 이미지 삭제
+        // 기존 옵션 및 이미지 삭제
         for (Options option : post.getOptionsList()) {
             if (option.getPhotoUrl() != null) {
+                // S3에서 이미지 삭제
                 s3Service.deleteImage(option.getPhotoUrl());
             }
             optionsRepository.delete(option);
         }
+        post.getOptionsList().clear(); // 옵션 리스트 초기화
+        postRepository.save(post); // 변경사항 저장
 
         // 새로운 옵션 추가
         List<Options> optionsList = new ArrayList<>();
@@ -161,29 +162,15 @@ public class PostServiceImpl implements PostService{
                 optionsList.add(newOption); // 옵션 리스트에 새로운 옵션 추가
             }
         }
-
-//        List<String> optionImgsList = new ArrayList<>();
-//        if (optionNames == null) return false;
-//        for (MultipartFile multipartFile:optionImages) {
-//            if (!multipartFile.isEmpty()) optionImgsList.add(s3Service.uploadFile(multipartFile, "options"));
-//            else optionImgsList.add(null);
-//        }
-//
-//        List<Options> optionsList = new ArrayList<>();
-//        for (int i = 0; i < optionNames.size(); i++) {
-//            Options options = Options.builder()
-//                    .body(optionNames.get(i))
-//                    .photoUrl(optionImgsList.get(i))
-//                    .post(post)
-//                    .build();
-//            optionsRepository.save(options);
-//        }
-
+        // 포스트에 새로운 옵션 리스트 설정
         post.setOptionsList(optionsList);
+        post.updatePost(request.getTitle(), request.getContent(), request.getCategory(),
+                parseStringToDate(request.getDeadline()), request.isPluralVoting(), request.getGender());
         postRepository.save(post);
 
         return true;
     }
+
 
     /* 삭제 */
     @Override
