@@ -2,10 +2,8 @@ package KGUcapstone.OutDecision.domain.user.service;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
-import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import KGUcapstone.OutDecision.global.security.dto.SecurityUserDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,10 @@ public class FindMemberService {
 
     public Optional<Member> findByEmail(String email) {
         return Optional.ofNullable(memberRepository.findByEmail(email));
+    }
+
+    public void deleteMember(Member member) {
+        memberRepository.delete(member);
     }
 
     // 로그인한 사용자 id 찾기

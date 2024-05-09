@@ -23,6 +23,9 @@ public class S3Service {
     @Value("${BUCKET_NAME}")
     private String bucket;
 
+    @Value("${DEFAULT_PROFILE_IMG}")
+    private String defaultImg;
+
     public String getUuidFileName(String fileName) {
         String ext = fileName.substring(fileName.indexOf(".") + 1);
         return UUID.randomUUID().toString() + "." + ext;
@@ -100,6 +103,10 @@ public class S3Service {
         String splitStr = ".com/" + bucket + "/";
         String fileName = ImgUrl.substring(ImgUrl.lastIndexOf(splitStr) + splitStr.length());
 
-        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        // 기본 프로필 이미지가 아닐 때, 삭제
+        if (!fileName.equals(defaultImg)) {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+            System.out.println(" 사진 삭제 완료 ");
+        }
     }
 }
