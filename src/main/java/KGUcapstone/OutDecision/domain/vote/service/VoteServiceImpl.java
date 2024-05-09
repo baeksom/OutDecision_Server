@@ -19,6 +19,7 @@ public class VoteServiceImpl implements VoteService{
     private final FindMemberService findMemberService;
     private final OptionsRepository optionsRepository;
 
+    @Override
     public boolean addVote(Long optionsId) {
         Optional<Member> member = findMemberService.findLoginMember();
         Optional<Options> options = optionsRepository.findById(optionsId);

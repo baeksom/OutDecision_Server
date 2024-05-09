@@ -1,6 +1,6 @@
 package KGUcapstone.OutDecision.domain.vote.controller;
 
-import KGUcapstone.OutDecision.domain.vote.service.VoteServiceImpl;
+import KGUcapstone.OutDecision.domain.vote.service.VoteService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class VoteController {
 
-    private final VoteServiceImpl voteService;
+    private final VoteService voteService;
 
     @PostMapping("/vote/{optionsId}")
     @Operation(summary = "투표 API", description = "특정 옵션을 투표합니다.")
