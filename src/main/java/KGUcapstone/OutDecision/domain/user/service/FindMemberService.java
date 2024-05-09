@@ -41,4 +41,18 @@ public class FindMemberService {
         }
         else return 0L;
     }
+
+    public Optional<Member> findLoginMember() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println("authentication = " + authentication);
+//        System.out.println("Principal 객체: " + authentication.getPrincipal());
+//        System.out.println("Principal 객체 타입: " + authentication.getPrincipal().getClass().getName());
+
+        if (authentication.getPrincipal() instanceof SecurityUserDto securityUserDto) {
+            String email = securityUserDto.getEmail();
+            Member member = memberRepository.findByEmail(email);
+            return Optional.ofNullable(member);
+        }
+        return Optional.empty();
+    }
 }
