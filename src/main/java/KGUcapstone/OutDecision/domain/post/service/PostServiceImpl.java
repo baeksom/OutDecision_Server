@@ -71,6 +71,7 @@ public class PostServiceImpl implements PostService{
                     .post(post)
                     .build();
             optionsRepository.save(options);
+            optionsList.add(options);
         }
 
         post.setOptionsList(optionsList);
@@ -122,14 +123,67 @@ public class PostServiceImpl implements PostService{
     }
 
     /* 수정 */
-//    @Transactional
-//    public Long update(Long id, PostRequestDTO dto) {
-//        Post post = postRepository.findById(id).orElseThrow(()
-//                ->new IllegalArgumentException("해당 게시글이 존재하지 않습니다. id = " + id) );
-//        post.update(dto.getTitle(), dto.getContent());
+    @Override
+    public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages) {
+        Long memberId = 2024L;
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+        if (!memberId.equals(post.getMember().getId())) return false;
+        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        post.updatePost(request.getTitle(), request.getContent(), request.getCategory(),
+                parseStringToDate(request.getDeadline()), request.isPluralVoting(), request.getGender());
+
+        // 옵션 및 이미지 삭제
+        for (Options option : post.getOptionsList()) {
+            if (option.getPhotoUrl() != null) {
+                s3Service.deleteImage(option.getPhotoUrl());
+            }
+            optionsRepository.delete(option);
+        }
+
+        // 새로운 옵션 추가
+        List<Options> optionsList = new ArrayList<>();
+        if (optionNames != null && optionImages != null && optionNames.size() == optionImages.size()) {
+            for (int i = 0; i < optionNames.size(); i++) {
+                String optionName = optionNames.get(i);
+                MultipartFile imageFile = optionImages.get(i);
+                String photoUrl = null;
+                if (imageFile != null && !imageFile.isEmpty()) {
+                    photoUrl = s3Service.uploadFile(imageFile, "options");
+                }
+                Options newOption = Options.builder()
+                        .body(optionName)
+                        .photoUrl(photoUrl)
+                        .post(post)
+                        .build();
+                optionsRepository.save(newOption); // 옵션을 저장소에 저장
+                optionsList.add(newOption); // 옵션 리스트에 새로운 옵션 추가
+            }
+        }
+
+//        List<String> optionImgsList = new ArrayList<>();
+//        if (optionNames == null) return false;
+//        for (MultipartFile multipartFile:optionImages) {
+//            if (!multipartFile.isEmpty()) optionImgsList.add(s3Service.uploadFile(multipartFile, "options"));
+//            else optionImgsList.add(null);
+//        }
 //
-//        return id;
-//    }
+//        List<Options> optionsList = new ArrayList<>();
+//        for (int i = 0; i < optionNames.size(); i++) {
+//            Options options = Options.builder()
+//                    .body(optionNames.get(i))
+//                    .photoUrl(optionImgsList.get(i))
+//                    .post(post)
+//                    .build();
+//            optionsRepository.save(options);
+//        }
+
+        post.setOptionsList(optionsList);
+        postRepository.save(post);
+
+        return true;
+    }
 
     /* 삭제 */
     @Override

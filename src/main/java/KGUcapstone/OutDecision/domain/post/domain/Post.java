@@ -90,4 +90,14 @@ public class Post extends BaseEntity {
     public void setOptionsList(List<Options> optionsList) {
     }
 
+    public void updatePost(String title, String content, Category category,
+                           Date deadline, Boolean pluralVoting, Gender gender) {
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.deadline = deadline;
+        this.pluralVoting = pluralVoting;
+        this.gender = gender;
+    }
+
 }

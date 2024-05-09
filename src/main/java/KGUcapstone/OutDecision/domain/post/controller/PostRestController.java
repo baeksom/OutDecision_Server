@@ -36,16 +36,18 @@ public class PostRestController {
     }
 
     /* 수정 */
-//    @PutMapping("/{post_id}")
-//    @Operation(summary = "게시글 수정")
-//    public ApiResponse<Object> updatePost(@PathVariable Long post_id, @RequestBody PostRequestDTO request) {
-//        boolean success = postServiceImpl.update(post_id, request);
-//        if(success) return ApiResponse.onSuccess("게시글이 수정되었습니다.");
-//        else return ApiResponse.onFailure("400", "게시글 수정에 실패하였습니다.", null);
-//    }
+    @PatchMapping (value = "/{postId}", consumes = "multipart/form-data")
+    @Operation(summary = "게시글 수정 API", description = "게시글을 수정합니다.")
+    public ApiResponse<Object> updatePost(@PathVariable Long postId,
+                                          @RequestPart UploadPostDTO request,
+                                          @RequestPart List<String> optionNames,
+                                          @RequestPart(required = false) List<MultipartFile> optionImages) {
+        return ApiResponse.onSuccess(postServiceImpl.updatePost(postId, request, optionNames, optionImages));
+    }
 
     /* 삭제 */
     @DeleteMapping("/{postId}")
+    @Operation(summary = "게시글 삭제 API", description = "게시글을 삭제하고, 연결된 S3 이미지도 삭제됩니다.")
     public ApiResponse<Object> deletePost(@PathVariable Long postId) {
         return ApiResponse.onSuccess(postServiceImpl.deletePost(postId));
     }
