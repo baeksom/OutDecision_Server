@@ -26,6 +26,7 @@ public class PostResponseDTO {
         Gender gender;
         Long userId;
         String nickname;
+        Integer bumps;
         boolean pluralVoting;
         String createdAt;
         String deadline;

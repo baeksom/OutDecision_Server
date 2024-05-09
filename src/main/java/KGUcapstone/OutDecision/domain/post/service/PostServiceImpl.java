@@ -87,6 +87,7 @@ public class PostServiceImpl implements PostService{
     /* 조회 */
     @Override
     public PostDTO viewPost(Long postId) {
+        Long memberId = 2024L;
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         post.incrementViews();
@@ -113,6 +114,7 @@ public class PostServiceImpl implements PostService{
                 .gender(post.getGender())
                 .userId(post.getMember().getId())
                 .nickname(post.getMember().getNickname())
+                .bumps(memberId.equals(post.getMember().getId()) ? post.getMember().getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
                 .deadline(formatDeadline(post.getDeadline()))
