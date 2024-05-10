@@ -1,7 +1,10 @@
 package KGUcapstone.OutDecision.global.security.config;
 
+import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
+import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.user.service.auth.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,9 @@ public class ProjectBeanConfig {
 
     private final MemberRepository memberRepository;
     private final FindMemberService findMemberService;
+    private final TitleRepository titleRepository;
+    private final MissionsRepository missionsRepository;
+    private final S3Service s3Service;
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
@@ -33,6 +39,6 @@ public class ProjectBeanConfig {
 
     @Bean
     public CustomUserDetailsService userService() {
-        return new CustomUserDetailsService(findMemberService, passwordEncoder(), memberRepository);
+        return new CustomUserDetailsService(findMemberService, passwordEncoder(), memberRepository, titleRepository, missionsRepository, s3Service);
     }
 }

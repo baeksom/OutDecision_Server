@@ -1,5 +1,9 @@
 package KGUcapstone.OutDecision.domain.user.service.mypage;
 
+import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
+import KGUcapstone.OutDecision.domain.title.domain.Missions;
+import KGUcapstone.OutDecision.domain.title.domain.Title;
 import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateTitleDTO;
@@ -40,4 +44,38 @@ public class TitleServiceImpl implements TitleService{
         return Arrays.asList(titleStr.split(","));
     }
 
+    @Override
+    public void memberGetTitle(Post post, Member member) {
+        Category category = post.getCategory();
+        Missions missions = member.getMissions();
+        Title title = member.getTitle();
+
+        if (post.getHot()) {
+            // 게시글 Hot 여부 확인 O
+            // Missions cnt+1
+            if (category.equals(Category.FASHION)) {
+                missions.setFashionista_cnt(missions.getFashionista_cnt() + 1);
+                if (missions.getFashionista_cnt() == 10) title.setFashionista(true);
+            } else if (category.equals(Category.FOOD)) {
+                missions.setFoodie_cnt(missions.getFoodie_cnt() + 1);
+                if (missions.getFoodie_cnt() == 10) title.setFoodie(true);
+            } else if (category.equals(Category.LOVE)) {
+                missions.setRomantist_cnt(missions.getRomantist_cnt() + 1);
+                if (missions.getRomantist_cnt() == 10) title.setRomantist(true);
+            } else if (category.equals(Category.HOBBY)) {
+                missions.setHobbyist_cnt(missions.getHobbyist_cnt() + 1);
+                if (missions.getHobbyist_cnt() == 10) title.setHobbyist(true);
+            } else if (category.equals(Category.TRAVEL)) {
+                missions.setTraveler_cnt(missions.getTraveler_cnt() + 1);
+                if (missions.getTraveler_cnt() == 10) title.setTraveler(true);
+            } else if (category.equals(Category.WORK)) {
+                missions.setCeo_cnt(missions.getCeo_cnt() + 1);
+                if (missions.getCeo_cnt() == 10) title.setCeo(true);
+            } else {
+                // 기타
+                missions.setHobbyist_cnt(missions.getHobbyist_cnt() + 1);
+                if (missions.getHobbyist_cnt() == 10) title.setHobbyist(true);
+            }
+        }
+    }
 }

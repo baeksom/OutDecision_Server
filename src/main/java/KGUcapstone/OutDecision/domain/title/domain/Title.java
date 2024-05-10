@@ -3,7 +3,6 @@ package KGUcapstone.OutDecision.domain.title.domain;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -20,47 +19,76 @@ public class Title {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ColumnDefault("true")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean sprout;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean fashionista;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean foodie;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean traveler;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean ceo;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean romantist;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean hobbyist;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean greedy;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean first;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean second;
 
-    @ColumnDefault("false")
     @Column(nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean third;
+
+    public void setFirst(Boolean first) {
+        this.first = first;
+    }
+
+    public void setSecond(Boolean second) {
+        this.second = second;
+    }
+
+    public void setThird(Boolean third) {
+        this.third = third;
+    }
+
+    public void setFashionista(Boolean fashionista) {
+        this.fashionista = fashionista;
+    }
+
+    public void setFoodie(Boolean foodie) {
+        this.foodie = foodie;
+    }
+
+    public void setTraveler(Boolean traveler) {
+        this.traveler = traveler;
+    }
+
+    public void setCeo(Boolean ceo) {
+        this.ceo = ceo;
+    }
+
+    public void setRomantist(Boolean romantist) {
+        this.romantist = romantist;
+    }
+
+    public void setHobbyist(Boolean hobbyist) {
+        this.hobbyist = hobbyist;
+    }
+
+    public void setGreedy(Boolean greedy) {
+        this.greedy = greedy;
+    }
 }

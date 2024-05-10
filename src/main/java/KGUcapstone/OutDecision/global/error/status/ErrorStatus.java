@@ -18,6 +18,8 @@ public enum ErrorStatus implements BaseErrorCode {
 
 //    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "존재하지 않는 사용자입니다."),
 
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "존재하지 않는 게시글입니다."),
+
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "이거는 테스트");
 

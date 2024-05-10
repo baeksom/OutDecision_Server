@@ -3,6 +3,8 @@ package KGUcapstone.OutDecision.domain.user.domain;
 import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.likes.domain.Likes;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.title.domain.Missions;
+import KGUcapstone.OutDecision.domain.title.domain.Title;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -25,7 +27,7 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false, length = 50, unique = true)
     private String email;
-    
+
     private String password;
 
     @Column(length = 20)
@@ -34,7 +36,7 @@ public class Member extends BaseEntity {
     @Column(length = 10)
     private String socialType;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String nickname;
 
     @ColumnDefault("0")
@@ -48,8 +50,7 @@ public class Member extends BaseEntity {
     @Column(length = 20)
     private String userTitle;
 
-    //default 기본이미지
-    @Column(nullable = false, columnDefinition = "VARCHAR(255) DEFAULT '기본 이미지 URL'")
+    @Column(nullable = false)
     private String userImg;
 
     @Column(length = 30)
@@ -83,6 +84,12 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Vote> voteList = new ArrayList<>();
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Missions missions;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Title title;
+
     public void updateUserTitle(String userTitle) {
         this.userTitle = userTitle;
     }
@@ -90,4 +97,6 @@ public class Member extends BaseEntity {
     public void updateBumps(int bumps) {
         this.bumps = bumps;
     }
+
+    public void updatePoint(int point) { this.point = point; }
 }

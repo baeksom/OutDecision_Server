@@ -1,6 +1,7 @@
 package KGUcapstone.OutDecision.domain.main.dto;
 
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostDTO;
+import KGUcapstone.OutDecision.domain.ranking.dto.RankingResponseDTO.RankingListDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,9 +15,11 @@ public class MainResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostListDTO{
-//        List<PostDTO> recommendPostList;
+        List<PostDTO> recommendPostList;
         List<PostDTO> hotPostList;
         List<PostDTO> latestPostList;
         List<PostDTO> closedPostList;
+        RankingListDTO rankingListDTO;
     }
+
 }
