@@ -3,6 +3,7 @@ package KGUcapstone.OutDecision.domain.post.service;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.options.repository.OptionsRepository;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.dto.PostRequestDTO.UploadPostDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostResponseDTO.CommentsDTO;
@@ -46,7 +47,7 @@ public class PostServiceImpl implements PostService{
         Post post = Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .category(request.getCategory())
+                .category(Category.fromValue(request.getCategory()))
                 .deadline(parseStringToDate(request.getDeadline()))
                 .pluralVoting(request.isPluralVoting())
                 .gender(request.getGender())
@@ -166,7 +167,7 @@ public class PostServiceImpl implements PostService{
         }
         // 포스트에 새로운 옵션 리스트 설정
         post.setOptionsList(optionsList);
-        post.updatePost(request.getTitle(), request.getContent(), request.getCategory(),
+        post.updatePost(request.getTitle(), request.getContent(), Category.fromValue(request.getCategory()),
                 parseStringToDate(request.getDeadline()), request.isPluralVoting(), request.getGender());
         postRepository.save(post);
 

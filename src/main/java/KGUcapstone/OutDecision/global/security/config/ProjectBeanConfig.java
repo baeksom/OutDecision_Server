@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.global.security.config;
 
+import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
 import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
@@ -20,6 +21,7 @@ public class ProjectBeanConfig {
     private final MemberRepository memberRepository;
     private final FindMemberService findMemberService;
     private final TitleRepository titleRepository;
+    private final MissionsRepository missionsRepository;
     private final S3Service s3Service;
 
     @Bean
@@ -37,6 +39,6 @@ public class ProjectBeanConfig {
 
     @Bean
     public CustomUserDetailsService userService() {
-        return new CustomUserDetailsService(findMemberService, passwordEncoder(), memberRepository, titleRepository, s3Service);
+        return new CustomUserDetailsService(findMemberService, passwordEncoder(), memberRepository, titleRepository, missionsRepository, s3Service);
     }
 }
