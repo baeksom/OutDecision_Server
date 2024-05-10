@@ -1,10 +1,10 @@
     package KGUcapstone.OutDecision.domain.vote.util;
 
+    import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
     import KGUcapstone.OutDecision.domain.post.domain.Post;
     import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
     import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
     import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
-    import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
     import KGUcapstone.OutDecision.domain.vote.service.MailService;
     import org.springframework.scheduling.annotation.Scheduled;
     import org.springframework.stereotype.Component;
@@ -19,14 +19,14 @@
     public class VoteClosingTask {
 
         private final PostRepository postRepository;
-        private final VoteRepository voteRepository;
         private final MemberRepository memberRepository;
+        private final NotificationsRepository notificationsRepository;
         private final MailService mailService;
 
-        public VoteClosingTask(PostRepository postRepository, VoteRepository voteRepository, MemberRepository memberRepository, MailService mailService) {
+        public VoteClosingTask(PostRepository postRepository, MemberRepository memberRepository, NotificationsRepository notificationsRepository, MailService mailService) {
             this.postRepository = postRepository;
-            this.voteRepository = voteRepository;
             this.memberRepository = memberRepository;
+            this.notificationsRepository = notificationsRepository;
             this.mailService = mailService;
         }
 
@@ -49,15 +49,14 @@
                 post.setStatus(Status.CLOSING);
                 // 변경된 상태를 데이터베이스에 저장합니다.
                 postRepository.save(post);
-//                Long postId = post.getId();
                 String title = post.getTitle();
                 String email = post.getMember().getEmail();
                 mailService.sendNotification(email, title);
-//                List<Long> votedMemberIds = voteRepository.findMemberIdsByPostId(postId);
-//                for (Long memberId:votedMemberIds) {
-//                    String email = memberRepository.findById(memberId).get().getEmail();
-//                    mailService.sendNotification(email, title);
-//                }
+                List<Long> checkedMemberIds = notificationsRepository.findMemberIdsByPostId(post.getId());
+                for (Long memberId:checkedMemberIds) {
+                    String checkedMemberEmail = memberRepository.findById(memberId).get().getEmail();
+                    mailService.sendNotificationV2(checkedMemberEmail, title);
+                }
             }
         }
     }

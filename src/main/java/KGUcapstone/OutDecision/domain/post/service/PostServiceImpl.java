@@ -1,5 +1,7 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
+import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.options.repository.OptionsRepository;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
@@ -36,6 +38,7 @@ public class PostServiceImpl implements PostService{
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
+    private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
 
     /* 등록 */
@@ -79,6 +82,12 @@ public class PostServiceImpl implements PostService{
 
         post.setOptionsList(optionsList);
         postRepository.save(post);
+
+        Notifications notifications = Notifications.builder()
+                .member(member)
+                .post(post)
+                .build();
+        notificationsRepository.save(notifications);
 
         return true;
     }
