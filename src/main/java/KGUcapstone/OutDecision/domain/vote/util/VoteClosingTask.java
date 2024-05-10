@@ -30,7 +30,7 @@
             this.mailService = mailService;
         }
 
-//        @Scheduled(cron = "0 4 15 ? * Fri") // 테스트용 매주 금요일 15:04분에 실행
+//        @Scheduled(cron = "0 0 3 ? * SAT") // 테스트용 매주 토요일 2:54분에 실행
         // 매 시간의 00분, 10분, 20분, 30분, 40분, 50분에 실행되도록 스케줄링
         @Scheduled(cron = "0 0/10 * * * *")
         @Transactional
@@ -49,13 +49,15 @@
                 post.setStatus(Status.CLOSING);
                 // 변경된 상태를 데이터베이스에 저장합니다.
                 postRepository.save(post);
-                Long postId = post.getId();
+//                Long postId = post.getId();
                 String title = post.getTitle();
-                List<Long> votedMemberIds = voteRepository.findMemberIdsByPostId(postId);
-                for (Long memberId:votedMemberIds) {
-                    String email = memberRepository.findById(memberId).get().getEmail();
-                    mailService.sendNotification(email, title);
-                }
+                String email = post.getMember().getEmail();
+                mailService.sendNotification(email, title);
+//                List<Long> votedMemberIds = voteRepository.findMemberIdsByPostId(postId);
+//                for (Long memberId:votedMemberIds) {
+//                    String email = memberRepository.findById(memberId).get().getEmail();
+//                    mailService.sendNotification(email, title);
+//                }
             }
         }
     }
