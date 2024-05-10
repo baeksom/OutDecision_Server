@@ -2,6 +2,7 @@ package KGUcapstone.OutDecision.domain.user.domain;
 
 import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.likes.domain.Likes;
+import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.title.domain.Missions;
 import KGUcapstone.OutDecision.domain.title.domain.Title;
@@ -89,6 +90,9 @@ public class Member extends BaseEntity {
 
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
     private Title title;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<Notifications> notificationsList = new ArrayList<>();
 
     public void updateUserTitle(String userTitle) {
         this.userTitle = userTitle;

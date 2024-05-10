@@ -2,6 +2,7 @@ package KGUcapstone.OutDecision.domain.post.domain;
 
 import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.likes.domain.Likes;
+import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
@@ -76,6 +77,9 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Options> optionsList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Notifications> notificationsList = new ArrayList<>();
 
     /* 게시글 수정 */
     public void update(String title, String content) {
