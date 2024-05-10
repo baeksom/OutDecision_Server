@@ -9,11 +9,13 @@ import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -21,41 +23,33 @@ import java.util.stream.Collectors;
 public class CommentsService {
 
     private final CommentsRepository commentsRepository;
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final FindMemberService findMemberService;
 
 
     @Transactional
-    public Long save(String nickname, Long id, CommentsRequestDto dto) {
+    public Comments save(Long id, CommentsRequestDto dto) {
 
-        Member member = memberRepository.findByNickname(nickname);
-        Post post = postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("댓글 쓰기 실패: 해당 게시글이 존재하지 않습니다. " + id));
+        Optional<Member> member = findMemberService.findLoginMember();
 
-        dto.setMember(member);
-        dto.setPost(post);
+        if (member.isPresent()) {
+            Post post = postRepository.findById(id).orElseThrow(() ->
+                    new IllegalArgumentException("댓글 쓰기 실패: 해당 게시글이 존재하지 않습니다. " + id));
 
-        Comments comment = dto.toEntity();
-        commentsRepository.save(comment);
+            Comments comment = dto.toEntity(member.get(), post);
+            commentsRepository.save(comment);
 
-        return comment.getId();
-
+            return comment;
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
-
-    @Transactional(readOnly = true)
-    public List<CommentsResponseDto> findAll(Long id) {
-        Post post = postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("해당게시글이 존재하지 않습니다." + id));
-        List<Comments> comments = post.getCommentsList();
-        return comments.stream().map(CommentsResponseDto::new).collect(Collectors.toList());
-
-    }
 
     @Transactional
-    public void delete(Long postsId, Long id) {
-        Comments comments = commentsRepository.findByPostIdAndId(postsId, id).orElseThrow(() ->
-                new IllegalArgumentException("해당 댓글이 존재하지 않습니다. id=" + id));
+    public void delete(Long postsId, Long commentsId) {
+        Comments comments = commentsRepository.findByPostIdAndId(postsId, commentsId).orElseThrow(() ->
+                new IllegalArgumentException("해당 댓글이 존재하지 않습니다. commentsId=" + commentsId));
 
         commentsRepository.delete(comments);
     }

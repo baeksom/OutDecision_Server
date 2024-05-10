@@ -12,15 +12,12 @@ public class CommentsResponseDto {
     private Long id;
     private String body;
     private String nickname;
-    private Long memberId;
     private Long postId;
 
     public CommentsResponseDto(Comments comments){
         this.id = comments.getId();
         this.body = comments.getBody();
         this.nickname = comments.getMember().getNickname();
-        this.memberId = comments.getMember().getId();
         this.postId = comments.getPost().getId();
-
     }
 }
