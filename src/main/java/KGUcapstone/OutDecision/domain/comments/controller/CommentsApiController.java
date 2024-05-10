@@ -5,6 +5,7 @@ import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.comments.dto.CommentsRequestDto;
 import KGUcapstone.OutDecision.domain.comments.dto.CommentsResponseDto;
 import KGUcapstone.OutDecision.domain.comments.service.CommentsService;
+import KGUcapstone.OutDecision.domain.user.service.mypage.MemberService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,11 @@ public class CommentsApiController {
     @Autowired
     private final CommentsService commentsService;
 
+
     @PostMapping("/{postId}/comments")
     @Operation(summary = "댓글 작성", description = "댓글을 작성하여 등록합니다.")
     public ResponseEntity<ApiResponse<Comments>> createComment(@PathVariable Long postId, @RequestBody CommentsRequestDto dto){
-        commentsService.save(dto.getNickname(), postId, dto);
+        commentsService.save(dto.getMember().getNickname(), postId, dto);
         return ResponseEntity.ok(ApiResponse.onSuccess((Comments) commentsService.findAll(postId)));
     }
 
@@ -37,9 +39,9 @@ public class CommentsApiController {
 
     @DeleteMapping("/{postId}/comments/{commentsId}")
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
-    public ResponseEntity<ApiResponse<Long>> deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
-        commentsService.delete(postId, commentId);
-        return ResponseEntity.ok(ApiResponse.onSuccess(commentId));
+    public ResponseEntity<ApiResponse<Long>> deleteComment(@PathVariable Long postId, @PathVariable Long commentsId) {
+        commentsService.delete(postId, commentsId);
+        return ResponseEntity.ok(ApiResponse.onSuccess(commentsId));
     }
 
 }

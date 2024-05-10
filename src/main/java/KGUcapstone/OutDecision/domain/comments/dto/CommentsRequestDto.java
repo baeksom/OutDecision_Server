@@ -18,18 +18,16 @@ public class CommentsRequestDto {
 
     private Long id;
     private String body;
-    private String nickname;
     private Member member;
     private Post post;
 
     public Comments toEntity(){
-        Comments comments = Comments.builder()
+
+        return Comments.builder()
                 .id(id)
                 .body(body)
                 .member(member)
                 .post(post)
                 .build();
-
-        return comments;
     }
 }
