@@ -1,6 +1,8 @@
 package KGUcapstone.OutDecision.domain.user.service.auth;
 
+import KGUcapstone.OutDecision.domain.title.domain.Missions;
 import KGUcapstone.OutDecision.domain.title.domain.Title;
+import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
 import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.CustomUserDetails;
@@ -28,6 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
+    private final MissionsRepository missionsRepository;
     private final S3Service s3Service;
 
     @Value("${DEFAULT_PROFILE_IMG}")
@@ -47,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public void saveMember(RegisterRequestDto request, MultipartFile userImg){
         String profileImage = "";
-        if (userImg == null) profileImage = defaultImg;
+        if (userImg.isEmpty()) profileImage = defaultImg;
         else profileImage = s3Service.uploadFile(userImg, "profile");
 
         Member member = Member.builder()
@@ -77,6 +80,18 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .third(false)
                 .build();
         titleRepository.save(title);
+
+        Missions missions = Missions.builder()
+                .member(member)
+                .ceo_cnt(0)
+                .fashionista_cnt(0)
+                .foodie_cnt(0)
+                .hobbyist_cnt(0)
+                .romantist_cnt(0)
+                .traveler_cnt(0)
+                .greedy_cnt(0)
+                .build();
+        missionsRepository.save(missions);
 
     }
 

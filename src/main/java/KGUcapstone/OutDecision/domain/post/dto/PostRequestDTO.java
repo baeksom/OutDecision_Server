@@ -10,7 +10,7 @@ public class PostRequestDTO {
     public static class UploadPostDTO{
         String title;
         String content;
-        Category category;
+        String category;
         Gender gender;
         boolean pluralVoting;
         String deadline;
