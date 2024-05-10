@@ -31,7 +31,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .httpBasic().disable() // HTTP 기본 인증을 비활성화
-//                .cors().and() // CORS 활성화
+                .cors().and() // CORS 활성화
                 .csrf().disable() // CSRF 보호 기능 비활성화
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션관리 정책을 STATELESS(세션이 있으면 쓰지도 않고, 없으면 만들지도 않는다)
@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .accessDeniedPage("/error");
 
         http
-            .oauth2Login() // OAuth2 로그인 설정시작
+                .oauth2Login() // OAuth2 로그인 설정시작
                 .loginPage("/login")
                 .userInfoEndpoint().userService(customOAuth2UserService) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
                 .and()

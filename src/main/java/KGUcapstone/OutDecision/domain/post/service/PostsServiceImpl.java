@@ -5,6 +5,8 @@ import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
+import KGUcapstone.OutDecision.domain.user.domain.MemberView;
+import KGUcapstone.OutDecision.domain.user.repository.MemberViewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,6 +24,7 @@ import java.util.function.Predicate;
 public class PostsServiceImpl implements PostsService{
 
     private final PostRepository postRepository;
+    private final MemberViewRepository memberViewRepository;
 
     @Override
     public Page<Post> getPosts(String sort,
@@ -104,8 +107,8 @@ public class PostsServiceImpl implements PostsService{
         }
 
         if (sort.equals("latest")) {
-            // 초기 default는 최신순(latest) 정렬
-            posts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+            // 초기 default는 최신순(끌어올리기 순) 정렬
+            posts.sort(Comparator.comparing(Post::getBumpsTime).reversed());
         }
         else if (sort.equals("views")) {
             // 조회수 내림차순 정렬
@@ -126,5 +129,50 @@ public class PostsServiceImpl implements PostsService{
             }
         }
         return filterPosts;
+    }
+    public List<Post> recommendPost(Long memberId) {
+
+        // 사용자의 조회 기록 가져오기
+        List<MemberView> viewList = memberViewRepository.findMemberViewsByMemberId(memberId);
+
+        // UserBasedCF를 사용하여 추천 시스템 실행
+        int topSimilarUsers = 5; // 상위 유사 사용자의 수
+        UserBasedCF userBasedCF = new UserBasedCF(viewList, topSimilarUsers);
+        Map<String, Double> recommendations = userBasedCF.predictRecommendations(memberId);
+
+        // 모든 게시글 가져오기
+        List<Post> allPosts = postRepository.findAll();
+        // 게시글을 추천 점수를 기준으로 내림차순으로 정렬하여 상위 10개 게시글 선택
+        allPosts.sort((post1, post2) -> {
+            double score1 = calculateScore(post1, recommendations);
+            double score2 = calculateScore(post2, recommendations);
+            return Double.compare(score2, score1); // 내림차순 정렬
+        });
+
+        // 상위 5개의 게시글 추천 리스트에 추가
+        List<Post> recommendPosts = new ArrayList<>();
+        int count = 0;
+        for (Post post : allPosts) {
+            double score = calculateScore(post, recommendations);
+            if (!Double.isNaN(score)) {
+                recommendPosts.add(post);
+                count++;
+                if (count >= 5) {
+                    break;
+                }
+            }
+        }
+        // 추천된 게시글 반환
+        return recommendPosts;
+    }
+
+    // 게시글의 총점을 계산하는 메소드
+    private double calculateScore(Post post, Map<String, Double> recommendations) {
+        // 각 카테고리별 추천 점수와 게시글의 정보를 이용하여 총점 계산
+        double categoryScore = recommendations.getOrDefault(post.getCategory().toString(), 0.0);
+        double likesScore = post.getLikes() * 5;
+        double totalViews = post.getViews();
+        // 총점 계산
+        return categoryScore + likesScore + totalViews;
     }
 }

@@ -25,6 +25,7 @@ public class PostsResponseDTO {
         String nickname;
         boolean pluralVoting;
         String createdAt;
+        String bumpsTime;
         String deadline;
         Integer participationCnt;
         Integer likesCnt;

@@ -13,6 +13,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class TokenService {
 
     private final TokenRepository tokenRepository;

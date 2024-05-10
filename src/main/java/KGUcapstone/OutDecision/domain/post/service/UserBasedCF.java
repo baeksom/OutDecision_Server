@@ -1,26 +1,41 @@
-package KGUcapstone.OutDecision.domain.post.domain;
+package KGUcapstone.OutDecision.domain.post.service;
+
+import KGUcapstone.OutDecision.domain.user.domain.MemberView;
 
 import java.util.*;
 
 public class UserBasedCF {
-    private final Map<Long, Map<String, Integer>> memberData;  // 사용자 데이터 저장
+    private final List<MemberView> memberData;  // 사용자 데이터 저장
     private final int topSimilarMembers;        // 상위 유사 사용자의 수
+    private final Map<Long, Map<String, Integer>> memberDataMap;  // 사용자 데이터를 맵으로 변환하여 저장
     private final Map<Long, Map<Long, Double>> similarityMatrix;  // 유사도 행렬 저장
 
-    public UserBasedCF(Map<Long, Map<String, Integer>> memberData, int topSimilarMembers){
+    public UserBasedCF(List<MemberView> memberData, int topSimilarMembers) {
         this.memberData = memberData;
         this.topSimilarMembers = topSimilarMembers;
+        this.memberDataMap = convertMemberDataToMap(memberData);
         this.similarityMatrix = computeSimilarityMatrix();    //유사도 행렬 계산
     }
 
-    private Map<Long, Map<Long, Double>> computeSimilarityMatrix(){
+    private Map<Long, Map<String, Integer>> convertMemberDataToMap(List<MemberView> memberData) {
+        Map<Long, Map<String, Integer>> memberDataMap = new HashMap<>();
+        for (MemberView memberView : memberData) {
+            long memberId = memberView.getMember().getId();
+            String category = memberView.getCategory().toString();
+            int views = memberView.getViews();
+            memberDataMap.computeIfAbsent(memberId, k -> new HashMap<>()).put(category, views);
+        }
+        return memberDataMap;
+    }
+
+    private Map<Long, Map<Long, Double>> computeSimilarityMatrix() {
         Map<Long, Map<Long, Double>> similarityMatrix = new HashMap<>();
 
-        for(Long member : memberData.keySet()) {
+        for (Long member : memberDataMap.keySet()) {
             Map<Long, Double> memberSimilarity = new HashMap<>();
-            for(Long otherMember : memberData.keySet()) {
+            for (Long otherMember : memberDataMap.keySet()) {
                 if (!member.equals(otherMember)) {
-                    double similarity = computeSimilarity(memberData.get(member), memberData.get(otherMember));
+                    double similarity = computeSimilarity(memberDataMap.get(member), memberDataMap.get(otherMember));
                     memberSimilarity.put(otherMember, similarity);
                 }
             }
@@ -32,7 +47,7 @@ public class UserBasedCF {
     }
 
     // 두 사용자 간의 유사도 계산 메서드
-    private double computeSimilarity(Map<String, Integer> member1Actions, Map<String, Integer> member2Actions){
+    private double computeSimilarity(Map<String, Integer> member1Actions, Map<String, Integer> member2Actions) {
         // 유사도 계산에 사용될 변수 초기화
         int member1SquaredSum = 0, member2SquaredSum = 0, dotProduct = 0;
 
@@ -60,16 +75,16 @@ public class UserBasedCF {
         Map<Long, Double> topNSimilarMembers = new HashMap<>();
         memberSimilarity.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))  // 유사도가 높은 순서대로 정렬
-                .limit(topN)  // 상위 topN개의 유사 사용자만 선택함
+                .limit(topN)  // 상위 topN개의 유사 사용자만 선택
                 .forEach(entry -> topNSimilarMembers.put(entry.getKey(), entry.getValue()));
         return topNSimilarMembers;
     }
 
     // 추천 게시글 예측 메서드
-    public Map<String, Double> predictRecommendations(long member) {
+    public Map<String, Double> predictRecommendations(long memberId) {
         Map<String, Double> weightedSum = new HashMap<>();
         Map<String, Double> similaritySum = new HashMap<>();
-        Map<Long, Double> postSimilarity = similarityMatrix.get(member);
+        Map<Long, Double> postSimilarity = similarityMatrix.get(memberId);
 
         // 상위 유사 사용자들의 가중치 합과 유사도 합 계산
         for (Map.Entry<Long, Double> entry : postSimilarity.entrySet()) {
@@ -77,15 +92,19 @@ public class UserBasedCF {
             double similarity = entry.getValue();
 
             // 해당 사용자의 평점 정보 가져오기
-            Map<String, Integer> otherMemberActions = memberData.get(otherMemberId);
+            Map<String, Integer> otherMemberActions = memberDataMap.get(otherMemberId);
             for (Map.Entry<String, Integer> action : otherMemberActions.entrySet()) {
                 String category = action.getKey();
                 int value = action.getValue();
-                if (!memberData.get(member).containsKey(category) || memberData.get(member).get(category) == 0) {
+                if (!memberDataMap.get(memberId).containsKey(category) || memberDataMap.get(memberId).get(category) == 0) {
                     weightedSum.putIfAbsent(category, 0.0);
                     similaritySum.putIfAbsent(category, 0.0);
                     weightedSum.put(category, weightedSum.get(category) + similarity * value);
                     similaritySum.put(category, similaritySum.get(category) + similarity);
+                } else {
+                    // 사용자가 조회한 카테고리의 추천 점수를 10으로 고정
+                    weightedSum.put(category, 10.0);
+                    similaritySum.put(category, 1.0); // 유사도는 1로 설정하여 가중치 합을 그대로 사용
                 }
             }
         }
@@ -93,7 +112,7 @@ public class UserBasedCF {
         // 추천 점수 계산
         Map<String, Double> recommendations = new HashMap<>();
         for (Map.Entry<String, Double> entry : weightedSum.entrySet()) {
-            String category= entry.getKey();
+            String category = entry.getKey();
             double weightedSumValue = entry.getValue();
             recommendations.put(category, weightedSumValue / similaritySum.get(category));
         }

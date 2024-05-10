@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,19 +22,20 @@ public class RegisterController {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomUserDetailsService customUserDetailsService;
 
-    @PostMapping("/register/v1")
+    @PostMapping(value = "/register/v1", consumes = "multipart/form-data")
     public ApiResponse<Object> registerSocialUser(@CookieValue(name = "email", required = false) String email,
-                                    @CookieValue(name = "provider", required = false) String provider,
-                                    @RequestParam("nickname") String nickname,
-                                    @RequestParam("userImg") String userImg
-                               ) {
+                                                  @CookieValue(name = "provider", required = false) String provider,
+                                                  @RequestParam("nickname") String nickname,
+                                                  @RequestPart(value = "userImg", required = false) MultipartFile userImg
+    ) {
         customOAuth2UserService.registerSocialMember(email, provider, nickname, userImg);
         return ApiResponse.onSuccess(null);
     }
 
-    @PostMapping("/register/v2")
-    public ApiResponse<Object> registerNormalUser(@RequestBody @Valid RegisterRequestDto request) {
-        customUserDetailsService.saveMember(request);
+    @PostMapping(value = "/register/v2", consumes = "multipart/form-data")
+    public ApiResponse<Object> registerNormalUser(@Valid @RequestPart RegisterRequestDto request,
+                                                  @RequestPart(value = "userImg", required = false) MultipartFile userImg) {
+        customUserDetailsService.saveMember(request, userImg);
         return ApiResponse.onSuccess(null);
     }
 
@@ -52,4 +54,3 @@ public class RegisterController {
         return ApiResponse.onSuccess(join_token);
     }
 }
-
