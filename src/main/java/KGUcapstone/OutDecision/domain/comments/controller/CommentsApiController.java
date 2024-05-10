@@ -5,7 +5,6 @@ import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.comments.dto.CommentsRequestDto;
 import KGUcapstone.OutDecision.domain.comments.dto.CommentsResponseDto;
 import KGUcapstone.OutDecision.domain.comments.service.CommentsService;
-import KGUcapstone.OutDecision.domain.user.service.mypage.MemberService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
