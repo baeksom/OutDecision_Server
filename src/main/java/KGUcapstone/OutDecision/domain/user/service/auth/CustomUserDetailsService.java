@@ -83,16 +83,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         Missions missions = Missions.builder()
                 .member(member)
-                .ceo_cnt(0)
                 .fashionista_cnt(0)
                 .foodie_cnt(0)
-                .hobbyist_cnt(0)
-                .romantist_cnt(0)
                 .traveler_cnt(0)
+                .ceo_cnt(0)
+                .romantist_cnt(0)
+                .hobbyist_cnt(0)
                 .greedy_cnt(0)
                 .build();
         missionsRepository.save(missions);
-
     }
 
 

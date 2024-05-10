@@ -97,4 +97,6 @@ public class Member extends BaseEntity {
     public void updateBumps(int bumps) {
         this.bumps = bumps;
     }
+
+    public void updatePoint(int point) { this.point = point; }
 }
