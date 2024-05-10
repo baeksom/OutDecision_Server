@@ -14,10 +14,10 @@ public class VoteController {
 
     private final VoteService voteService;
 
-    @PostMapping("/vote/{optionsId}")
+    @PostMapping("/vote/{optionId}")
     @Operation(summary = "투표 API", description = "특정 옵션을 투표합니다.")
-    public ApiResponse<?> vote(@PathVariable Long optionsId) {
-        if (voteService.addVote(optionsId)) {
+    public ApiResponse<?> vote(@PathVariable Long optionId) {
+        if (voteService.addVote(optionId)) {
             return ApiResponse.onSuccess(null);
         }
         return ApiResponse.onFailure("400", "투표 실패하였습니다.", null);

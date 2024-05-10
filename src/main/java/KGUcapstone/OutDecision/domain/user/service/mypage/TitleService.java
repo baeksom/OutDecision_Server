@@ -1,5 +1,7 @@
 package KGUcapstone.OutDecision.domain.user.service.mypage;
 
+import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO;
 
 import java.util.List;
@@ -9,4 +11,6 @@ public interface TitleService {
     boolean updateUserTitle(Long memberId, UpdateRequestDTO.UpdateTitleDTO request);
 
     List<String> myTitlesDTO(Long memberId);
+
+    void memberGetTitle(Post post, Member member);
 }

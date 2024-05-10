@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MissionsRepository extends JpaRepository<Missions, Long> {
     Missions findAllByMemberId(Long memberId);
+
+    Missions findByMemberId(Long id);
 }
