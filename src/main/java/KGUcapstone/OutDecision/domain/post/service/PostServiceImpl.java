@@ -15,6 +15,7 @@ import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
+import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
 import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class PostServiceImpl implements PostService{
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
+    private final VoteRepository voteRepository;
     private final S3Service s3Service;
 
     /* 등록 */
@@ -230,4 +232,13 @@ public class PostServiceImpl implements PostService{
         return optionsDtoList;
     }
 
+    @Override
+    // 핫 게시글 변경
+    public void turnsHot (Post post) {
+        List<Long> votes = voteRepository.findMemberIdsByPostId(post.getId());
+        if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 2) {
+            // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
+            post.updateHot(true);
+        }
+    }
 }

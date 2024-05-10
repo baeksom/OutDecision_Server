@@ -44,6 +44,7 @@ public class TitleServiceImpl implements TitleService{
         return Arrays.asList(titleStr.split(","));
     }
 
+    // 칭호 획득 가능 여부 확인
     @Override
     public void memberGetTitle(Post post, Member member) {
         Category category = post.getCategory();
