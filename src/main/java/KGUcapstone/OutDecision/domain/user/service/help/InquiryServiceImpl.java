@@ -6,9 +6,11 @@ import KGUcapstone.OutDecision.domain.user.dto.InquiryResponseDto;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class InquiryServiceImpl implements InquiryService{
 
     private final MemberRepository memberRepository;
