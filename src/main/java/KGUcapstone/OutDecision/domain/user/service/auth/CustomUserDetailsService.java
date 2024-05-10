@@ -9,6 +9,7 @@ import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +26,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final TitleRepository titleRepository;
     private final S3Service s3Service;
 
+    @Value("${DEFAULT_PROFILE_IMG}")
+    private String defaultImg;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 사용자를 데이터베이스 등에서 찾는 코드
@@ -39,7 +43,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public void saveMember(RegisterRequestDto request, MultipartFile userImg){
         String profileImage = "";
-        if (userImg == null) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
+        if (userImg == null) profileImage = defaultImg;
         else profileImage = s3Service.uploadFile(userImg, "profile");
 
         Member member = Member.builder()

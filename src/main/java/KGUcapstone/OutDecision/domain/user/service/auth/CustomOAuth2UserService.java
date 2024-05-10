@@ -8,6 +8,7 @@ import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -33,6 +34,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
     private final S3Service s3Service;
+
+    @Value("${DEFAULT_PROFILE_IMG}")
+    private String defaultImg;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -85,7 +89,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     public void registerSocialMember(String email, String provider, String nickname, MultipartFile userImg) {
         String profileImage = "";
-        if (userImg == null) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
+        if (userImg == null) profileImage = defaultImg;
         else profileImage = s3Service.uploadFile(userImg, "profile");
 
         // 사용자 정보를 이용하여 User 객체 생성
