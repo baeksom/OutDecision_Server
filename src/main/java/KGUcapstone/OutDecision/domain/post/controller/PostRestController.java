@@ -55,7 +55,7 @@ public class PostRestController {
     }
 
     // 게시글 이메일 알림 on
-    @GetMapping("/{postId}/notification")
+    @PostMapping("/{postId}/notification")
     @Operation(summary = "게시글 알림 on", description = "사용자가 게시글 알림을 설정하여 투표 마감 시, 이메일 알림을 받을 수 있습니다.")
     public ApiResponse<Object> onNotification(@PathVariable Long postId) {
         return ApiResponse.onSuccess(notificationService.addNotifications(postId));
