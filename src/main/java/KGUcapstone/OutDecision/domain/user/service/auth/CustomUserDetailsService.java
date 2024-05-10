@@ -11,15 +11,20 @@ import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomUserDetailsService implements UserDetailsService {
     private final FindMemberService findMemberService;
     private final PasswordEncoder passwordEncoder;
@@ -27,6 +32,9 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final TitleRepository titleRepository;
     private final MissionsRepository missionsRepository;
     private final S3Service s3Service;
+
+    @Value("${DEFAULT_PROFILE_IMG}")
+    private String defaultImg;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -42,7 +50,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public void saveMember(RegisterRequestDto request, MultipartFile userImg){
         String profileImage = "";
-        if (userImg == null) profileImage = "https://kr.object.ncloudstorage.com/outdecisionbucket/profile/3b0ae8ae-78b6-4a05-86fc-070900b8b763.png";
+        if (userImg.isEmpty()) profileImage = defaultImg;
         else profileImage = s3Service.uploadFile(userImg, "profile");
 
         Member member = Member.builder()

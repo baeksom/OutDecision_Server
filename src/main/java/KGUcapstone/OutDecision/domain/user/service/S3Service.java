@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class S3Service {
 
     private final AmazonS3Client amazonS3Client;
@@ -62,6 +64,41 @@ public class S3Service {
         s3file = uploadFileUrl;
         return s3file;
     }
+
+//    // 이미지 파일 여러 개 받기
+//    public List<String> uploadFiles(List<MultipartFile> multipartFiles, String filePath) {
+//        List<String > s3files = new ArrayList<>();
+//
+//        for (MultipartFile multipartFile : multipartFiles) {
+//
+//            String originalFileName = multipartFile.getOriginalFilename();
+//            String uploadFileName = getUuidFileName(originalFileName);
+//            String uploadFileUrl = "";
+//
+//            ObjectMetadata objectMetadata = new ObjectMetadata();
+//            objectMetadata.setContentLength(multipartFile.getSize());
+//            objectMetadata.setContentType(multipartFile.getContentType());
+//
+//            try (InputStream inputStream = multipartFile.getInputStream()) {
+//
+//                String keyName = filePath + "/" + uploadFileName;
+//
+//                // S3에 폴더 및 파일 업로드
+//                amazonS3Client.putObject(
+//                        new PutObjectRequest(bucket, keyName, inputStream, objectMetadata)
+//                                .withCannedAcl(CannedAccessControlList.PublicRead));
+//
+//                // S3에 업로드한 폴더 및 파일 URL
+//                uploadFileUrl = "https://kr.object.ncloudstorage.com/"+ bucket + "/" + keyName;
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            s3files.add(uploadFileUrl);
+//        }
+//        return s3files;
+//    }
 
     // 이미지 수정으로 인해 기존 이미지 삭제 메소드
     public void deleteImage(String ImgUrl) {

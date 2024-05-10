@@ -12,12 +12,14 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RedisRankingServiceImpl implements RankingService {
 
     private static final String RANKING_KEY = "ranking";
