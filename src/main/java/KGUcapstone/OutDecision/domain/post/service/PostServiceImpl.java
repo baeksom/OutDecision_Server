@@ -238,6 +238,7 @@ public class PostServiceImpl implements PostService{
         List<Long> votes = voteRepository.findMemberIdsByPostId(post.getId());
         if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 2) {
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
+            System.out.println("votes = " + votes);
             post.updateHot(true);
         }
     }
