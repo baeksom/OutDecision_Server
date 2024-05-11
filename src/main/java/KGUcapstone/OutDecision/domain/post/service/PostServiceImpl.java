@@ -245,6 +245,7 @@ public class PostServiceImpl implements PostService{
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
             System.out.println("if문 안 votes = " + votes+ " likes = "+post.getLikes() + " post.getHot()=" + post.getHot());
             post.updateHot(true);
+            System.out.println("if문 안 업뎃 후 post.getHot() = " + post.getHot());
         }
     }
 }
