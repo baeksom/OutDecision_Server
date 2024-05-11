@@ -16,10 +16,10 @@ public class LikesController {
 
     private final LikesService likesService;
 
-    @PostMapping("/{arg0}/like")
+    @PostMapping("/{postId}/like")
     @Operation(summary = "좋아요 API", description = "게시글에 좋아요를 누릅니다.")
-    public ApiResponse<?> addLike(@PathVariable Long arg0) {
-        Long likesId = likesService.addLikes(arg0);
+    public ApiResponse<?> addLike(@PathVariable Long postId) {
+        Long likesId = likesService.addLikes(postId);
         return ApiResponse.onSuccess(likesId);
     }
 }
