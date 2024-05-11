@@ -2,6 +2,7 @@ package KGUcapstone.OutDecision.domain.vote.service;
 
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.options.repository.OptionsRepository;
+import KGUcapstone.OutDecision.domain.post.service.PostService;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.mypage.TitleService;
@@ -22,6 +23,7 @@ public class VoteServiceImpl implements VoteService{
     private final FindMemberService findMemberService;
     private final OptionsRepository optionsRepository;
     private final TitleService titleService;
+    private final PostService postService;
 
     @Override
     public boolean addVote(Long optionsId) {
@@ -39,6 +41,9 @@ public class VoteServiceImpl implements VoteService{
                     .options(options.get())
                     .build();
             voteRepository.save(vote);
+
+            // 핫 게시글 가능 여부 확인
+            postService.turnsHot(options.get().getPost());
 
             // 칭호 획득 가능 여부 확인
             titleService.memberGetTitle(options.get().getPost(), member.get());

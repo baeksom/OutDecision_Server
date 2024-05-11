@@ -104,4 +104,11 @@ public class Post extends BaseEntity {
         this.gender = gender;
     }
 
+    public void updateLikes(Integer likes) {
+        this.likes = likes;
+    }
+
+    public void updateHot(boolean hot) {
+        this.hot = hot;
+    }
 }
