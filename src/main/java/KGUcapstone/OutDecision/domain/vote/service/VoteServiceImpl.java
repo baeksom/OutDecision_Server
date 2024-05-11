@@ -43,6 +43,7 @@ public class VoteServiceImpl implements VoteService{
             voteRepository.save(vote);
 
             // 핫 게시글 가능 여부 확인
+            System.out.println("VoteServiceImpl.addVote 핫 게시글 가능 여부 확인");
             postService.turnsHot(options.get().getPost());
 
             // 칭호 획득 가능 여부 확인
