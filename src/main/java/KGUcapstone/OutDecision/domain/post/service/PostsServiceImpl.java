@@ -135,6 +135,12 @@ public class PostsServiceImpl implements PostsService{
         // 사용자의 조회 기록 가져오기
         List<MemberView> viewList = memberViewRepository.findMemberViewsByMemberId(memberId);
 
+        if (viewList == null || viewList.isEmpty()) {
+            // 사용자의 조회 기록이 없는 경우, 모든 게시글을 반환
+            Pageable pageable = PageRequest.of(0, 5); // 페이지와 사이즈 조정
+            return postRepository.findAll(pageable).getContent();
+        }
+
         // UserBasedCF를 사용하여 추천 시스템 실행
         int topSimilarUsers = 5; // 상위 유사 사용자의 수
         UserBasedCF userBasedCF = new UserBasedCF(viewList, topSimilarUsers);
@@ -165,6 +171,7 @@ public class PostsServiceImpl implements PostsService{
         // 추천된 게시글 반환
         return recommendPosts;
     }
+
 
     // 게시글의 총점을 계산하는 메소드
     private double calculateScore(Post post, Map<String, Double> recommendations) {
