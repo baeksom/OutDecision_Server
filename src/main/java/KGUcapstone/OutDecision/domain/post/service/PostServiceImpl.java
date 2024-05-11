@@ -238,6 +238,9 @@ public class PostServiceImpl implements PostService{
         System.out.println("PostServiceImpl.turnsHot");
         List<Long> votes = voteRepository.findMemberIdsByPostId(post.getId());
         System.out.println("votes = " + votes);
+        System.out.println("post.getHot() = " + post.getHot());
+        System.out.println("post.getLikes() = " + post.getLikes());
+        System.out.println("votes.size() = " + votes.size());
         if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 2) {
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
             System.out.println("if문 안 votes = " + votes+ " likes = "+post.getLikes() + " post.getHot()=" + post.getHot());
