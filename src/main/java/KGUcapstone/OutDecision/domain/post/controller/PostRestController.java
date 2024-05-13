@@ -52,4 +52,10 @@ public class PostRestController {
         return ApiResponse.onSuccess(postServiceImpl.deletePost(postId));
     }
 
+    /* 끌어올리기 */
+    @PatchMapping("/{postId}/bumps")
+    public ApiResponse<Object> upPost(@PathVariable Long postId) {
+        return ApiResponse.onSuccess(postServiceImpl.topPost(postId));
+
+    }
 }

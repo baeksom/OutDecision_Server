@@ -13,6 +13,7 @@ import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.*;
 
@@ -38,6 +40,7 @@ public class PostServiceImpl implements PostService{
     private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
     private final VoteRepository voteRepository;
+    private final FindMemberService findMemberService;
     private final S3Service s3Service;
 
     /* 등록 */
@@ -248,5 +251,24 @@ public class PostServiceImpl implements PostService{
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
             post.updateHot(true);
         }
+    }
+
+    // 게시글 끌어올리기
+    public boolean topPost(Long postId) {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            Post post = postRepository.findById(postId).orElseThrow(() ->
+                    new IllegalArgumentException("게시물이 존재하지 않습니다."));
+            // member의 bumps 갯수 줄이기
+
+            if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
+
+            post.upPost();
+            postRepository.save(post);
+            return true;
+        }
+        return false;
     }
 }
