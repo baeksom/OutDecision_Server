@@ -130,6 +130,16 @@ public class PostsServiceImpl implements PostsService{
         }
         return filterPosts;
     }
+
+    public Page<Post> getRecommendPost(Long memberId, Integer page, Integer size) {
+        List<Post> recommend=recommendPost(memberId);
+        // 페이징 적용
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), recommend.size());
+        return new PageImpl<>(recommend.subList(start, end), pageable, recommend.size());
+    }
+
     public List<Post> recommendPost(Long memberId) {
 
         // 사용자의 조회 기록 가져오기
@@ -171,7 +181,6 @@ public class PostsServiceImpl implements PostsService{
         // 추천된 게시글 반환
         return recommendPosts;
     }
-
 
     // 게시글의 총점을 계산하는 메소드
     private double calculateScore(Post post, Map<String, Double> recommendations) {
