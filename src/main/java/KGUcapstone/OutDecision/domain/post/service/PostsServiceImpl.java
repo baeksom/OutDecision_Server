@@ -97,7 +97,7 @@ public class PostsServiceImpl implements PostsService{
                 } else if (filterType.equals("gender")) {
                     // 성별 필터 - female, male
                     // Gender Enum 과 매핑해주어야함
-                    posts = findByFilter(posts, post -> post.getGender().equals(filterValue.equals("female")? Gender.FEMALE : Gender.MALE));
+                    posts = findByFilter(posts, post -> post.getGender().equals(filterValue.equals("female")? Gender.female : Gender.male));
                 } else if (filterType.equals("vote")) {
                     // 투표 상태 - progress, end
                     // Status Enum 과 매핑해주어야함
