@@ -49,6 +49,7 @@ public class PostConverter {
                 .content(post.getContent())
                 .category(post.getCategory())
                 .status(post.getStatus())
+                .gender(post.getGender())
                 .userId(post.getMember().getId())
                 .nickname(post.getMember().getNickname())
                 .pluralVoting(post.getPluralVoting())

@@ -1,6 +1,7 @@
 package KGUcapstone.OutDecision.domain.post.dto;
 
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
+import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,7 @@ public class PostsResponseDTO {
         String content;
         Category category;
         Status status;
+        Gender gender;
         Long userId;
         String nickname;
         boolean pluralVoting;
