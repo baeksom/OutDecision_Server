@@ -101,7 +101,7 @@ public class PostsServiceImpl implements PostsService{
                 } else if (filterType.equals("vote")) {
                     // 투표 상태 - progress, end
                     // Status Enum 과 매핑해주어야함
-                    posts = findByFilter(posts, post -> post.getStatus().equals(filterValue.equals("progress")? Status.VOTING : Status.CLOSING));
+                    posts = findByFilter(posts, post -> post.getStatus().equals(filterValue.equals("progress")? Status.progress : Status.end));
                 }
             }
         }
