@@ -130,10 +130,26 @@ public class PostsServiceImpl implements PostsService{
         }
         return filterPosts;
     }
+
+    public Page<Post> getRecommendPost(Long memberId, Integer page, Integer size) {
+        List<Post> recommend=recommendPost(memberId);
+        // 페이징 적용
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), recommend.size());
+        return new PageImpl<>(recommend.subList(start, end), pageable, recommend.size());
+    }
+
     public List<Post> recommendPost(Long memberId) {
 
         // 사용자의 조회 기록 가져오기
         List<MemberView> viewList = memberViewRepository.findMemberViewsByMemberId(memberId);
+
+        if (viewList == null || viewList.isEmpty()) {
+            // 사용자의 조회 기록이 없는 경우, 모든 게시글을 반환
+            Pageable pageable = PageRequest.of(0, 5); // 페이지와 사이즈 조정
+            return postRepository.findAll(pageable).getContent();
+        }
 
         // UserBasedCF를 사용하여 추천 시스템 실행
         int topSimilarUsers = 5; // 상위 유사 사용자의 수
