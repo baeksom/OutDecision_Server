@@ -51,7 +51,7 @@ public class MainServiceImpl implements MainService{
         // 최신 게시물 리스트
         List<PostDTO> latestPostDTOList = mapToDTO(postRepository.findAll(pageable).getContent());
         // 투표 마감 게시물 리스트
-        List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByCreatedAtDesc(Status.CLOSING, pageable));
+        List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByCreatedAtDesc(Status.end, pageable));
 
         RankingResponseDTO.RankingListDTO top10Rankings = rankingService.getTop10Rankings();
 
