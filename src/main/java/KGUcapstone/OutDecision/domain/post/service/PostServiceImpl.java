@@ -261,7 +261,11 @@ public class PostServiceImpl implements PostService{
             Member member = memberOptional.get();
             Post post = postRepository.findById(postId).orElseThrow(() ->
                     new IllegalArgumentException("게시물이 존재하지 않습니다."));
-            // member의 bumps 갯수 줄이기
+
+            if(member.getBumps() == 0) return false; // 끌어올리기 1개이상
+            int newbump = member.getBumps() - 1;
+            member.updateBumps(newbump);
+            memberRepository.save(member);
 
             if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
 
