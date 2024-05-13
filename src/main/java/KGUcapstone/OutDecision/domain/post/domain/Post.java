@@ -58,11 +58,11 @@ public class Post extends BaseEntity {
     private LocalDateTime bumpsTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(15) DEFAULT 'VOTING'")
+    @Column(columnDefinition = "ENUM('progress', 'other') DEFAULT 'progress'")
     private Status status;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(15) DEFAULT 'ALL'")
+    @Column(columnDefinition = "ENUM('female', 'male', 'all') DEFAULT 'all'")
     private Gender gender;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
@@ -101,4 +101,11 @@ public class Post extends BaseEntity {
         this.gender = gender;
     }
 
+    public void updateLikes(Integer likes) {
+        this.likes = likes;
+    }
+
+    public void updateHot(boolean hot) {
+        this.hot = hot;
+    }
 }

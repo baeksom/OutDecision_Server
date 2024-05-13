@@ -17,6 +17,7 @@ import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
+import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
 import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -39,13 +40,15 @@ public class PostServiceImpl implements PostService{
     private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
     private final NotificationsRepository notificationsRepository;
+    private final VoteRepository voteRepository;
     private final S3Service s3Service;
 
     /* 등록 */
     @Override
-    public boolean uploadPost(UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages){
+    public boolean uploadPost(UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages) {
         Long memberId = 2024L;
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("Member를 찾을 수 없습니다."));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member를 찾을 수 없습니다."));
 
         Post post = Post.builder()
                 .title(request.getTitle())
@@ -55,31 +58,37 @@ public class PostServiceImpl implements PostService{
                 .pluralVoting(request.isPluralVoting())
                 .gender(request.getGender())
                 .member(member)
-                .status(Status.VOTING)
+                .status(Status.progress)
                 .bumpsTime(LocalDateTime.now())
                 .likes(0)
                 .views(0)
                 .hot(false)
                 .build();
         postRepository.save(post);
-        List<String> optionImgsList = new ArrayList<>();
-        if (optionNames == null) return false;
-        for (MultipartFile multipartFile:optionImages) {
-            if (!multipartFile.isEmpty()) optionImgsList.add(s3Service.uploadFile(multipartFile, "options"));
-            else optionImgsList.add(null);
-        }
 
         List<Options> optionsList = new ArrayList<>();
-        for (int i = 0; i < optionNames.size(); i++) {
-            Options options = Options.builder()
-                    .body(optionNames.get(i))
-                    .photoUrl(optionImgsList.get(i))
-                    .post(post)
-                    .build();
-            optionsRepository.save(options);
-            optionsList.add(options);
+        if (optionNames != null && optionImages != null && optionNames.size() == optionImages.size()) {
+            for (int i = 0; i < optionNames.size(); i++) {
+                String optionName = optionNames.get(i);
+                MultipartFile imageFile = optionImages.get(i);
+                String photoUrl = "";
+                if (imageFile != null && !imageFile.isEmpty()) {
+                    // 이미지 파일 업로드 후 URL 획득
+                    photoUrl = s3Service.uploadFile(imageFile, "options");
+                }
+                // 옵션 엔터티 생성
+                Options newOption = Options.builder()
+                        .body(optionName)
+                        .photoUrl(photoUrl)
+                        .post(post)
+                        .build();
+//                // 옵션을 저장소에 저장
+                optionsRepository.save(newOption);
+                optionsList.add(newOption); // 옵션 리스트에 새로운 옵션 추가
+            }
         }
 
+        // 옵션 리스트를 포스트에 설정
         post.setOptionsList(optionsList);
         postRepository.save(post);
 
@@ -91,6 +100,7 @@ public class PostServiceImpl implements PostService{
 
         return true;
     }
+
 
 
 
@@ -161,7 +171,7 @@ public class PostServiceImpl implements PostService{
             for (int i = 0; i < optionNames.size(); i++) {
                 String optionName = optionNames.get(i);
                 MultipartFile imageFile = optionImages.get(i);
-                String photoUrl = null;
+                String photoUrl = "";
                 if (imageFile != null && !imageFile.isEmpty()) {
                     photoUrl = s3Service.uploadFile(imageFile, "options");
                 }
@@ -239,4 +249,13 @@ public class PostServiceImpl implements PostService{
         return optionsDtoList;
     }
 
+    // 핫 게시글 변경
+    @Override
+    public void turnsHot (Post post) {
+        List<Long> votes = voteRepository.findMemberIdsByPostId(post.getId());
+        if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 20) {
+            // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
+            post.updateHot(true);
+        }
+    }
 }

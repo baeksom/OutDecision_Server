@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,16 +37,21 @@ public class MainServiceImpl implements MainService{
         Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Long memberId = findMemberService.findLoginMemberId();
-        List<Post> recommendPosts = postsService.recommendPost(memberId);
-
         //추천 게시물 리스트
-        List<PostDTO> recommendPostDTOList = mapToDTO(recommendPosts);
+        List<PostDTO> recommendPostDTOList;
+        if(memberId==0) {
+            recommendPostDTOList=mapToDTO(postRepository.findAll(pageable).getContent());
+        }
+        else{
+            List<Post> recommendPosts = postsService.recommendPost(memberId);
+            recommendPostDTOList = mapToDTO(recommendPosts);
+        }
         // HOT 게시물 리스트
         List<PostDTO> hotPostDTOList = mapToDTO(postRepository.findByHotTrue(pageable));
         // 최신 게시물 리스트
         List<PostDTO> latestPostDTOList = mapToDTO(postRepository.findAll(pageable).getContent());
         // 투표 마감 게시물 리스트
-        List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByCreatedAtDesc(Status.CLOSING, pageable));
+        List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByCreatedAtDesc(Status.end, pageable));
 
         RankingResponseDTO.RankingListDTO top10Rankings = rankingService.getTop10Rankings();
 

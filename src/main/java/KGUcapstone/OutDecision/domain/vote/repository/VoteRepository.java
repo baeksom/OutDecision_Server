@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.vote.repository;
 
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

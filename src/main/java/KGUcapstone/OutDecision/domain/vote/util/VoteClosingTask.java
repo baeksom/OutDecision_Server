@@ -42,11 +42,11 @@
             Date currentDate = Date.from(now.atZone(ZoneId.systemDefault()).toInstant());
 
             // 현재 시간 이전에 마감시간이 지난 투표 게시물들을 가져옵니다.
-            List<Post> postsToClose = postRepository.findByStatusAndDeadlineBefore(Status.VOTING, currentDate);
+            List<Post> postsToClose = postRepository.findByStatusAndDeadlineBefore(Status.progress, currentDate);
 
             // 투표 상태를 CLOSING으로 변경합니다.
             for (Post post : postsToClose) {
-                post.setStatus(Status.CLOSING);
+                post.setStatus(Status.end);
                 // 변경된 상태를 데이터베이스에 저장합니다.
                 postRepository.save(post);
                 String title = post.getTitle();
