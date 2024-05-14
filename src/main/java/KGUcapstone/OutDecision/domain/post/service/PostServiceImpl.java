@@ -4,6 +4,7 @@ import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
 import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.options.repository.OptionsRepository;
+import KGUcapstone.OutDecision.domain.post.converter.PostConverter;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
@@ -45,6 +46,7 @@ public class PostServiceImpl implements PostService{
     private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
     private final FindMemberService findMemberService;
+    private final PostConverter postConverter;
 
     /* 등록 */
     @Override
@@ -121,13 +123,6 @@ public class PostServiceImpl implements PostService{
         post.incrementViews();
         postRepository.save(post);
 
-        String existNotifications;
-        if (memberId.equals(0L)) existNotifications = null;
-        else if (notificationsRepository.existsByMemberIdAndPostId(memberId, postId)) {
-            existNotifications = "ON";
-        } else {
-            existNotifications = "OFF";
-        }
 
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .map(comments -> {
@@ -155,7 +150,6 @@ public class PostServiceImpl implements PostService{
                 .profileUrl(post.getMember().getUserImg())
                 .bumps(memberId.equals(post.getMember().getId()) ? post.getMember().getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
-                .existNotifications(existNotifications)
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
                 .bumpsTime(formatCreatedAt(post.getBumpsTime()))
                 .deadline(formatDeadline(post.getDeadline()))
@@ -164,6 +158,7 @@ public class PostServiceImpl implements PostService{
                 .views(post.getViews())
                 .optionsList(optionList(post))
                 .commentsList(commentsListDTO)
+                .loginMemberPostInfoDTOList(postConverter.checkLoginPosts(post))
                 .build();
     }
 

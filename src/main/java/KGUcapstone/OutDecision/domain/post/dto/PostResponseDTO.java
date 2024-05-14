@@ -3,6 +3,7 @@ package KGUcapstone.OutDecision.domain.post.dto;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
+import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.LoginMemberPostInfoDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +30,6 @@ public class PostResponseDTO {
         String profileUrl;
         Integer bumps;
         boolean pluralVoting;
-        String existNotifications;
         String createdAt;
         String bumpsTime;
         String deadline;
@@ -37,6 +37,7 @@ public class PostResponseDTO {
         Integer likesCnt;
         Integer views;
         List<OptionsDTO> optionsList;
+        LoginMemberPostInfoDTO loginMemberPostInfoDTOList;
         CommentsListDTO commentsList;
     }
 
