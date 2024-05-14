@@ -1,7 +1,10 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
+import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.options.repository.OptionsRepository;
+import KGUcapstone.OutDecision.domain.post.converter.PostConverter;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
@@ -41,7 +44,9 @@ public class PostServiceImpl implements PostService{
     private final OptionsRepository optionsRepository;
     private final VoteRepository voteRepository;
     private final FindMemberService findMemberService;
+    private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
+    private final PostConverter postConverter;
 
     /* 등록 */
     @Override
@@ -58,7 +63,7 @@ public class PostServiceImpl implements PostService{
                 .pluralVoting(request.isPluralVoting())
                 .gender(request.getGender())
                 .member(member)
-                .status(Status.VOTING)
+                .status(Status.progress)
                 .bumpsTime(LocalDateTime.now())
                 .likes(0)
                 .views(0)
@@ -92,6 +97,12 @@ public class PostServiceImpl implements PostService{
         post.setOptionsList(optionsList);
         postRepository.save(post);
 
+        Notifications notifications = Notifications.builder()
+                .member(member)
+                .post(post)
+                .build();
+        notificationsRepository.save(notifications);
+
         return true;
     }
 
@@ -101,16 +112,24 @@ public class PostServiceImpl implements PostService{
     /* 조회 */
     @Override
     public PostDTO viewPost(Long postId) {
-        Long memberId = 2024L;
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else memberId = 0L;
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         post.incrementViews();
         postRepository.save(post);
+
+
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .map(comments -> {
                     return CommentsDTO.builder()
                             .memberId(comments.getMember().getId())
                             .nickname(comments.getMember().getNickname())
+                            .profileUrl(comments.getMember().getUserImg())
                             .body(comments.getBody())
                             .createdAt(formatCreatedAt2(comments.getCreatedAt()))
                             .build();
@@ -128,15 +147,18 @@ public class PostServiceImpl implements PostService{
                 .gender(post.getGender())
                 .userId(post.getMember().getId())
                 .nickname(post.getMember().getNickname())
+                .profileUrl(post.getMember().getUserImg())
                 .bumps(memberId.equals(post.getMember().getId()) ? post.getMember().getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
+                .bumpsTime(formatCreatedAt(post.getBumpsTime()))
                 .deadline(formatDeadline(post.getDeadline()))
                 .participationCnt(getParticipationCnt(post))
                 .likesCnt(post.getLikes())
                 .views(post.getViews())
                 .optionsList(optionList(post))
                 .commentsList(commentsListDTO)
+                .loginMemberPostInfoDTOList(postConverter.checkLoginPosts(post))
                 .build();
     }
 
@@ -233,6 +255,7 @@ public class PostServiceImpl implements PostService{
                     int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
 
                     return OptionsDTO.builder()
+                            .optionId(option.getId())
                             .body(option.getBody())
                             .imgUrl(option.getPhotoUrl())
                             .votePercentage(votePercentage)
@@ -250,6 +273,9 @@ public class PostServiceImpl implements PostService{
         if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 20) {
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
             post.updateHot(true);
+
+            // 포인트 +300 적립
+            post.getMember().updatePoint(post.getMember().getPoint()+300);
         }
     }
 

@@ -27,6 +27,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final LikesRepository likesRepository;
     private final VoteRepository voteRepository;
     private final TitleRepository titleRepository;
+    private final PostConverter  postConverter;
 
     @Override
     public MyPageDTO getMyPage(Long memberId, String posts) {
@@ -35,7 +36,7 @@ public class MyPageServiceImpl implements MyPageService{
 
         List<Post> latestPostList = postList(memberId, posts);
         List<PostDTO> latestPostDTOList = latestPostList.stream()
-                .map(PostConverter::toPostDTO)
+                .map(postConverter::toPostDTO)
                 .collect(Collectors.toList());
 
         return MyPageDTO.builder()

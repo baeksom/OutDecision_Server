@@ -6,13 +6,13 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Category {
-    FOOD("food"),
-    LOVE("love"),
-    FASHION("fashion"),
-    HOBBY("hobby"),
-    WORK("work"),
-    TRAVEL("travel"),
-    OTHER("other");
+    food("food"),
+    love("love"),
+    fashion("fashion"),
+    hobby("hobby"),
+    work("work"),
+    travel("travel"),
+    other("other");
 
     private final String value;
 

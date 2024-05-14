@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Status {
-    VOTING,
-    CLOSING
+    progress,
+    end
 }

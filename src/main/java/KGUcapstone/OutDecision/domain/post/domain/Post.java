@@ -61,11 +61,11 @@ public class Post extends BaseEntity {
     private Boolean bump;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(15) DEFAULT 'VOTING'")
+    @Column(columnDefinition = "ENUM('progress', 'end') DEFAULT 'progress'")
     private Status status;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "VARCHAR(15) DEFAULT 'ALL'")
+    @Column(columnDefinition = "ENUM('female', 'male', 'all') DEFAULT 'all'")
     private Gender gender;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

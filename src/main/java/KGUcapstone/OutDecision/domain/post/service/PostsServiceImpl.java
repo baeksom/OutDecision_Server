@@ -1,12 +1,18 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.likes.repository.LikesRepository;
+import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
+import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.domain.MemberView;
 import KGUcapstone.OutDecision.domain.user.repository.MemberViewRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Predicate;
+
+import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.*;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +58,7 @@ public class PostsServiceImpl implements PostsService{
 
         List<Post> posts = postRepository.findAll();
 
+        /* 키워드 검색 */
         // searchType - 제목, 내용, 제목+내용
         if (keyword != null && !keyword.trim().isEmpty()) {
             // 키워드가 있다면 == 사용자가 키워드 검색을 했다면
@@ -97,11 +106,11 @@ public class PostsServiceImpl implements PostsService{
                 } else if (filterType.equals("gender")) {
                     // 성별 필터 - female, male
                     // Gender Enum 과 매핑해주어야함
-                    posts = findByFilter(posts, post -> post.getGender().equals(filterValue.equals("female")? Gender.FEMALE : Gender.MALE));
+                    posts = findByFilter(posts, post -> post.getGender().equals(filterValue.equals("female")? Gender.female : Gender.male));
                 } else if (filterType.equals("vote")) {
                     // 투표 상태 - progress, end
                     // Status Enum 과 매핑해주어야함
-                    posts = findByFilter(posts, post -> post.getStatus().equals(filterValue.equals("progress")? Status.VOTING : Status.CLOSING));
+                    posts = findByFilter(posts, post -> post.getStatus().equals(filterValue.equals("progress")? Status.progress : Status.end));
                 }
             }
         }
@@ -130,6 +139,16 @@ public class PostsServiceImpl implements PostsService{
         }
         return filterPosts;
     }
+
+    public Page<Post> getRecommendPost(Long memberId, Integer page, Integer size) {
+        List<Post> recommend=recommendPost(memberId);
+        // 페이징 적용
+        Pageable pageable = PageRequest.of(page, size);
+        int start = (int)pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), recommend.size());
+        return new PageImpl<>(recommend.subList(start, end), pageable, recommend.size());
+    }
+
     public List<Post> recommendPost(Long memberId) {
 
         // 사용자의 조회 기록 가져오기
@@ -171,7 +190,6 @@ public class PostsServiceImpl implements PostsService{
         // 추천된 게시글 반환
         return recommendPosts;
     }
-
 
     // 게시글의 총점을 계산하는 메소드
     private double calculateScore(Post post, Map<String, Double> recommendations) {

@@ -19,12 +19,12 @@ public class MissionsServiceImpl implements MissionsService{
     public MemberMissionsDTO getMemberMissions(Long memberId) {
         return MemberMissionsDTO.builder()
                 .memberId(memberId)
-                .fashionista(getTitleByCategory(memberId, Category.FASHION))
-                .foodie(getTitleByCategory(memberId, Category.FOOD))
-                .traveler(getTitleByCategory(memberId, Category.TRAVEL))
-                .ceo(getTitleByCategory(memberId, Category.WORK))
-                .romantist(getTitleByCategory(memberId, Category.LOVE))
-                .hobbyist(getTitleByCategory(memberId, Category.HOBBY))
+                .fashionista(getTitleByCategory(memberId, Category.fashion))
+                .foodie(getTitleByCategory(memberId, Category.food))
+                .traveler(getTitleByCategory(memberId, Category.travel))
+                .ceo(getTitleByCategory(memberId, Category.work))
+                .romantist(getTitleByCategory(memberId, Category.love))
+                .hobbyist(getTitleByCategory(memberId, Category.hobby))
                 .greedy(getGreedyMission(memberId))
                 .build();
     }
@@ -48,32 +48,32 @@ public class MissionsServiceImpl implements MissionsService{
         int missionCnt = 0;
         int greedyCnt = missions.getGreedy_cnt();
         switch (category) {
-            case FASHION:
+            case fashion:
                 missionCnt = missions.getFashionista_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
                 title = "패셔니스타";
                 break;
-            case FOOD:
+            case food:
                 missionCnt = missions.getFoodie_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
                 title = "미식가";
                 break;
-            case TRAVEL:
+            case travel:
                 missionCnt = missions.getTraveler_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
                 title = "여행가";
                 break;
-            case WORK:
+            case work:
                 missionCnt = missions.getCeo_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
                 title = "일꾼";
                 break;
-            case LOVE:
+            case love:
                 missionCnt = missions.getRomantist_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
                 title = "로맨티스트";
                 break;
-            case HOBBY:
+            case hobby:
                 missionCnt = missions.getHobbyist_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
                 title = "취미가";
