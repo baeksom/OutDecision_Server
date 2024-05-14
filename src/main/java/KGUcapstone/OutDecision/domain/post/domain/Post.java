@@ -85,10 +85,6 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Notifications> notificationsList = new ArrayList<>();
 
-<<<<<<< HEAD
-=======
-
->>>>>>> develop
     public void incrementViews() {
         views++;
     }

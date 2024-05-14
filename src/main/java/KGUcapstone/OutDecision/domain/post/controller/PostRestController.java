@@ -54,7 +54,6 @@ public class PostRestController {
         return ApiResponse.onSuccess(postServiceImpl.deletePost(postId));
     }
 
-<<<<<<< HEAD
     // 게시글 이메일 알림 on
     @PostMapping("/{postId}/notification")
     @Operation(summary = "게시글 알림 on", description = "사용자가 게시글 알림을 설정하여 투표 마감 시, 이메일 알림을 받을 수 있습니다.")
@@ -67,13 +66,13 @@ public class PostRestController {
     @Operation(summary = "게시글 알림 off", description = "사용자가 게시글 알림을 오프하여 투표 마감 시, 이메일 알림을 받는 것을 막을 수 있습니다.")
     public ApiResponse<Object> offNotification(@PathVariable Long postId) {
         return ApiResponse.onSuccess(notificationService.deleteNotifications(postId));
-=======
-    /* 끌어올리기 */
+    }
+
+        /* 끌어올리기 */
     @PatchMapping("/{postId}/bumps")
     @Operation(summary = "게시글 끌어올리기", description = "게시글을 게시판 상단으로 올려준다.")
     public ApiResponse<Object> upPost(@PathVariable Long postId) {
         return ApiResponse.onSuccess(postServiceImpl.topPost(postId));
 
->>>>>>> develop
     }
 }

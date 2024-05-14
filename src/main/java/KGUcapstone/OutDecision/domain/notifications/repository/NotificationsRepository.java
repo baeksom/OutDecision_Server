@@ -14,4 +14,6 @@ public interface NotificationsRepository extends JpaRepository<Notifications, Lo
     @Query("SELECT member.id FROM Notifications WHERE post.id = :postId")
     List<Long> findMemberIdsByPostId(Long postId);
     Notifications findByMemberIdAndPostId(Long memberId, Long postId);
+    @Query("SELECT COUNT(n) > 0 FROM Notifications n WHERE n.member.id = :memberId AND n.post.id = :postId")
+    boolean existsByMemberIdAndPostId(Long memberId, Long postId);
 }

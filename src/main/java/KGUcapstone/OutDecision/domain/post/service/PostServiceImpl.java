@@ -45,7 +45,6 @@ public class PostServiceImpl implements PostService{
     private final NotificationsRepository notificationsRepository;
     private final VoteRepository voteRepository;
     private final FindMemberService findMemberService;
-    private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
     private final PostConverter postConverter;
 
