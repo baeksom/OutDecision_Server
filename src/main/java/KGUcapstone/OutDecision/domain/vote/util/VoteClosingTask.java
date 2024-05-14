@@ -30,9 +30,9 @@
             this.mailService = mailService;
         }
 
-        @Scheduled(cron = "0 15 2 ? * WED") // 테스트용 매주 토요일 4:18에 실행
+//        @Scheduled(cron = "0 15 2 ? * WED") // 테스트용 매주 토요일 4:18에 실행
         // 매 시간의 00분, 10분, 20분, 30분, 40분, 50분에 실행되도록 스케줄링
-//        @Scheduled(cron = "0 0/10 * * * *")
+        @Scheduled(cron = "0 0/10 * * * *")
         @Transactional
         public void closeVotes() {
             // 현재 시간
