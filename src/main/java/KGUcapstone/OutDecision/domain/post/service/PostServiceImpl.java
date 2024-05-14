@@ -43,9 +43,9 @@ public class PostServiceImpl implements PostService{
     private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
     private final VoteRepository voteRepository;
+    private final FindMemberService findMemberService;
     private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
-    private final FindMemberService findMemberService;
     private final PostConverter postConverter;
 
     /* 등록 */
@@ -277,5 +277,29 @@ public class PostServiceImpl implements PostService{
             // 포인트 +300 적립
             post.getMember().updatePoint(post.getMember().getPoint()+300);
         }
+    }
+
+    // 게시글 끌어올리기
+    public boolean topPost(Long postId) {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            Post post = postRepository.findById(postId).orElseThrow(() ->
+                    new IllegalArgumentException("게시물이 존재하지 않습니다."));
+
+            if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
+
+            if(member.getBumps() != 0) { // 끌올 1개이상
+                int bumpCount = member.getBumps() - 1;
+                member.updateBumps(bumpCount);
+                memberRepository.save(member);
+
+                post.updateBumpsTime();
+                postRepository.save(post);
+                return true;
+            }
+        }
+        return false;
     }
 }

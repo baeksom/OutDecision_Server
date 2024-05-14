@@ -57,6 +57,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime bumpsTime;
 
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "ENUM('progress', 'end') DEFAULT 'progress'")
     private Status status;
@@ -81,11 +82,6 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Notifications> notificationsList = new ArrayList<>();
 
-    /* 게시글 수정 */
-    public void update(String title, String content) {
-            this.title = title;
-            this.content = content;
-    }
 
     public void incrementViews() {
         views++;
@@ -110,5 +106,10 @@ public class Post extends BaseEntity {
 
     public void updateHot(boolean hot) {
         this.hot = hot;
+    }
+
+    public void updateBumpsTime() {
+        this.bumpsTime = LocalDateTime.now();
+
     }
 }
