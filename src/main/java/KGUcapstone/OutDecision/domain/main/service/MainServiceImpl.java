@@ -30,6 +30,7 @@ public class MainServiceImpl implements MainService{
     private final RankingService rankingService;
     private final PostsServiceImpl postsService;
     private final FindMemberService findMemberService;
+    private final PostConverter postConverter;
 
     @Override
     public PostListDTO getMain() {
@@ -66,7 +67,7 @@ public class MainServiceImpl implements MainService{
 
     private List<PostDTO> mapToDTO(List<Post> posts) {
         return posts.stream()
-                .map(PostConverter::toPostDTO)
+                .map(postConverter::toPostDTO)
                 .collect(Collectors.toList());
     }
 

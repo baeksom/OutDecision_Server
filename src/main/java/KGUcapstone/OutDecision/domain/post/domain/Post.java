@@ -58,7 +58,7 @@ public class Post extends BaseEntity {
     private LocalDateTime bumpsTime;
 
     @Enumerated(EnumType.STRING)
-    @Column(columnDefinition = "ENUM('progress', 'other') DEFAULT 'progress'")
+    @Column(columnDefinition = "ENUM('progress', 'end') DEFAULT 'progress'")
     private Status status;
 
     @Enumerated(EnumType.STRING)

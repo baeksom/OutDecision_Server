@@ -25,6 +25,7 @@ import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.*;
 public class PostsController {
 
     private final PostsService postsService;
+    private final PostConverter postConverter;
 
     @GetMapping("/posts/{category}")
     @Operation(summary = "게시판 조회 API", description = "필터링 및 검색 기능을 포함한 게시글을 조회합니다.")
@@ -34,7 +35,7 @@ public class PostsController {
                                                 @RequestParam(required = false) String gender,
                                                 @RequestParam(required = false) String vote,
                                                 @RequestParam(required = false) String search,
-                                                @RequestParam(name = "search-type", required = false) String searchType,
+                                                @RequestParam(required = false) String searchType,
                                                 @RequestParam String sort) {
         Map<String, String> filters = new HashMap<>();
         filters.put("category", category);
@@ -43,7 +44,7 @@ public class PostsController {
         filters.put("vote", vote);
 
         Page<Post> postPage = postsService.getPosts(sort, search, searchType, filters, page-1, 6);
-        return ApiResponse.onSuccess(PostConverter.toPostListDTO(postPage));
+        return ApiResponse.onSuccess(postConverter.toPostListDTO(postPage));
     }
 
     @GetMapping("/posts")
@@ -53,7 +54,7 @@ public class PostsController {
                                               @RequestParam(required = false) String gender,
                                               @RequestParam(required = false) String vote,
                                               @RequestParam(required = false) String search,
-                                              @RequestParam(name = "search-type", required = false) String searchType,
+                                              @RequestParam(required = false) String searchType,
                                               @RequestParam String sort) {
         Map<String, String> filters = new HashMap<>();
         filters.put("mode", mode);
@@ -61,17 +62,17 @@ public class PostsController {
         filters.put("vote", vote);
 
         Page<Post> postPage = postsService.getPosts(sort, search, searchType, filters, page-1, 6);
-        return ApiResponse.onSuccess(PostConverter.toPostListDTO(postPage));
+        return ApiResponse.onSuccess(postConverter.toPostListDTO(postPage));
     }
 
-    @GetMapping("/posts/{memberId}")
+    @GetMapping("/posts/recommend/{memberId}")
     @Operation(summary = "추천 게시글 API", description = "사용자 협업 필터링을 통한 추천 게시글을 조회합니다.")
     public ApiResponse<PostListDTO> getRecommendPosts (@PathVariable(name = "memberId")
                                                            Long memberId,
                                                        @RequestParam Integer page) {
 
             Page<Post> recommendPosts = postsService.getRecommendPost(memberId, page - 1, 6);
-            return ApiResponse.onSuccess(PostConverter.toPostListDTO(recommendPosts));
+            return ApiResponse.onSuccess(postConverter.toPostListDTO(recommendPosts));
     }
 
 }

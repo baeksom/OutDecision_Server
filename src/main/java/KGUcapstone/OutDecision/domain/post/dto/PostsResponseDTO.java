@@ -25,7 +25,7 @@ public class PostsResponseDTO {
         Gender gender;
         Long userId;
         String nickname;
-        boolean pluralVoting;
+        Boolean pluralVoting;
         String createdAt;
         String bumpsTime;
         String deadline;
@@ -33,8 +33,20 @@ public class PostsResponseDTO {
         Integer likesCnt;
         Integer commentsCnt;
         Integer views;
+        LoginMemberPostInfoDTO loginMemberPostInfoDTOList;
         List<OptionsDTO> optionsList;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginMemberPostInfoDTO {
+        Boolean isLiked;
+        Boolean receiveAlert;
+        List<Long> votedOptionIds;
+    }
+
 
     @Builder
     @Getter
