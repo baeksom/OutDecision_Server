@@ -52,7 +52,7 @@ public class PostConverter {
                     int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
 
                     return OptionsDTO.builder()
-                            .OptionId(option.getId())
+                            .optionId(option.getId())
                             .body(option.getBody())
                             .imgUrl(option.getPhotoUrl())
                             .votePercentage(votePercentage)

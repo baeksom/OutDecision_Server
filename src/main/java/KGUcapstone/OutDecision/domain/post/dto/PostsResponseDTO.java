@@ -53,7 +53,7 @@ public class PostsResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OptionsDTO{
-        Long OptionId;
+        Long optionId;
         String body;
         String imgUrl;
         Integer votePercentage;
