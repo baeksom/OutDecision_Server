@@ -55,7 +55,7 @@ public class PostServiceImpl implements PostService{
                 .pluralVoting(request.isPluralVoting())
                 .gender(request.getGender())
                 .member(member)
-                .status(Status.VOTING)
+                .status(Status.progress)
                 .bumpsTime(LocalDateTime.now())
                 .likes(0)
                 .views(0)

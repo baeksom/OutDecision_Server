@@ -22,6 +22,7 @@ public class PostsResponseDTO {
         String content;
         Category category;
         Status status;
+        Gender gender;
         Long userId;
         String nickname;
         Gender gender;

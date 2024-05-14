@@ -7,6 +7,7 @@ import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,7 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.*;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -59,6 +62,16 @@ public class PostsController {
 
         Page<Post> postPage = postsService.getPosts(sort, search, searchType, filters, page-1, 6);
         return ApiResponse.onSuccess(PostConverter.toPostListDTO(postPage));
+    }
+
+    @GetMapping("/posts/{memberId}")
+    @Operation(summary = "추천 게시글 API", description = "사용자 협업 필터링을 통한 추천 게시글을 조회합니다.")
+    public ApiResponse<PostListDTO> getRecommendPosts (@PathVariable(name = "memberId")
+                                                           Long memberId,
+                                                       @RequestParam Integer page) {
+
+            Page<Post> recommendPosts = postsService.getRecommendPost(memberId, page - 1, 6);
+            return ApiResponse.onSuccess(PostConverter.toPostListDTO(recommendPosts));
     }
 
 }
