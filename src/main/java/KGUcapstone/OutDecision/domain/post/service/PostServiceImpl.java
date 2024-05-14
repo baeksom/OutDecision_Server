@@ -273,6 +273,9 @@ public class PostServiceImpl implements PostService{
         if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 20) {
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
             post.updateHot(true);
+
+            // 포인트 +300 적립
+            post.getMember().updatePoint(post.getMember().getPoint()+300);
         }
     }
 }
