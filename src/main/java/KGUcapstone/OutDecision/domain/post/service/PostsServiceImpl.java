@@ -1,12 +1,18 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.likes.repository.LikesRepository;
+import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
+import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.domain.MemberView;
 import KGUcapstone.OutDecision.domain.user.repository.MemberViewRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Predicate;
+
+import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +44,9 @@ public class PostsServiceImpl implements PostsService{
         // 필터링 적용
         List<Post> filteredPosts = applyFilters(sort, keyword, searchType, filters);
 
+        // 사용자 인증 여부에 따라
+
+
         // 페이징 적용
         Pageable pageable = PageRequest.of(page, size);
         int start = (int)pageable.getOffset();
@@ -50,6 +61,7 @@ public class PostsServiceImpl implements PostsService{
 
         List<Post> posts = postRepository.findAll();
 
+        /* 키워드 검색 */
         // searchType - 제목, 내용, 제목+내용
         if (keyword != null && !keyword.trim().isEmpty()) {
             // 키워드가 있다면 == 사용자가 키워드 검색을 했다면

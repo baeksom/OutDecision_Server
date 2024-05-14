@@ -1,23 +1,37 @@
 package KGUcapstone.OutDecision.domain.post.converter;
 
+import KGUcapstone.OutDecision.domain.likes.repository.LikesRepository;
+import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
-import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.PostListDTO;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
+import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.*;
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.formatCreatedAt;
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.formatDeadline;
 
+@Component
+@RequiredArgsConstructor
 public class PostConverter {
 
-    public static PostDTO toPostDTO(Post post) {
+    private final LikesRepository likesRepository;
+    private final NotificationsRepository notificationsRepository;
+    private final VoteRepository voteRepository;
+    private final FindMemberService findMemberService;
+
+    public PostDTO toPostDTO(Post post) {
         int participationCnt = post.getOptionsList().stream()
                 .flatMap(option -> option.getVoteList().stream())
                 .map(Vote::getMember)
@@ -62,13 +76,32 @@ public class PostConverter {
                 .likesCnt(post.getLikes())
                 .commentsCnt(post.getCommentsList().size())
                 .views(post.getViews())
+                .loginMemberPostInfoDTOList(checkLoginPosts(post))
                 .optionsList(optionsDtoList)
                 .build();
     }
 
-    public static PostListDTO toPostListDTO(Page<Post> postList) {
+    public LoginMemberPostInfoDTO checkLoginPosts(Post post) {
+        Optional<Member> optionalMember = findMemberService.findLoginMember();
+        if (optionalMember.isPresent()) {
+            Member member = optionalMember.get();
+
+            Boolean isLiked = likesRepository.findByPostAndMember(post, member).isPresent();
+            Boolean receiveAlert = notificationsRepository.findByPostAndMember(post, member).isPresent();
+            List<Long> votedOptionIds = voteRepository.findOptionIdsByMemberAndPost(member, post);
+
+            return LoginMemberPostInfoDTO.builder()
+                    .isLiked(isLiked) // 좋아요 repo에서 (member, post) 값이 존재하는지
+                    .receiveAlert(receiveAlert) // 알람 repo에서 (member, post) 값이 존재하는지
+                    .votedOptionIds(votedOptionIds) // 투표 repo에서 (member, option.getPost()) 의 optionId 반환
+                    .build();
+        }
+        else return null;
+    }
+
+    public PostListDTO toPostListDTO(Page<Post> postList) {
         List<PostDTO> postDTOList = postList.stream()
-                .map(PostConverter::toPostDTO)
+                .map(this::toPostDTO)
                 .collect(Collectors.toList());
 
         return PostListDTO.builder()
