@@ -1,7 +1,6 @@
 package KGUcapstone.OutDecision.domain.title.domain;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import io.swagger.models.auth.In;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;

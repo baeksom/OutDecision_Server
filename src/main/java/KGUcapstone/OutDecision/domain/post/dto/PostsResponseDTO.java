@@ -25,7 +25,7 @@ public class PostsResponseDTO {
         Gender gender;
         Long userId;
         String nickname;
-        boolean pluralVoting;
+        Boolean pluralVoting;
         String createdAt;
         String bumpsTime;
         String deadline;
@@ -33,6 +33,7 @@ public class PostsResponseDTO {
         Integer likesCnt;
         Integer commentsCnt;
         Integer views;
+        LoginMemberPostInfoDTO loginMemberPostInfoDTO;
         List<OptionsDTO> optionsList;
     }
 
@@ -40,7 +41,19 @@ public class PostsResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class LoginMemberPostInfoDTO {
+        Boolean isLiked;
+        Boolean receiveAlert;
+        List<Long> votedOptionIds;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class OptionsDTO{
+        Long optionId;
         String body;
         String imgUrl;
         Integer votePercentage;
