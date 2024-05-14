@@ -57,8 +57,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime bumpsTime;
 
-    @ColumnDefault("false")
-    private Boolean bump;
 
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(15) DEFAULT 'VOTING'")
@@ -110,8 +108,7 @@ public class Post extends BaseEntity {
         this.hot = hot;
     }
 
-    public void upPost() {
-        this.bump = true;
+    public void updateBumpsTime() {
         this.bumpsTime = LocalDateTime.now();
 
     }
