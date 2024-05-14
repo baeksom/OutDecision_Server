@@ -15,6 +15,7 @@ import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
@@ -28,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.*;
 
@@ -42,6 +44,7 @@ public class PostServiceImpl implements PostService{
     private final VoteRepository voteRepository;
     private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
+    private final FindMemberService findMemberService;
 
     /* 등록 */
     @Override
@@ -107,23 +110,31 @@ public class PostServiceImpl implements PostService{
     /* 조회 */
     @Override
     public PostDTO viewPost(Long postId) {
-        Long memberId = 2024L;
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else memberId = 0L;
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         post.incrementViews();
         postRepository.save(post);
-        String existNotifications = null;
-        // 로그인 여부
-        if (!memberId.equals(0L) && notificationsRepository.existsByMemberIdAndPostId(memberId, postId)) {
+
+        String existNotifications;
+        if (memberId.equals(0L)) existNotifications = null;
+        else if (notificationsRepository.existsByMemberIdAndPostId(memberId, postId)) {
             existNotifications = "ON";
         } else {
             existNotifications = "OFF";
         }
+
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .map(comments -> {
                     return CommentsDTO.builder()
                             .memberId(comments.getMember().getId())
                             .nickname(comments.getMember().getNickname())
+                            .profileUrl(comments.getMember().getUserImg())
                             .body(comments.getBody())
                             .createdAt(formatCreatedAt2(comments.getCreatedAt()))
                             .build();
@@ -141,6 +152,7 @@ public class PostServiceImpl implements PostService{
                 .gender(post.getGender())
                 .userId(post.getMember().getId())
                 .nickname(post.getMember().getNickname())
+                .profileUrl(post.getMember().getUserImg())
                 .bumps(memberId.equals(post.getMember().getId()) ? post.getMember().getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
                 .existNotifications(existNotifications)

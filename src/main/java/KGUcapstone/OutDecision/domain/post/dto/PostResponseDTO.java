@@ -26,6 +26,7 @@ public class PostResponseDTO {
         Gender gender;
         Long userId;
         String nickname;
+        String profileUrl;
         Integer bumps;
         boolean pluralVoting;
         String existNotifications;
@@ -46,6 +47,7 @@ public class PostResponseDTO {
     public static class CommentsDTO {
         Long memberId;
         String nickname;
+        String profileUrl;
         String body;
         String createdAt;
     }
