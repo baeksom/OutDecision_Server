@@ -43,10 +43,7 @@ public class PostsServiceImpl implements PostsService{
                               Integer size) {
         // 필터링 적용
         List<Post> filteredPosts = applyFilters(sort, keyword, searchType, filters);
-
-        // 사용자 인증 여부에 따라
-
-
+        
         // 페이징 적용
         Pageable pageable = PageRequest.of(page, size);
         int start = (int)pageable.getOffset();
