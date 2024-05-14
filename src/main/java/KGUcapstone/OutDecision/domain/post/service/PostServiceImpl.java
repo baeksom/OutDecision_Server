@@ -1,5 +1,7 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
+import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.options.repository.OptionsRepository;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
@@ -38,6 +40,7 @@ public class PostServiceImpl implements PostService{
     private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
     private final VoteRepository voteRepository;
+    private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
 
     /* 등록 */
@@ -89,6 +92,12 @@ public class PostServiceImpl implements PostService{
         post.setOptionsList(optionsList);
         postRepository.save(post);
 
+        Notifications notifications = Notifications.builder()
+                .member(member)
+                .post(post)
+                .build();
+        notificationsRepository.save(notifications);
+
         return true;
     }
 
@@ -103,6 +112,13 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         post.incrementViews();
         postRepository.save(post);
+        String existNotifications = null;
+        // 로그인 여부
+        if (!memberId.equals(0L) && notificationsRepository.existsByMemberIdAndPostId(memberId, postId)) {
+            existNotifications = "ON";
+        } else {
+            existNotifications = "OFF";
+        }
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .map(comments -> {
                     return CommentsDTO.builder()
@@ -127,7 +143,9 @@ public class PostServiceImpl implements PostService{
                 .nickname(post.getMember().getNickname())
                 .bumps(memberId.equals(post.getMember().getId()) ? post.getMember().getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
+                .existNotifications(existNotifications)
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
+                .bumpsTime(formatCreatedAt(post.getBumpsTime()))
                 .deadline(formatDeadline(post.getDeadline()))
                 .participationCnt(getParticipationCnt(post))
                 .likesCnt(post.getLikes())
