@@ -33,7 +33,7 @@ public class PostsResponseDTO {
         Integer likesCnt;
         Integer commentsCnt;
         Integer views;
-        LoginMemberPostInfoDTO loginMemberPostInfoDTOList;
+        LoginMemberPostInfoDTO loginMemberPostInfoDTO;
         List<OptionsDTO> optionsList;
     }
 
@@ -53,6 +53,7 @@ public class PostsResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class OptionsDTO{
+        Long OptionId;
         String body;
         String imgUrl;
         Integer votePercentage;

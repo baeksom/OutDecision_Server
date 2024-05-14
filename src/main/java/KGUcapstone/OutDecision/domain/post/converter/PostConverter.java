@@ -52,6 +52,7 @@ public class PostConverter {
                     int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
 
                     return OptionsDTO.builder()
+                            .OptionId(option.getId())
                             .body(option.getBody())
                             .imgUrl(option.getPhotoUrl())
                             .votePercentage(votePercentage)
@@ -76,7 +77,7 @@ public class PostConverter {
                 .likesCnt(post.getLikes())
                 .commentsCnt(post.getCommentsList().size())
                 .views(post.getViews())
-                .loginMemberPostInfoDTOList(checkLoginPosts(post))
+                .loginMemberPostInfoDTO(checkLoginPosts(post))
                 .optionsList(optionsDtoList)
                 .build();
     }

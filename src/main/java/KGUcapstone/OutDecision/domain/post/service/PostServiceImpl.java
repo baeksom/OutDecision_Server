@@ -230,6 +230,7 @@ public class PostServiceImpl implements PostService{
                     int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
 
                     return OptionsDTO.builder()
+                            .OptionId(option.getId())
                             .body(option.getBody())
                             .imgUrl(option.getPhotoUrl())
                             .votePercentage(votePercentage)
