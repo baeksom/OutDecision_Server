@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MainRestController {
     private final MainService mainService;
 
-    @GetMapping("")
-    @Operation(summary = "메인페이지 조회 API", description = "메인페이지로 추천 게시물/핫 게시물/전체 게시물/투표마감 게시물 섹션으로 이루어져 있습니다.")
+    @GetMapping("/")
+    @Operation(summary = "메인페이지 조회 API", description = "메인페이지로 핫 게시물/전체 게시물/투표마감 게시물 섹션으로 이루어져 있습니다.")
     public ApiResponse<PostListDTO> getMainPostList() {
         return ApiResponse.onSuccess(mainService.getMain());
     }
