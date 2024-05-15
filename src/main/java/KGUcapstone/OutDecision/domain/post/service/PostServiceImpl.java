@@ -282,44 +282,31 @@ public class PostServiceImpl implements PostService{
     // 게시글 끌어올리기
     public boolean topPost(Long postId, Long memberId) {
 //        Optional<Member> memberOptional = findMemberService.findLoginMember();
-        Optional<Member> memberOptional = memberRepository.findById(2L); // 유저 설정
+//        if (memberOptional.isPresent())
+//            Member member = memberOptional.get();
+        Optional<Member> memberOptional = memberRepository.findById(2L); // 임시 유저 설정
         Member member = memberOptional.get();
+
         Post post = postRepository.findById(postId).orElseThrow(() ->
                 new IllegalArgumentException("게시물이 존재하지 않습니다."));
 
         if (!memberId.equals(post.getMember().getId())) { // 게시글을 작성한 유저 맞는지 확인
             return false;
         }
-        if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
+        if (post.getStatus().equals(Status.end)){  // 투표 중인 게시글만
+            return false;
+        }
+
         if(member.getBumps() != 0) { // 끌올 1개이상
-                int bumpCount = member.getBumps() - 1;
-                member.updateBumps(bumpCount);
-                memberRepository.save(member);
+            int bumpCount = member.getBumps() - 1;
+            member.updateBumps(bumpCount);
+            memberRepository.save(member);
 
-                post.updateBumpsTime();
-                postRepository.save(post);
+            post.updateBumpsTime();
+            postRepository.save(post);
 
-                return true;
-            }
-
-//        if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
-//        if (memberOptional.isPresent()) {
-//            Member member = memberOptional.get();
-//            Post post = postRepository.findById(postId).orElseThrow(() ->
-//                    new IllegalArgumentException("게시물이 존재하지 않습니다."));
-//
-//            if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
-//
-//            if(member.getBumps() != 0) { // 끌올 1개이상
-//                int bumpCount = member.getBumps() - 1;
-//                member.updateBumps(bumpCount);
-//                memberRepository.save(member);
-//
-//                post.updateBumpsTime();
-//                postRepository.save(post);
-//                return true;
-//            }
-//        }
+            return true;
+        }
         return false;
     }
 }
