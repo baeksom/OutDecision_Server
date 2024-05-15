@@ -280,20 +280,25 @@ public class PostServiceImpl implements PostService{
     }
 
     // 게시글 끌어올리기
-    public boolean topPost(Long postId, Long memberId) {
+    public boolean topPost(Long postId) {
 //        Optional<Member> memberOptional = findMemberService.findLoginMember();
-//        if (memberOptional.isPresent())
+//        if (memberOptional.isPresent()) {
 //            Member member = memberOptional.get();
+//        }
+
         Optional<Member> memberOptional = memberRepository.findById(2L); // 임시 유저 설정
         Member member = memberOptional.get();
 
         Post post = postRepository.findById(postId).orElseThrow(() ->
                 new IllegalArgumentException("게시물이 존재하지 않습니다."));
 
-        if (!memberId.equals(post.getMember().getId())) { // 게시글을 작성한 유저 맞는지 확인
+        if (!member.getId().equals(post.getMember().getId())) { // 게시글을 작성한 유저 맞는지 확인
+            System.out.println("작성자가 아닙니다.");
             return false;
         }
+
         if (post.getStatus().equals(Status.end)){  // 투표 중인 게시글만
+            System.out.println("투표가 마감 되었습니다.");
             return false;
         }
 
@@ -306,7 +311,10 @@ public class PostServiceImpl implements PostService{
             postRepository.save(post);
 
             return true;
+        } else{
+            System.out.println("끌어올리기 횟수가 부족합니다.");
+            return false;
         }
-        return false;
+
     }
 }
