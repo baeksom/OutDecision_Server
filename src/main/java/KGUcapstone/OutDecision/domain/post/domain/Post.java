@@ -54,7 +54,7 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TINYINT(1)")
     private Boolean hot;
 
-    @Column(nullable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(nullable = false, updatable = true, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime bumpsTime;
 
 

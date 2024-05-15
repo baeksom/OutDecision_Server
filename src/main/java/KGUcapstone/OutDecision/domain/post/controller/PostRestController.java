@@ -53,10 +53,10 @@ public class PostRestController {
     }
 
     /* 끌어올리기 */
-    @PatchMapping("/{postId}/bumps")
+    @PostMapping("/{postId}/bumps")
     @Operation(summary = "게시글 끌어올리기", description = "게시글을 게시판 상단으로 올려준다.")
-    public ApiResponse<Object> upPost(@PathVariable Long postId) {
-        return ApiResponse.onSuccess(postServiceImpl.topPost(postId));
+    public ApiResponse<Object> upPost(@PathVariable Long postId, Long memberId) {
+        return ApiResponse.onSuccess(postServiceImpl.topPost(postId, memberId));
 
     }
 }
