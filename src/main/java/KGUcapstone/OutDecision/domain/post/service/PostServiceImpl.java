@@ -272,6 +272,7 @@ public class PostServiceImpl implements PostService{
 
                 post.updateBumpsTime();
                 postRepository.save(post);
+
                 return true;
             }
 
