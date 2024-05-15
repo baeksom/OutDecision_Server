@@ -1,6 +1,7 @@
 package KGUcapstone.OutDecision.domain.post.dto;
 
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
+import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,9 +22,10 @@ public class PostsResponseDTO {
         String content;
         Category category;
         Status status;
+        Gender gender;
         Long userId;
         String nickname;
-        boolean pluralVoting;
+        Boolean pluralVoting;
         String createdAt;
         String bumpsTime;
         String deadline;
@@ -31,6 +33,7 @@ public class PostsResponseDTO {
         Integer likesCnt;
         Integer commentsCnt;
         Integer views;
+        LoginMemberPostInfoDTO loginMemberPostInfoDTO;
         List<OptionsDTO> optionsList;
     }
 
@@ -38,7 +41,19 @@ public class PostsResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class LoginMemberPostInfoDTO {
+        Boolean isLiked;
+        Boolean receiveAlert;
+        List<Long> votedOptionIds;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class OptionsDTO{
+        Long optionId;
         String body;
         String imgUrl;
         Integer votePercentage;
