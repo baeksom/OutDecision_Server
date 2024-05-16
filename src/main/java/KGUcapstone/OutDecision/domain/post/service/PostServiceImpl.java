@@ -51,9 +51,11 @@ public class PostServiceImpl implements PostService{
     /* 등록 */
     @Override
     public boolean uploadPost(UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages) {
-        Long memberId = 2024L;
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member를 찾을 수 없습니다."));
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else return false;
 
         Post post = Post.builder()
                 .title(request.getTitle())

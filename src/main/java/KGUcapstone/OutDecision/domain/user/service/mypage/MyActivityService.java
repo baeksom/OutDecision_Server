@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 
 public interface MyActivityService{
-    Page<Post> getMyPostListByStatus(Long memberId, Status status, Integer page);
-    Page<Post> getLikedPostListByStatus(Long memberId, Status status, Integer page);
-    Page<Post> getVotedPostListByStatus(Long memberId, Status status, Integer page);
+    Page<Post> getMyPostListByStatus(Status status, Integer page);
+    Page<Post> getLikedPostListByStatus(Status status, Integer page);
+    Page<Post> getVotedPostListByStatus(Status status, Integer page);
 }
