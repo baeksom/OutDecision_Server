@@ -54,19 +54,19 @@ public class MyPageServiceImpl implements MyPageService{
     public List<Post> postList(Long memberId, String posts) {
         if (posts == null || posts.equals("written")) {
             // 작성한 최신 게시글 2개 조회
-            return postRepository.findAllByMemberId(memberId, Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+            return postRepository.findAllByMemberId(memberId, Sort.by(Sort.Direction.DESC, "bumpsTime")).stream()
                     .limit(2)
                     .collect(Collectors.toList());
         } else if (posts.equals("liked")) {
             // 좋아요한 최신 게시글 2개 조회
             List<Long> likedPostIds = likesRepository.findPostIdsByMemberId(memberId);
-            return postRepository.findAllByIdIn(likedPostIds, Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+            return postRepository.findAllByIdIn(likedPostIds, Sort.by(Sort.Direction.DESC, "bumpsTime")).stream()
                     .limit(2)
                     .collect(Collectors.toList());
         } else if (posts.equals("voted")) {
             // 투표한 최신 게시글 2개 조회
             List<Long> votedPostIds = voteRepository.findPostIdsByMemberId(memberId);
-            return postRepository.findAllByIdIn(votedPostIds, Sort.by(Sort.Direction.DESC, "createdAt")).stream()
+            return postRepository.findAllByIdIn(votedPostIds, Sort.by(Sort.Direction.DESC, "bumpsTime")).stream()
                     .limit(2)
                     .collect(Collectors.toList());
         } else return null;
