@@ -34,7 +34,7 @@ public class MainServiceImpl implements MainService{
     @Override
     public PostListDTO getMain() {
 
-        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "bumpsTime"));
 
         Long memberId = findMemberService.findLoginMemberId();
         //추천 게시물 리스트

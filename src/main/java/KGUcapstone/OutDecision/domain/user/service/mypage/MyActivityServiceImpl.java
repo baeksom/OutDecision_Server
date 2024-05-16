@@ -41,7 +41,7 @@ public class MyActivityServiceImpl implements MyActivityService {
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         Page<Post> postPage;
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // createdAt으로 내림차순 정렬
+        Sort sort = Sort.by(Sort.Direction.DESC, "bumpsTime"); // bumpsTime으로 내림차순 정렬
         if (status == null) {
             postPage = postRepository.findAllByMember(member, PageRequest.of(page, 10, sort));
         } else {
@@ -61,7 +61,7 @@ public class MyActivityServiceImpl implements MyActivityService {
 
         List<Long> likedPostIds = likesRepository.findPostIdsByMemberId(memberId);
         Page<Post> likedPosts;
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // createdAt으로 내림차순 정렬
+        Sort sort = Sort.by(Sort.Direction.DESC, "bumpsTime"); // bumpsTime으로 내림차순 정렬
         if (status == null) {
             likedPosts = postRepository.findAllByIdIn(likedPostIds, PageRequest.of(page, 10, sort));
         } else {
@@ -81,7 +81,7 @@ public class MyActivityServiceImpl implements MyActivityService {
 
         List<Long> votedPostIds = voteRepository.findPostIdsByMemberId(memberId);
         Page<Post> votedPosts;
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt"); // createdAt으로 내림차순 정렬
+        Sort sort = Sort.by(Sort.Direction.DESC, "bumpsTime"); // bumpsTime으로 내림차순 정렬
         if (status == null) {
             votedPosts = postRepository.findAllByIdIn(votedPostIds, PageRequest.of(page, 10, sort));
         } else {
