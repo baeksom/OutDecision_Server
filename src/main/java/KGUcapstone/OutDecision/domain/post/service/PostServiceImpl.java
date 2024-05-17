@@ -284,24 +284,36 @@ public class PostServiceImpl implements PostService{
     // 게시글 끌어올리기
     public boolean topPost(Long postId) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
-
-        if (memberOptional.isPresent()) {
-            Member member = memberOptional.get();
-            Post post = postRepository.findById(postId).orElseThrow(() ->
-                    new IllegalArgumentException("게시물이 존재하지 않습니다."));
-
-            if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
-
-            if(member.getBumps() != 0) { // 끌올 1개이상
-                int bumpCount = member.getBumps() - 1;
-                member.updateBumps(bumpCount);
-                memberRepository.save(member);
-
-                post.updateBumpsTime();
-                postRepository.save(post);
-                return true;
-            }
+        if (memberOptional.isEmpty()) { // 로그인 하였는지 여부
+            System.out.println("로그인 하세요.");
+            return false;
         }
-        return false;
+        Member member = memberOptional.get();
+        Post post = postRepository.findById(postId).orElseThrow(() ->
+                new IllegalArgumentException("게시물이 존재하지 않습니다."));
+
+        if (!member.getId().equals(post.getMember().getId())) { // 게시글을 작성한 유저 맞는지 확인
+            System.out.println("작성자가 아닙니다.");
+            return false;
+        }
+
+        if (post.getStatus().equals(Status.end)){  // 투표 중인 게시글만
+            System.out.println("투표가 마감 되었습니다.");
+            return false;
+        }
+
+        if(member.getBumps() == 0) { // 끌올 1개이상
+            System.out.println("끌어올리기 횟수가 부족합니다.");
+            return false;
+        }
+
+        int bumpCount = member.getBumps() - 1;
+        member.updateBumps(bumpCount);
+        memberRepository.save(member);
+
+        post.updateBumpsTime();
+        postRepository.save(post);
+
+        return true;
     }
 }
