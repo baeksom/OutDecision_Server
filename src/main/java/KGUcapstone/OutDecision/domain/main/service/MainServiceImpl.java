@@ -25,18 +25,18 @@ public class MainServiceImpl implements MainService{
 
     private final PostRepository postRepository;
     private final RankingService rankingService;
+    private final PostConverter postConverter;
 
     @Override
     public PostListDTO getMain() {
 
         Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
-
         // HOT 게시물 리스트
         List<PostDTO> hotPostDTOList = mapToDTO(postRepository.findByHotTrue(pageable));
         // 최신 게시물 리스트
         List<PostDTO> latestPostDTOList = mapToDTO(postRepository.findAll(pageable).getContent());
         // 투표 마감 게시물 리스트
-        List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByCreatedAtDesc(Status.CLOSING, pageable));
+        List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByCreatedAtDesc(Status.end, pageable));
 
         RankingResponseDTO.RankingListDTO top10Rankings = rankingService.getTop10Rankings();
 
@@ -50,7 +50,7 @@ public class MainServiceImpl implements MainService{
 
     private List<PostDTO> mapToDTO(List<Post> posts) {
         return posts.stream()
-                .map(PostConverter::toPostDTO)
+                .map(postConverter::toPostDTO)
                 .collect(Collectors.toList());
     }
 

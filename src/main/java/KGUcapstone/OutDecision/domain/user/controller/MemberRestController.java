@@ -36,41 +36,39 @@ public class MemberRestController {
     private final UserImgService userImgService;
     private final MyPageService myPageService;
     private final TitleService titleService;
+    private final PostConverter postConverter;
 
-    @GetMapping("/{memberId}/posting")
+    @GetMapping("/posting")
     @Operation(summary = "마이페이지 작성글 API", description = "사용자가 작성한 글을 게시판 보드로 조회하는 API이며, 페이징을 포함합니다.")
     public ApiResponse<PostListDTO> getMyPostList(
-            @PathVariable(name = "memberId") Long memberId,
             @RequestParam(name = "status", required = false) Status status,
             @RequestParam(name = "page", defaultValue = "1") Integer page) {
         // 페이지 번호를 1부터 시작하도록 변환
         Integer adjustedPage = page - 1;
-        Page<Post> myPostPage = myActivityService.getMyPostListByStatus(memberId, status, adjustedPage);
-        return ApiResponse.onSuccess(PostConverter.toPostListDTO(myPostPage));
+        Page<Post> myPostPage = myActivityService.getMyPostListByStatus(status, adjustedPage);
+        return ApiResponse.onSuccess(postConverter.toPostListDTO(myPostPage));
     }
 
-    @GetMapping("/{memberId}/liked")
+    @GetMapping("/liked")
     @Operation(summary = "마이페이지 좋아요한 글 API", description = "사용자가 좋아요한 글을 게시판 보드로 조회하는 API이며, 페이징을 포함합니다.")
     public ApiResponse<PostListDTO> getLikedPostList(
-            @PathVariable(name = "memberId") Long memberId,
             @RequestParam(name = "status", required = false) Status status,
             @RequestParam(name = "page", defaultValue = "1") Integer page) {
         // 페이지 번호를 1부터 시작하도록 변환
         Integer adjustedPage = page - 1;
-        Page<Post> likedPostPage = myActivityService.getLikedPostListByStatus(memberId, status, adjustedPage);
-        return ApiResponse.onSuccess(PostConverter.toPostListDTO(likedPostPage));
+        Page<Post> likedPostPage = myActivityService.getLikedPostListByStatus(status, adjustedPage);
+        return ApiResponse.onSuccess(postConverter.toPostListDTO(likedPostPage));
     }
 
-    @GetMapping("/{memberId}/vote")
+    @GetMapping("/vote")
     @Operation(summary = "마이페이지 투표한 글 API", description = "사용자가 투표한 글을 게시판 보드로 조회하는 API이며, 페이징을 포함합니다.")
     public ApiResponse<PostListDTO> getVotedPostList(
-            @PathVariable(name = "memberId") Long memberId,
             @RequestParam(name = "status", required = false) Status status,
             @RequestParam(name = "page", defaultValue = "1") Integer page) {
         // 페이지 번호를 1부터 시작하도록 변환
         Integer adjustedPage = page - 1;
-        Page<Post> votedPostPage = myActivityService.getVotedPostListByStatus(memberId, status, adjustedPage);
-        return ApiResponse.onSuccess(PostConverter.toPostListDTO(votedPostPage));
+        Page<Post> votedPostPage = myActivityService.getVotedPostListByStatus(status, adjustedPage);
+        return ApiResponse.onSuccess(postConverter.toPostListDTO(votedPostPage));
     }
 
     @GetMapping("/{memberId}/edit")

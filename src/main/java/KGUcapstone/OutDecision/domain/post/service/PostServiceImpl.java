@@ -1,7 +1,10 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
+import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
 import KGUcapstone.OutDecision.domain.options.repository.OptionsRepository;
+import KGUcapstone.OutDecision.domain.post.converter.PostConverter;
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
@@ -13,6 +16,7 @@ import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
@@ -26,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.*;
 
@@ -38,14 +43,19 @@ public class PostServiceImpl implements PostService{
     private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
     private final VoteRepository voteRepository;
+    private final FindMemberService findMemberService;
+    private final NotificationsRepository notificationsRepository;
     private final S3Service s3Service;
+    private final PostConverter postConverter;
 
     /* 등록 */
     @Override
     public boolean uploadPost(UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages) {
-        Long memberId = 2024L;
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member를 찾을 수 없습니다."));
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else return false;
 
         Post post = Post.builder()
                 .title(request.getTitle())
@@ -55,7 +65,7 @@ public class PostServiceImpl implements PostService{
                 .pluralVoting(request.isPluralVoting())
                 .gender(request.getGender())
                 .member(member)
-                .status(Status.VOTING)
+                .status(Status.progress)
                 .bumpsTime(LocalDateTime.now())
                 .likes(0)
                 .views(0)
@@ -89,6 +99,12 @@ public class PostServiceImpl implements PostService{
         post.setOptionsList(optionsList);
         postRepository.save(post);
 
+        Notifications notifications = Notifications.builder()
+                .member(member)
+                .post(post)
+                .build();
+        notificationsRepository.save(notifications);
+
         return true;
     }
 
@@ -98,16 +114,24 @@ public class PostServiceImpl implements PostService{
     /* 조회 */
     @Override
     public PostDTO viewPost(Long postId) {
-        Long memberId = 2024L;
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else memberId = 0L;
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         post.incrementViews();
         postRepository.save(post);
+
+
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .map(comments -> {
                     return CommentsDTO.builder()
                             .memberId(comments.getMember().getId())
                             .nickname(comments.getMember().getNickname())
+                            .profileUrl(comments.getMember().getUserImg())
                             .body(comments.getBody())
                             .createdAt(formatCreatedAt2(comments.getCreatedAt()))
                             .build();
@@ -125,15 +149,18 @@ public class PostServiceImpl implements PostService{
                 .gender(post.getGender())
                 .userId(post.getMember().getId())
                 .nickname(post.getMember().getNickname())
+                .profileUrl(post.getMember().getUserImg())
                 .bumps(memberId.equals(post.getMember().getId()) ? post.getMember().getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
+                .bumpsTime(formatCreatedAt(post.getBumpsTime()))
                 .deadline(formatDeadline(post.getDeadline()))
                 .participationCnt(getParticipationCnt(post))
                 .likesCnt(post.getLikes())
                 .views(post.getViews())
                 .optionsList(optionList(post))
                 .commentsList(commentsListDTO)
+                .loginMemberPostInfoDTOList(postConverter.checkLoginPosts(post))
                 .build();
     }
 
@@ -230,6 +257,7 @@ public class PostServiceImpl implements PostService{
                     int votePercentage = (int) Math.round((optionVoteCnt * 100.0) / totalVoteCnt);
 
                     return OptionsDTO.builder()
+                            .optionId(option.getId())
                             .body(option.getBody())
                             .imgUrl(option.getPhotoUrl())
                             .votePercentage(votePercentage)
@@ -247,6 +275,45 @@ public class PostServiceImpl implements PostService{
         if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 20) {
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
             post.updateHot(true);
+
+            // 포인트 +300 적립
+            post.getMember().updatePoint(post.getMember().getPoint()+300);
         }
+    }
+
+    // 게시글 끌어올리기
+    public boolean topPost(Long postId) {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        if (memberOptional.isEmpty()) { // 로그인 하였는지 여부
+            System.out.println("로그인 하세요.");
+            return false;
+        }
+        Member member = memberOptional.get();
+        Post post = postRepository.findById(postId).orElseThrow(() ->
+                new IllegalArgumentException("게시물이 존재하지 않습니다."));
+
+        if (!member.getId().equals(post.getMember().getId())) { // 게시글을 작성한 유저 맞는지 확인
+            System.out.println("작성자가 아닙니다.");
+            return false;
+        }
+
+        if (post.getStatus().equals(Status.end)){  // 투표 중인 게시글만
+            System.out.println("투표가 마감 되었습니다.");
+            return false;
+        }
+
+        if(member.getBumps() == 0) { // 끌올 1개이상
+            System.out.println("끌어올리기 횟수가 부족합니다.");
+            return false;
+        }
+
+        int bumpCount = member.getBumps() - 1;
+        member.updateBumps(bumpCount);
+        memberRepository.save(member);
+
+        post.updateBumpsTime();
+        postRepository.save(post);
+
+        return true;
     }
 }
