@@ -25,13 +25,14 @@ public class MainServiceReImpl implements MainServiceRe{
     private final PostRepository postRepository;
     private final PostsServiceImpl postsService;
     private final FindMemberService findMemberService;
+    private final PostConverter postConverter;
 
     @Override
-    public PostListReDTO getMainRe() {
+    public PostListReDTO getMainRe(Long memberId) {
 
         Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Long memberId = findMemberService.findLoginMemberId();
+        //Long memberId = findMemberService.findLoginMemberId();
         //추천 게시물 리스트
         List<PostDTO> recommendPostDTOList;
         if(memberId==0) {
@@ -49,7 +50,7 @@ public class MainServiceReImpl implements MainServiceRe{
 
     private List<PostDTO> mapToDTO(List<Post> posts) {
         return posts.stream()
-                .map(PostConverter::toPostDTO)
+                .map(postConverter::toPostDTO)
                 .collect(Collectors.toList());
     }
 

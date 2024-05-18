@@ -15,7 +15,6 @@ public class MainResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostListDTO{
-        List<PostDTO> recommendPostList;
         List<PostDTO> hotPostList;
         List<PostDTO> latestPostList;
         List<PostDTO> closedPostList;

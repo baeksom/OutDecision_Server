@@ -6,10 +6,10 @@ import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import KGUcapstone.OutDecision.domain.post.domain.enums.Status;
-import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.domain.MemberView;
+import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.repository.MemberViewRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
@@ -24,15 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 import java.util.function.Predicate;
 
-import static KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.*;
-
 @Service
+
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostsServiceImpl implements PostsService{
 
     private final PostRepository postRepository;
     private final MemberViewRepository memberViewRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Page<Post> getPosts(String sort,
@@ -140,6 +140,7 @@ public class PostsServiceImpl implements PostsService{
         return filterPosts;
     }
 
+
     public Page<Post> getRecommendPost(Long memberId, Integer page, Integer size) {
         List<Post> recommend=recommendPost(memberId);
         // 페이징 적용
@@ -152,9 +153,8 @@ public class PostsServiceImpl implements PostsService{
     public List<Post> recommendPost(Long memberId) {
 
         // 사용자의 조회 기록 가져오기
-        List<MemberView> viewList = memberViewRepository.findMemberViewsByMemberId(memberId);
-
-        if (viewList == null || viewList.isEmpty()) {
+        List<MemberView> viewList = memberViewRepository.findAll();
+        if (viewList.isEmpty()) {
             // 사용자의 조회 기록이 없는 경우, 모든 게시글을 반환
             Pageable pageable = PageRequest.of(0, 5); // 페이지와 사이즈 조정
             return postRepository.findAll(pageable).getContent();
@@ -162,15 +162,18 @@ public class PostsServiceImpl implements PostsService{
 
         // UserBasedCF를 사용하여 추천 시스템 실행
         int topSimilarUsers = 5; // 상위 유사 사용자의 수
-        UserBasedCF userBasedCF = new UserBasedCF(viewList, topSimilarUsers);
-        Map<String, Double> recommendations = userBasedCF.predictRecommendations(memberId);
+        UserBasedCF userBasedCF = new UserBasedCF(viewList,topSimilarUsers);
+        Map<Category, Double> recommendations = userBasedCF.predictRecommendations(memberId);
 
         // 모든 게시글 가져오기
         List<Post> allPosts = postRepository.findAll();
+
         // 게시글을 추천 점수를 기준으로 내림차순으로 정렬하여 상위 10개 게시글 선택
         allPosts.sort((post1, post2) -> {
-            double score1 = calculateScore(post1, recommendations);
-            double score2 = calculateScore(post2, recommendations);
+            Category category1 = post1.getCategory();
+            Category category2 = post2.getCategory();
+            double score1 = recommendations.getOrDefault(category1, 0.0) + post1.getLikes() * 5 + post1.getViews();
+            double score2 = recommendations.getOrDefault(category2, 0.0) + post2.getLikes() * 5 + post2.getViews();
             return Double.compare(score2, score1); // 내림차순 정렬
         });
 
@@ -178,7 +181,7 @@ public class PostsServiceImpl implements PostsService{
         List<Post> recommendPosts = new ArrayList<>();
         int count = 0;
         for (Post post : allPosts) {
-            double score = calculateScore(post, recommendations);
+            double score = recommendations.getOrDefault(post.getCategory(), 0.0) + post.getLikes() * 5 + post.getViews();
             if (!Double.isNaN(score)) {
                 recommendPosts.add(post);
                 count++;
@@ -191,13 +194,4 @@ public class PostsServiceImpl implements PostsService{
         return recommendPosts;
     }
 
-    // 게시글의 총점을 계산하는 메소드
-    private double calculateScore(Post post, Map<String, Double> recommendations) {
-        // 각 카테고리별 추천 점수와 게시글의 정보를 이용하여 총점 계산
-        double categoryScore = recommendations.getOrDefault(post.getCategory().toString(), 0.0);
-        double likesScore = post.getLikes() * 5;
-        double totalViews = post.getViews();
-        // 총점 계산
-        return categoryScore + likesScore + totalViews;
-    }
 }
