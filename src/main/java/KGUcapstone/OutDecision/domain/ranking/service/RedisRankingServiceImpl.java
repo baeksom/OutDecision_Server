@@ -227,6 +227,7 @@ public class RedisRankingServiceImpl implements RankingService {
                 rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
                 break;
             }
+            prevScore = point;
         }
         return rankingDTO;
     }
