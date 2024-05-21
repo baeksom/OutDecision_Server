@@ -32,7 +32,6 @@ public class PostsServiceImpl implements PostsService{
 
     private final PostRepository postRepository;
     private final MemberViewRepository memberViewRepository;
-    private final MemberRepository memberRepository;
 
     @Override
     public Page<Post> getPosts(String sort,
@@ -59,7 +58,7 @@ public class PostsServiceImpl implements PostsService{
         List<Post> posts = postRepository.findAll();
 
         /* 키워드 검색 */
-        // searchType - 제목, 내용, 제목+내용
+        // searchType - 제목, 내용, 옵션, 전체
         if (keyword != null && !keyword.trim().isEmpty()) {
             // 키워드가 있다면 == 사용자가 키워드 검색을 했다면
             String[] keywords = keyword.split("\\s+"); // 공백을 기준으로 단어를 분리
@@ -71,12 +70,16 @@ public class PostsServiceImpl implements PostsService{
                     matches = postRepository.findByTitleContaining(word);
                 } else if (searchType.equals("content")) {
                     matches = postRepository.findByContentContaining(word);
+                } else if (searchType.equals("option")) {
+                    matches = postRepository.findByOptionsContaining(word);
                 } else {
                     List<Post> titleMatches = postRepository.findByTitleContaining(word);
                     List<Post> contentMatches = postRepository.findByContentContaining(word);
+                    List<Post> optionMatches = postRepository.findByOptionsContaining(word);
                     // 중복 방지
                     Set<Post> temp = new HashSet<>(titleMatches);
                     temp.addAll(contentMatches);
+                    temp.addAll(optionMatches);
                     matches = new ArrayList<>(temp);
                 }
                 if (tempMatches.isEmpty()) {
@@ -95,11 +98,16 @@ public class PostsServiceImpl implements PostsService{
 
             if (filterValue != null) {
                 if (filterType.equals("category")) {
-                    // Category enum 이랑 매핑해주어야함
-                    posts = findByFilter(posts, post -> post.getCategory().equals(Category.fromValue(filterValue)));
+                    if (filterValue.equals("hot")) {
+                        // 핫 게시글 (전체)
+                        posts = findByFilter(posts, post -> post.getHot().equals(true));
+                    } else {
+                        // Category enum 이랑 매핑해주어야함
+                        posts = findByFilter(posts, post -> post.getCategory().equals(Category.fromValue(filterValue)));
+                    }
                 } else if (filterType.equals("mode")) {
                     if (filterValue.equals("hot")) {
-                        // 핫 게시글 - hot, normal
+                        // 카테고리 핫 게시글 - hot, normal
                         // hot이 true라면 hot 게시글
                         posts = findByFilter(posts, post -> post.getHot().equals(true));
                     }
