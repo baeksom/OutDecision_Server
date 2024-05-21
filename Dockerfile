@@ -36,6 +36,7 @@ ENV BUCKET_NAME=$BUCKET_NAME
 ENV IP=$IP
 ENV DEFAULT_PROFILE_IMG=$DEFAULT_PROFILE_IMG
 
+ENV TZ Asia/Seoul
 
 COPY build/libs/*.jar docker-springboot.jar
 ENTRYPOINT ["java", "-Dspring.profiles.active=docker", "-jar", "docker-springboot.jar"]
