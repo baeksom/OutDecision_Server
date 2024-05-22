@@ -29,7 +29,7 @@ public class TitleServiceImpl implements TitleService{
 
     // 칭호 변경
     @Override
-    public boolean updateUserTitle(Long memberId, UpdateTitleDTO request) {
+    public boolean updateUserTitle(UpdateTitleDTO request) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
         Member member;
         // 로그인 체크

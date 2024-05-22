@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface TitleService {
     // 프로필 사진 변경
-    boolean updateUserTitle(Long memberId, UpdateRequestDTO.UpdateTitleDTO request);
+    boolean updateUserTitle(UpdateRequestDTO.UpdateTitleDTO request);
 
     List<String> myTitlesDTO(Long memberId);
 
