@@ -9,13 +9,17 @@ import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO.MyPageDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
+import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,7 +27,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class MyPageServiceImpl implements MyPageService{
     private final PostRepository postRepository;
-    private final MemberRepository memberRepository;
+    private final FindMemberService findMemberService;
     private final LikesRepository likesRepository;
     private final VoteRepository voteRepository;
     private final TitleRepository titleRepository;
@@ -31,7 +35,16 @@ public class MyPageServiceImpl implements MyPageService{
 
     @Override
     public MyPageDTO getMyPage(Long memberId, String posts) {
-        Member member = memberRepository.findById(memberId).get();
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent())
+        {
+            member = memberOptional.get();
+            memberId = member.getId();
+        }
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         int titleCnt = titleRepository.countTrueColumnsForMember(memberId);
 
         List<Post> latestPostList = postList(memberId, posts);
