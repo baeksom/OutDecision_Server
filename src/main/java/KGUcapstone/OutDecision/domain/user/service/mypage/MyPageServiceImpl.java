@@ -34,9 +34,10 @@ public class MyPageServiceImpl implements MyPageService{
     private final PostConverter  postConverter;
 
     @Override
-    public MyPageDTO getMyPage(Long memberId, String posts) {
+    public MyPageDTO getMyPage(String posts) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
         Member member;
+        Long memberId;
         // 로그인 체크
         if(memberOptional.isPresent())
         {
