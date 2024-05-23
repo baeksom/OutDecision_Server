@@ -32,8 +32,8 @@ public class PostsController {
                                                 @RequestParam(required = false) String gender,
                                                 @RequestParam(required = false) String vote,
                                                 @RequestParam(required = false) String search,
-                                                @RequestParam(name = "search-type", required = false) String searchType,
-                                                @RequestParam String sort) {
+                                                @RequestParam(required = false) String searchType,
+                                                @RequestParam String sorgit t) {
         Map<String, String> filters = new HashMap<>();
         filters.put("category", category);
         filters.put("mode", mode);
@@ -51,7 +51,7 @@ public class PostsController {
                                               @RequestParam(required = false) String gender,
                                               @RequestParam(required = false) String vote,
                                               @RequestParam(required = false) String search,
-                                              @RequestParam(name = "search-type", required = false) String searchType,
+                                              @RequestParam(required = false) String searchType,
                                               @RequestParam String sort) {
         Map<String, String> filters = new HashMap<>();
         filters.put("mode", mode);
