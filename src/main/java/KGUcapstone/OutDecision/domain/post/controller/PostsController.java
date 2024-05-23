@@ -33,7 +33,7 @@ public class PostsController {
                                                 @RequestParam(required = false) String vote,
                                                 @RequestParam(required = false) String search,
                                                 @RequestParam(required = false) String searchType,
-                                                @RequestParam String sorgit t) {
+                                                @RequestParam String sort) {
         Map<String, String> filters = new HashMap<>();
         filters.put("category", category);
         filters.put("mode", mode);
