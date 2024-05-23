@@ -102,10 +102,10 @@ public class MemberRestController {
         else return ApiResponse.onFailure("400", "프로필 사진 변경에 실패하였습니다.", null);
     }
 
-    @PatchMapping("/{memberId}/delete/profile")
+    @PatchMapping("/delete/profile")
     @Operation(summary = "마이페이지 프로필 사진 삭제", description = "프로필 사진을 삭제합니다.")
-    public ApiResponse<Object> deleteUserImg(@PathVariable("memberId") Long memberId) {
-        boolean success = userImgService.deleteUserImg(memberId);
+    public ApiResponse<Object> deleteUserImg() {
+        boolean success = userImgService.deleteUserImg();
         if (success) return ApiResponse.onSuccess("프로필 사진이 성공적으로 삭제되었습니다.");
         else return ApiResponse.onFailure("400", "프로필 사진 삭제에 실패하였습니다.", null);
     }
