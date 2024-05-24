@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,7 +136,10 @@ public class PostServiceImpl implements PostService{
                             .body(comments.getBody())
                             .createdAt(formatCreatedAt2(comments.getCreatedAt()))
                             .build();
-                }).toList();
+                })
+                .sorted(Comparator.comparing(CommentsDTO::getCreatedAt).reversed())
+                .toList();
+
         CommentsListDTO commentsListDTO = CommentsListDTO.builder()
                 .commentsDTOList(commentsList)
                 .listSize(commentsList.size())
