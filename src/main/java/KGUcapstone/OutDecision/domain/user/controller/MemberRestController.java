@@ -110,7 +110,7 @@ public class MemberRestController {
         else return ApiResponse.onFailure("400", "프로필 사진 삭제에 실패하였습니다.", null);
     }
 
-    @GetMapping("/")
+    @GetMapping()
     @Operation(summary = "마이페이지 홈 API", description = "마이페이지 홈을 조회하는 API입니다.")
     public ApiResponse<MyPageDTO> getMyPostList(@RequestParam(name = "posts", required = false) String posts) {
         return ApiResponse.onSuccess(myPageService.getMyPage(posts));
