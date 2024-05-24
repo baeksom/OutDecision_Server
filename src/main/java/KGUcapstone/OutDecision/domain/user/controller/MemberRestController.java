@@ -94,10 +94,10 @@ public class MemberRestController {
         else return ApiResponse.onFailure("400", "비밀번호 변경에 실패하였습니다.", null);
     }
 
-    @PatchMapping(value = "/{memberId}/edit/profile", consumes = "multipart/form-data")
+    @PatchMapping(value = "/edit/profile", consumes = "multipart/form-data")
     @Operation(summary = "마이페이지 프로필 사진 변경", description = "프로필 사진을 변경합니다.")
-    public ApiResponse<Object> updateUserImg(@PathVariable("memberId") Long memberId, @RequestPart(value = "userImg") MultipartFile userImg) {
-        boolean success = userImgService.updateUserImg(memberId, userImg);
+    public ApiResponse<Object> updateUserImg(@RequestPart(value = "userImg") MultipartFile userImg) {
+        boolean success = userImgService.updateUserImg(userImg);
         if (success) return ApiResponse.onSuccess("프로필 사진이 성공적으로 변경되었습니다.");
         else return ApiResponse.onFailure("400", "프로필 사진 변경에 실패하였습니다.", null);
     }
