@@ -28,11 +28,11 @@ public class MainServiceReImpl implements MainServiceRe{
     private final PostConverter postConverter;
 
     @Override
-    public PostListReDTO getMainRe(Long memberId) {
+    public PostListReDTO getMainRe() {
 
         Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        //Long memberId = findMemberService.findLoginMemberId();
+        Long memberId = findMemberService.findLoginMemberId();
         //추천 게시물 리스트
         List<PostDTO> recommendPostDTOList;
         if(memberId==0) {
