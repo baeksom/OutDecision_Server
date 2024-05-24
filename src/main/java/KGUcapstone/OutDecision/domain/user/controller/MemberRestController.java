@@ -86,10 +86,10 @@ public class MemberRestController {
         else return ApiResponse.onFailure("400", "개인정보 수정에 실패하였습니다.", null);
     }
 
-    @PatchMapping("/{memberId}/edit/password")
+    @PatchMapping("/edit/password")
     @Operation(summary = "마이페이지 비밀번호 변경", description = "비밀번호를 변경합니다.")
-    public ApiResponse<Object> updatePassword(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdatePasswordDTO request) {
-        boolean success = passwordService.updatePassword(memberId, request);
+    public ApiResponse<Object> updatePassword(@RequestBody @Valid UpdatePasswordDTO request) {
+        boolean success = passwordService.updatePassword(request);
         if (success) return ApiResponse.onSuccess("비밀번호가 성공적으로 변경되었습니다.");
         else return ApiResponse.onFailure("400", "비밀번호 변경에 실패하였습니다.", null);
     }
