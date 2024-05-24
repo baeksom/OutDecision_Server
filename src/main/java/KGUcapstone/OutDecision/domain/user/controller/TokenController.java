@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.auth.TokenService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class TokenController {
 
     private final TokenService tokenService;
+    private final FindMemberService findMemberService;
 
     @PostMapping("/token/logout")
-    public ApiResponse<Object> logout(@RequestHeader("Authorization") final String accessToken) {
+    public ApiResponse<Object> logout() {
+        String accessToken = findMemberService.getTokenFromCookies();
         // 엑세스 토큰으로 현재 Redis 정보 삭제
         tokenService.removeRefreshToken(accessToken);
         return ApiResponse.onSuccess(null);
     }
 
     @PostMapping("/token/refresh")
-    public ResponseEntity<ApiResponse<Object>> refresh(@RequestHeader("Authorization") final String accessToken) {
+    public ResponseEntity<ApiResponse<Object>> refresh() {
+        String accessToken = findMemberService.getTokenFromCookies();
         String newAccessToken = tokenService.republishAccessToken(accessToken);
         if (StringUtils.hasText(newAccessToken)) {
             return ResponseEntity.ok(ApiResponse.onSuccess(newAccessToken));
