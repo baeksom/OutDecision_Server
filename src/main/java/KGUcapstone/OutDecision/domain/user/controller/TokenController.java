@@ -30,7 +30,7 @@ public class TokenController {
         // 엑세스 토큰으로 현재 Redis 정보 삭제
         tokenService.removeRefreshToken(accessToken);
         // 쿠키에서 토큰 삭제
-        deleteCookie(response, "accessToken");
+        deleteCookie(response, "Authorization");
         return ApiResponse.onSuccess(null);
     }
 
@@ -40,7 +40,7 @@ public class TokenController {
         String newAccessToken = tokenService.republishAccessToken(accessToken);
         if (StringUtils.hasText(newAccessToken)) {
             // 클라이언트에게 응답할 때 쿠키를 변경한다.
-            addCookie(response, "accessToken", newAccessToken, 60*60);
+            addCookie(response, "Authorization", newAccessToken, 60*60);
             return ResponseEntity.ok(ApiResponse.onSuccess(newAccessToken));
         }
 

@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.auth.RevokeService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,11 @@ import java.io.IOException;
 public class RevokeController {
 
     private final RevokeService revokeService;
+    private final FindMemberService findMemberService;
 
     @DeleteMapping("/user/revoke")
-    public ApiResponse<Object> revokeMemberController(@RequestHeader("Authorization") String accessToken) throws IOException {
+    public ApiResponse<Object> revokeMemberController() throws IOException {
+        String accessToken = findMemberService.getTokenFromCookies();
         revokeService.deleteAccount(accessToken);
         return ApiResponse.onSuccess(null);
     }
