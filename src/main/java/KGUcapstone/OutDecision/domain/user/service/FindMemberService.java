@@ -50,7 +50,7 @@ public class FindMemberService {
         return Optional.empty();
     }
 
-    private String getTokenFromCookies() {
+    public String getTokenFromCookies() {
         if (request.getCookies() == null) {
             return null;
         }

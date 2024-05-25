@@ -22,6 +22,7 @@ public class TokenService {
     // Redis에서 토큰 삭제
     @Transactional
     public void removeRefreshToken(String accessToken) {
+        System.out.println("accessToken = " + accessToken);
 
         // 헤더에서 가져온 값 앞에 자동 생성되는 "Bearer "을 삭제한다.
         String cleanedToken = accessToken.replace("Bearer ", "");
