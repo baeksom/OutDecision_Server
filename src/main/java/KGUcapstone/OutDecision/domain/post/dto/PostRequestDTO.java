@@ -2,7 +2,6 @@ package KGUcapstone.OutDecision.domain.post.dto;
 
 import KGUcapstone.OutDecision.domain.post.domain.enums.Gender;
 import lombok.Getter;
-import org.springframework.web.multipart.MultipartFile;
 
 public class PostRequestDTO {
 
