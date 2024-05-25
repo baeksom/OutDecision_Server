@@ -43,8 +43,9 @@ public class PostRestController {
     public ApiResponse<Object> updatePost(@PathVariable Long postId,
                                           @RequestPart UploadPostDTO request,
                                           @RequestPart List<String> optionNames,
-                                          @RequestPart(required = false) List<MultipartFile> optionImages) {
-        return ApiResponse.onSuccess(postServiceImpl.updatePost(postId, request, optionNames, optionImages));
+                                          @RequestPart List<MultipartFile> newImages,
+                                          @RequestPart List<String> originImages) {
+        return ApiResponse.onSuccess(postServiceImpl.updatePost(postId, request, optionNames, newImages, originImages));
     }
 
     /* 삭제 */

@@ -11,7 +11,8 @@ public interface PostService {
 
     boolean uploadPost(UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages);
     PostDTO viewPost(Long postId);
-    boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages);
+    boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames,
+                       List<MultipartFile> newImages, List<String> originImages);
     boolean deletePost(Long postId);
     void turnsHot(Post post);
 }
