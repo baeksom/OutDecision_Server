@@ -22,7 +22,8 @@ public class CookieUtil {
     }
 
     public static void deleteCookie(HttpServletResponse response, String name) {
-        ResponseCookie cookie = ResponseCookie.from(name)
+        System.out.println("CookieUtil.deleteCookie");
+        ResponseCookie cookie = ResponseCookie.from(name, null)
                 .path("/")
                 .sameSite("None")
                 .httpOnly(true)
