@@ -28,10 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.*;
 
@@ -170,33 +168,37 @@ public class PostServiceImpl implements PostService{
 
     /* 수정 */
     @Override
-    public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages) {
+    public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames,
+                              List<MultipartFile> newImages, List<String> originImages) {
         Long memberId = 2024L;
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         if (!memberId.equals(post.getMember().getId())) return false;
 
-        // 기존 옵션 및 이미지 삭제
-        for (Options option : post.getOptionsList()) {
-            if (option.getPhotoUrl() != null) {
-                // S3에서 이미지 삭제
-                s3Service.deleteImage(option.getPhotoUrl());
-            }
-            optionsRepository.delete(option);
-        }
-        post.getOptionsList().clear(); // 옵션 리스트 초기화
-        postRepository.save(post); // 변경사항 저장
+        // 기존 옵션 이미지 리스트를 수집
+        List<String> originOptionImgList = post.getOptionsList().stream()
+                .map(Options::getPhotoUrl)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        // 기존 옵션 삭제
+        post.getOptionsList().forEach(option -> optionsRepository.delete(option));
+        post.getOptionsList().clear();
 
         // 새로운 옵션 추가
         List<Options> optionsList = new ArrayList<>();
-        if (optionNames != null && optionImages != null && optionNames.size() == optionImages.size()) {
+        if (optionNames != null && newImages != null && optionNames.size() == newImages.size()) {
             for (int i = 0; i < optionNames.size(); i++) {
                 String optionName = optionNames.get(i);
-                MultipartFile imageFile = optionImages.get(i);
                 String photoUrl = "";
-                if (imageFile != null && !imageFile.isEmpty()) {
-                    photoUrl = s3Service.uploadFile(imageFile, "options");
+
+                // 새로운 이미지 업로드 또는 기존 이미지 사용
+                if (!newImages.get(i).isEmpty()) {
+                    photoUrl = s3Service.uploadFile(newImages.get(i), "options");
+                } else if (originImages.get(i).isEmpty()) {
+                    photoUrl = originImages.get(i);
                 }
+
                 Options newOption = Options.builder()
                         .body(optionName)
                         .photoUrl(photoUrl)
@@ -206,6 +208,16 @@ public class PostServiceImpl implements PostService{
                 optionsList.add(newOption); // 옵션 리스트에 새로운 옵션 추가
             }
         }
+
+        // S3에서 사용되지 않는 기존 이미지 삭제
+        for (String originImageUrl : originOptionImgList) {
+            boolean existsInOptionsList = optionsList.stream()
+                    .anyMatch(option -> originImageUrl.equals(option.getPhotoUrl()));
+            if (!existsInOptionsList) {
+                s3Service.deleteImage(originImageUrl);
+            }
+        }
+
         // 포스트에 새로운 옵션 리스트 설정
         post.setOptionsList(optionsList);
         post.updatePost(request.getTitle(), request.getContent(), Category.fromValue(request.getCategory()),
