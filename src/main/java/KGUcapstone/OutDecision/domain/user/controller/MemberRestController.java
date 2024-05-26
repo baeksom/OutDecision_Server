@@ -71,10 +71,10 @@ public class MemberRestController {
         return ApiResponse.onSuccess(postConverter.toPostListDTO(votedPostPage));
     }
 
-    @GetMapping("/{memberId}/edit")
+    @GetMapping("/edit")
     @Operation(summary = "마이페이지 개인정보수정 조회 API", description = "마이페이지 개인정보수정 페이지에서 개인정보를 조회합니다.")
-    public ApiResponse<MemberInfoDTO> getMemberInfo(@PathVariable("memberId") Long memberId) {
-        MemberInfoDTO memberDTO = memberService.getMemberById(memberId);
+    public ApiResponse<MemberInfoDTO> getMemberInfo() {
+        MemberInfoDTO memberDTO = memberService.getMemberById();
         return ApiResponse.onSuccess(memberDTO);
     }
 
