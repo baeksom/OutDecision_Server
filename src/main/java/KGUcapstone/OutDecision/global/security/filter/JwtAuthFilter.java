@@ -56,7 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String newAccessToken = tokenService.republishAccessToken(atc, response);
 
             if (newAccessToken != null) {
-                addCookie(response, "Authorization", newAccessToken, 60 * 5);
+                addCookie(response, "Authorization", newAccessToken, 60 * 60);
                 atc = newAccessToken;
                 log.info("토큰 발급 완료 필터 newAccessToken = {}", newAccessToken);
             } else {
@@ -68,6 +68,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // 아래 코드는 AccessToken이 유효할 때만 실행됨
         if (jwtUtil.verifyToken(atc)) {
+            log.info("accessToken 유효 : " + atc);
             Member findMember = findMemberService.findByEmail(jwtUtil.getUid(atc)).orElse(null);
 
             if (findMember != null) {
