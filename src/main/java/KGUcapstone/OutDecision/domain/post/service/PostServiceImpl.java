@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
 import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
@@ -121,18 +122,15 @@ public class PostServiceImpl implements PostService{
         post.incrementViews();
         postRepository.save(post);
 
-
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
-                .map(comments -> {
-                    return CommentsDTO.builder()
-                            .memberId(comments.getMember().getId())
-                            .nickname(comments.getMember().getNickname())
-                            .profileUrl(comments.getMember().getUserImg())
-                            .body(comments.getBody())
-                            .createdAt(formatCreatedAt2(comments.getCreatedAt()))
-                            .build();
-                })
-                .sorted(Comparator.comparing(CommentsDTO::getCreatedAt).reversed())
+                .sorted(Comparator.comparing(Comments::getCreatedAt).reversed())
+                .map(comments -> CommentsDTO.builder()
+                        .memberId(comments.getMember().getId())
+                        .nickname(comments.getMember().getNickname())
+                        .profileUrl(comments.getMember().getUserImg())
+                        .body(comments.getBody())
+                        .createdAt(formatCreatedAt2(comments.getCreatedAt()))
+                        .build())
                 .toList();
 
         CommentsListDTO commentsListDTO = CommentsListDTO.builder()
