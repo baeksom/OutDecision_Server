@@ -20,6 +20,7 @@ import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
 import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +54,7 @@ public class PostServiceImpl implements PostService{
         Member member;
         // 로그인 체크
         if(memberOptional.isPresent()) member = memberOptional.get();
-        else return false;
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         Post post = Post.builder()
                 .title(request.getTitle())
@@ -106,9 +107,6 @@ public class PostServiceImpl implements PostService{
         return true;
     }
 
-
-
-
     /* 조회 */
     @Override
     public PostDTO viewPost(Long postId) {
@@ -116,7 +114,7 @@ public class PostServiceImpl implements PostService{
         Long memberId;
         // 로그인 체크
         if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
-        else memberId = 0L;
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
@@ -169,7 +167,12 @@ public class PostServiceImpl implements PostService{
     @Override
     public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames,
                               List<MultipartFile> optionImages, List<String> originImages) {
-        Long memberId = 2024L;
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         if (!memberId.equals(post.getMember().getId())) return false;
@@ -230,9 +233,15 @@ public class PostServiceImpl implements PostService{
     /* 삭제 */
     @Override
     public boolean deletePost(Long postId) {
-        Long memberId = 2024L;
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
         if (!memberId.equals(post.getMember().getId())) {
             return false;
         }
