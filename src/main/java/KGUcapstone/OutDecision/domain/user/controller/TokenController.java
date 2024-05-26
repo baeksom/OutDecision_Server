@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,14 +34,12 @@ public class TokenController {
         return ApiResponse.onSuccess(null);
     }
 
-    @GetMapping("/token/refresh")
+    @PostMapping("/token/refresh")
     public ResponseEntity<ApiResponse<Object>> refresh(HttpServletResponse response) {
         String accessToken = findMemberService.getTokenFromCookies();
-        System.out.println("accessToken = " + accessToken);
         String newAccessToken = tokenService.republishAccessToken(accessToken, response);
-        System.out.println("newAccessToken = " + newAccessToken);
         if (StringUtils.hasText(newAccessToken)) {
-            System.out.println("변경 완");
+            // 클라이언트에게 응답할 때 쿠키를 변경한다.
             return ResponseEntity.ok(ApiResponse.onSuccess(newAccessToken));
         }
 

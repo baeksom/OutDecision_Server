@@ -58,10 +58,23 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String newAccessToken = tokenService.republishAccessToken(atc, response);
 
             if (newAccessToken != null) {
-                addCookie(response, "Authorization", newAccessToken, 60 * 60);
                 log.info("토큰 발급 완료 필터 newAccessToken = {}", newAccessToken);
 
-                filterChain.doFilter(request, response);
+                // 원래 요청을 새로 만든 토큰으로 다시 수행
+                HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request) {
+                    @Override
+                    public Cookie[] getCookies() {
+                        Cookie[] cookies = super.getCookies();
+                        for (Cookie cookie : cookies) {
+                            if ("Authorization".equals(cookie.getName())) {
+                                cookie.setValue(newAccessToken);
+                            }
+                        }
+                        return cookies;
+                    }
+                };
+
+                filterChain.doFilter(requestWrapper, response);
                 return;
             } else {
                 log.error("새로운 토큰 발급 실패");

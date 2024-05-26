@@ -54,6 +54,7 @@ public class TokenService {
             // 액세스 토큰의 값을 수정해준다.
             resultToken.updateAccessToken(newAccessToken);
             tokenRepository.save(resultToken);
+            addCookie(response, "Authorization", newAccessToken, 60*60);
             log.info("Attempting to republish accessToken: {}", newAccessToken);
             // 새로운 액세스 토큰을 반환해준다.
             return newAccessToken;
