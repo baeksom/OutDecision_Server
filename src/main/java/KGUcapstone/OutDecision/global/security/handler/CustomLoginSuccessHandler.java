@@ -35,7 +35,7 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         log.info("jwtToken = {}", token.getAccessToken());
 
         // 쿠키로 accessToken 전달
-        addCookie(response, "Authorization", token.getAccessToken(), 60*5);
+        addCookie(response, "Authorization", token.getAccessToken(), 60*60);
 
         // 로그인 확인 페이지로 리다이렉트 시킨다.
         log.info("일반 로그인 redirect 준비");
