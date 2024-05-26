@@ -18,6 +18,7 @@ public class CookieUtil {
                 .maxAge(maxAge)
                 .build();
 
+        System.out.println("cookie = " + cookie);
         response.addHeader("Set-Cookie", cookie.toString());
     }
 

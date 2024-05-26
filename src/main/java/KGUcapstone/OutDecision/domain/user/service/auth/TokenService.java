@@ -3,12 +3,15 @@ package KGUcapstone.OutDecision.domain.user.service.auth;
 import KGUcapstone.OutDecision.domain.user.dto.RefreshToken;
 import KGUcapstone.OutDecision.domain.user.repository.TokenRepository;
 import KGUcapstone.OutDecision.global.common.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static KGUcapstone.OutDecision.global.common.util.CookieUtil.addCookie;
 
 @Slf4j
 @Service
@@ -38,7 +41,7 @@ public class TokenService {
 
     // AccessToken 재생성
     @Transactional
-    public String republishAccessToken(String accessToken) {
+    public String republishAccessToken(String accessToken, HttpServletResponse response) {
         // 액세스 토큰으로 Refresh 토큰 객체를 조회
         Optional<RefreshToken> refreshToken = tokenRepository.findByAccessToken(accessToken.replace("Bearer ", ""));
 
