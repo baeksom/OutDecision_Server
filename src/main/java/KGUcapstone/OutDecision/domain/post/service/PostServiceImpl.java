@@ -169,7 +169,7 @@ public class PostServiceImpl implements PostService{
     /* 수정 */
     @Override
     public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames,
-                              List<MultipartFile> newImages, List<String> originImages) {
+                              List<MultipartFile> optionImages, List<String> originImages) {
         Long memberId = 2024L;
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
@@ -187,14 +187,14 @@ public class PostServiceImpl implements PostService{
 
         // 새로운 옵션 추가
         List<Options> optionsList = new ArrayList<>();
-        if (optionNames != null && newImages != null && optionNames.size() == newImages.size()) {
+        if (optionNames != null && optionImages != null && optionNames.size() == optionImages.size()) {
             for (int i = 0; i < optionNames.size(); i++) {
                 String optionName = optionNames.get(i);
                 String photoUrl = "";
 
                 // 새로운 이미지 업로드 또는 기존 이미지 사용
-                if (!newImages.get(i).isEmpty()) {
-                    photoUrl = s3Service.uploadFile(newImages.get(i), "options");
+                if (!optionImages.get(i).isEmpty()) {
+                    photoUrl = s3Service.uploadFile(optionImages.get(i), "options");
                 } else if (originImages.get(i).isEmpty()) {
                     photoUrl = originImages.get(i);
                 }
