@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,40 +27,47 @@ public class VoteServiceImpl implements VoteService{
     private final PostService postService;
 
     @Override
-    public boolean addVote(Long optionsId) {
+    public boolean addVote(List<Long> optionsIds) {
         Optional<Member> member = findMemberService.findLoginMember();
-        Optional<Options> options = optionsRepository.findById(optionsId);
+        boolean isPointed = false;
 
-        if (member.isPresent() && options.isPresent()) {
-            // 사용자가 존재하고, 옵션이 있으면 - 투표
-            // 포인트 +10
-            member.get().updatePoint(member.get().getPoint() + 10);
+        for (Long id : optionsIds) {
+            Optional<Options> options = optionsRepository.findById(id);
 
-            // 투표 저장
-            Vote vote = Vote.builder()
-                    .member(member.get())
-                    .options(options.get())
-                    .build();
-            voteRepository.save(vote);
+            if (member.isPresent() && options.isPresent()) {
+                // 사용자가 존재하고, 옵션이 있으면 - 투표
+                // 포인트 +10
+                if(!isPointed) {
+                    member.get().updatePoint(member.get().getPoint() + 10);
+                    isPointed = true;
+                }
 
-            // 핫 게시글 가능 여부 확인
-            postService.turnsHot(options.get().getPost());
+                // 투표 저장
+                Vote vote = Vote.builder()
+                        .member(member.get())
+                        .options(options.get())
+                        .build();
+                voteRepository.save(vote);
 
-            // 칭호 획득 가능 여부 확인
-            titleService.memberGetTitle(options.get().getPost(), member.get());
+                // 핫 게시글 가능 여부 확인
+                postService.turnsHot(options.get().getPost());
 
-            System.out.println("-- 투표 완료 --");
-            return true;
-        } else if (member.isPresent()) {
-            System.out.println("옵션이 없음");
-            return false;
-        } else if (options.isPresent()) {
-            System.out.println("멤버가 없음");
-            return false;
+                // 칭호 획득 가능 여부 확인
+                titleService.memberGetTitle(options.get().getPost(), member.get());
+
+                System.out.println("-- 투표 완료 --");
+            } else if (member.isPresent()) {
+                System.out.println("옵션이 없음");
+                return false;
+            } else if (options.isPresent()) {
+                System.out.println("멤버가 없음");
+                return false;
+            }
+            else {
+                // 예외 처리
+                return false;
+            }
         }
-        else {
-            // 예외 처리
-            return false;
-        }
+        return true;
     }
 }
