@@ -167,11 +167,11 @@ public class PostServiceImpl implements PostService{
     @Override
     public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames,
                               List<MultipartFile> optionImages, List<String> originImages) {
-//        Optional<Member> memberOptional = findMemberService.findLoginMember();
-        Long memberId = 2024L;
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
         // 로그인 체크
-//        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
-//        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
