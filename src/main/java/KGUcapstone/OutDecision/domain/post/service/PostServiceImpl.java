@@ -29,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.*;
 
@@ -178,11 +177,11 @@ public class PostServiceImpl implements PostService{
         // 기존 옵션 이미지 리스트를 수집
         List<String> originOptionImgList = post.getOptionsList().stream()
                 .map(Options::getPhotoUrl)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                .filter(url -> url != null && !url.isEmpty())
+                .toList();
 
         // 기존 옵션 삭제
-        post.getOptionsList().forEach(option -> optionsRepository.delete(option));
+        optionsRepository.deleteAll(post.getOptionsList());
         post.getOptionsList().clear();
 
         // 새로운 옵션 추가
@@ -195,7 +194,7 @@ public class PostServiceImpl implements PostService{
                 // 새로운 이미지 업로드 또는 기존 이미지 사용
                 if (!optionImages.get(i).isEmpty()) {
                     photoUrl = s3Service.uploadFile(optionImages.get(i), "options");
-                } else if (originImages.get(i).isEmpty()) {
+                } else if (!originImages.get(i).isEmpty()) {
                     photoUrl = originImages.get(i);
                 }
 
