@@ -114,7 +114,7 @@ public class PostServiceImpl implements PostService{
         Long memberId;
         // 로그인 체크
         if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
-        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+        else memberId = 0L;
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
