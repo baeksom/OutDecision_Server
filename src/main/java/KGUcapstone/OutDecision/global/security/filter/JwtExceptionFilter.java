@@ -1,5 +1,8 @@
 package KGUcapstone.OutDecision.global.security.filter;
 
+import KGUcapstone.OutDecision.domain.user.service.auth.TokenService;
+import KGUcapstone.OutDecision.global.common.util.CookieUtil;
+import KGUcapstone.OutDecision.global.common.util.JwtUtil;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -14,6 +17,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
+import static KGUcapstone.OutDecision.global.common.util.CookieUtil.deleteCookie;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding("UTF-8");
             objectMapper.writeValue(response.getWriter(), ApiResponse.onFailure("401",e.getMessage(),null));
+            deleteCookie(response, "Authorization");
         }
     }
 }
