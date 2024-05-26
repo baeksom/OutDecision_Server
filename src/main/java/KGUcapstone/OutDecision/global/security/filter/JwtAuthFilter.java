@@ -23,8 +23,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static KGUcapstone.OutDecision.global.common.util.CookieUtil.addCookie;
@@ -61,25 +59,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (newAccessToken != null) {
                 addCookie(response, "Authorization", newAccessToken, 60 * 60);
-                atc = newAccessToken;
                 log.info("토큰 발급 완료 필터 newAccessToken = {}", newAccessToken);
 
-                // 원래 요청을 재시도
-                HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request) {
-                    @Override
-                    public Cookie[] getCookies() {
-                        Cookie[] cookies = super.getCookies();
-                        if (cookies == null) {
-                            cookies = new Cookie[0];
-                        }
-                        List<Cookie> updatedCookies = new ArrayList<>(Arrays.asList(cookies));
-                        updatedCookies.removeIf(cookie -> "Authorization".equals(cookie.getName()));
-                        updatedCookies.add(new Cookie("Authorization", newAccessToken));
-                        return updatedCookies.toArray(new Cookie[0]);
-                    }
-                };
-
-                filterChain.doFilter(requestWrapper, response);
+                filterChain.doFilter(request, response);
                 return;
             } else {
                 log.error("새로운 토큰 발급 실패");
