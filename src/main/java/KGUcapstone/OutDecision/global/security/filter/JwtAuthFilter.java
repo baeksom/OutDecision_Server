@@ -56,7 +56,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             String newAccessToken = tokenService.republishAccessToken(atc, response);
 
             if (newAccessToken != null) {
-                addCookie(response, "Authorization", newAccessToken, 60 * 60);
+                addCookie(response, "Authorization", newAccessToken, 60 * 5);
                 atc = newAccessToken;
                 log.info("토큰 발급 완료 필터 newAccessToken = {}", newAccessToken);
             } else {
