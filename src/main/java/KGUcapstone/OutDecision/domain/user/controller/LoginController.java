@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.user.controller;
 
+import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,7 +16,7 @@ public class LoginController {
     private final FindMemberService findMemberService;
 
     @GetMapping("/loginSuccess")
-    public ApiResponse<Object> loginSuccess() {
+    public ApiResponse<MemberResponseDTO.LoginSuccessMemberDTO> loginSuccess() {
         return ApiResponse.onSuccess(findMemberService.getLoginSuccessMember());
     }
 }
