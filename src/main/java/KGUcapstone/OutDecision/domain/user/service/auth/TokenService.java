@@ -64,6 +64,7 @@ public class TokenService {
             return newAccessToken;
         }
 
+        deleteCookie(response, "Authorization");
         return null;
     }
 }
