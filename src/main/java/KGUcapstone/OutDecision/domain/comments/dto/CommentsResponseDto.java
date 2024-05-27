@@ -14,6 +14,7 @@ public class CommentsResponseDto {
     private String nickname;
     private Long postId;
     private String profileUrl;
+    private String createdAt;
 
     public CommentsResponseDto(Comments comments){
         this.id = comments.getId();
@@ -21,5 +22,9 @@ public class CommentsResponseDto {
         this.nickname = comments.getMember().getNickname();
         this.postId = comments.getPost().getId();
         this.profileUrl = comments.getMember().getUserImg();
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }
