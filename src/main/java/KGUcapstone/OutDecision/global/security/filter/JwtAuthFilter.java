@@ -82,6 +82,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 log.error("새로운 토큰 발급 실패");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰 재발급 실패");
                 deleteCookie(response, "Authorization");
+                
+                return;
             }
         }
 
