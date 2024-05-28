@@ -25,7 +25,7 @@ public class LikesServiceImpl implements LikesService{
     private final TitleService titleService;
     private final PostService postService;
 
-    public Long addLikes(Long postId) {
+    public int addLikes(Long postId) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
 
         if (memberOptional.isPresent()) {
@@ -45,7 +45,7 @@ public class LikesServiceImpl implements LikesService{
 
             // 칭호 획득 가능 여부 확인
             titleService.memberGetTitle(post, member);
-            return likes.getId();
+            return post.getLikes();
         } else {
             throw new RuntimeException("User Not Found");
         }
