@@ -14,6 +14,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,13 +32,15 @@ public class MainServiceReImpl implements MainServiceRe{
     @Override
     public PostListReDTO getMainRe() {
 
-        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Long memberId = findMemberService.findLoginMemberId();
         //추천 게시물 리스트
         List<PostDTO> recommendPostDTOList;
         if(memberId==0) {
-            recommendPostDTOList=mapToDTO(postRepository.findAll(pageable).getContent());
+            List<Post> posts = new ArrayList<>(postRepository.findAll(pageable).getContent()); // 수정 가능한 리스트로 변환
+            Collections.shuffle(posts); // 리스트를 랜덤하게 섞음
+            recommendPostDTOList = mapToDTO(posts);
         }
         else{
             List<Post> recommendPosts = postsService.recommendPost(memberId);
