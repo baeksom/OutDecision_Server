@@ -51,6 +51,7 @@ public class PostResponseDTO {
         String profileUrl;
         String body;
         String createdAt;
+        boolean isOwn;
     }
 
     @Builder
