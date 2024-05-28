@@ -10,6 +10,8 @@ import KGUcapstone.OutDecision.domain.user.dto.RegisterRequestDto;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
+import KGUcapstone.OutDecision.global.common.util.AESUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +29,6 @@ import java.util.Optional;
 @Transactional
 public class CustomUserDetailsService implements UserDetailsService {
     private final FindMemberService findMemberService;
-    private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
     private final MissionsRepository missionsRepository;
@@ -35,6 +36,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Value("${DEFAULT_PROFILE_IMG}")
     private String defaultImg;
+
+    @Value("${JOIN_SECRET}")
+    String joinSecret;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -48,16 +52,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         throw new UsernameNotFoundException("User not found with email: " + username);
     }
 
-    public void saveMember(RegisterRequestDto request, MultipartFile userImg){
+    public void saveMember(String email, String provide, String nickname, MultipartFile userImg) {
         String profileImage = "";
         if (userImg.isEmpty()) profileImage = defaultImg;
         else profileImage = s3Service.uploadFile(userImg, "profile");
 
         Member member = Member.builder()
-                .name(request.getName())
-                .nickname(request.getNickname())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .nickname(nickname)
+                .email(email)
+                .socialType(provide)
                 .userImg(profileImage)
                 .userRole("USER")
                 .point(0)
