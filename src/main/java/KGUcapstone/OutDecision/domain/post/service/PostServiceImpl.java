@@ -16,7 +16,9 @@ import KGUcapstone.OutDecision.domain.post.dto.PostResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.domain.MemberView;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.repository.MemberViewRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
@@ -45,6 +47,7 @@ public class PostServiceImpl implements PostService{
     private final VoteRepository voteRepository;
     private final FindMemberService findMemberService;
     private final NotificationsRepository notificationsRepository;
+    private final MemberViewRepository memberViewRepository;
     private final S3Service s3Service;
     private final PostConverter postConverter;
 
@@ -89,7 +92,7 @@ public class PostServiceImpl implements PostService{
                         .photoUrl(photoUrl)
                         .post(post)
                         .build();
-//                // 옵션을 저장소에 저장
+                // 옵션을 저장소에 저장
                 optionsRepository.save(newOption);
                 optionsList.add(newOption); // 옵션 리스트에 새로운 옵션 추가
             }
@@ -122,6 +125,23 @@ public class PostServiceImpl implements PostService{
         post.incrementViews();
         postRepository.save(post);
 
+        if (!memberId.equals(0L)) {
+            MemberView memberView = memberViewRepository.findByMemberIdAndCategory(memberId, post.getCategory());
+            if (memberView != null) {
+                memberView.setViews(memberView.getViews() + 1);
+                memberViewRepository.save(memberView);
+            } else {
+                Member member = memberOptional.get();
+                memberView = MemberView.builder()
+                        .member(member)
+                        .category(post.getCategory())
+                        .views(1)
+                        .build();
+                memberViewRepository.save(memberView);
+            }
+        }
+
+
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .sorted(Comparator.comparing(Comments::getCreatedAt).reversed())
                 .map(comments -> CommentsDTO.builder()
@@ -130,6 +150,7 @@ public class PostServiceImpl implements PostService{
                         .profileUrl(comments.getMember().getUserImg())
                         .body(comments.getBody())
                         .createdAt(formatCreatedAt2(comments.getCreatedAt()))
+                        .isOwn(comments.getMember().getId().equals(memberId))
                         .build())
                 .toList();
 
