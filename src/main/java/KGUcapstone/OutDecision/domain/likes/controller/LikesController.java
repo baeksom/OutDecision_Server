@@ -19,7 +19,7 @@ public class LikesController {
     @PostMapping("/{postId}/like")
     @Operation(summary = "좋아요 API", description = "게시글에 좋아요를 누릅니다.")
     public ApiResponse<?> addLike(@PathVariable Long postId) {
-        Long likesId = likesService.addLikes(postId);
-        return ApiResponse.onSuccess(likesId);
+        int likesCnt = likesService.addLikes(postId);
+        return ApiResponse.onSuccess(likesCnt);
     }
 }
