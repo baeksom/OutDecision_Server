@@ -83,6 +83,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             };
 
             filterChain.doFilter(requestWrapper, response);
+            return;
         }
 
         // 아래 코드는 AccessToken이 유효할 때만 실행됨
