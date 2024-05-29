@@ -123,10 +123,10 @@ public class MemberRestController {
         return ApiResponse.onSuccess(myTitlesDTO);
     }
 
-    @PutMapping("/{memberId}/title")
+    @PutMapping("/title")
     @Operation(summary = "마이페이지 칭호 변경 API", description = "마이페이지 홈에서 칭호를 변경하는 API입니다.")
-    public ApiResponse<Object> updateTitle(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateTitleDTO request) {
-        boolean success = titleService.updateUserTitle(memberId, request);
+    public ApiResponse<Object> updateTitle(@RequestBody @Valid UpdateTitleDTO request) {
+        boolean success = titleService.updateUserTitle(request);
         if (success) return ApiResponse.onSuccess("칭호가 성공적으로 변경되었습니다.");
         else return ApiResponse.onFailure("400", "칭호 변경에 실패하였습니다.", null);
     }
