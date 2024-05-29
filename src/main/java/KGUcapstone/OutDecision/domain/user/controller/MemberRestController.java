@@ -71,10 +71,10 @@ public class MemberRestController {
         return ApiResponse.onSuccess(postConverter.toPostListDTO(votedPostPage));
     }
 
-    @GetMapping("/{memberId}/edit")
+    @GetMapping("/edit")
     @Operation(summary = "마이페이지 개인정보수정 조회 API", description = "마이페이지 개인정보수정 페이지에서 개인정보를 조회합니다.")
-    public ApiResponse<MemberInfoDTO> getMemberInfo(@PathVariable("memberId") Long memberId) {
-        MemberInfoDTO memberDTO = memberService.getMemberById(memberId);
+    public ApiResponse<MemberInfoDTO> getMemberInfo() {
+        MemberInfoDTO memberDTO = memberService.getMemberById();
         return ApiResponse.onSuccess(memberDTO);
     }
 
@@ -102,10 +102,10 @@ public class MemberRestController {
         else return ApiResponse.onFailure("400", "프로필 사진 변경에 실패하였습니다.", null);
     }
 
-    @PatchMapping("/{memberId}/delete/profile")
+    @PatchMapping("/delete/profile")
     @Operation(summary = "마이페이지 프로필 사진 삭제", description = "프로필 사진을 삭제합니다.")
-    public ApiResponse<Object> deleteUserImg(@PathVariable("memberId") Long memberId) {
-        boolean success = userImgService.deleteUserImg(memberId);
+    public ApiResponse<Object> deleteUserImg() {
+        boolean success = userImgService.deleteUserImg();
         if (success) return ApiResponse.onSuccess("프로필 사진이 성공적으로 삭제되었습니다.");
         else return ApiResponse.onFailure("400", "프로필 사진 삭제에 실패하였습니다.", null);
     }
@@ -116,17 +116,17 @@ public class MemberRestController {
         return ApiResponse.onSuccess(myPageService.getMyPage(posts));
     }
 
-    @GetMapping("/{memberId}/title")
+    @GetMapping("/title")
     @Operation(summary = "마이페이지 칭호 조회 API", description = "마이페이지에서 보유 칭호를 조회하는 API입니다.")
-    public ApiResponse<List<String>> updateTitle(@PathVariable("memberId") Long memberId) {
-        List<String> myTitlesDTO = titleService.myTitlesDTO(memberId);
+    public ApiResponse<List<String>> updateTitle() {
+        List<String> myTitlesDTO = titleService.myTitlesDTO();
         return ApiResponse.onSuccess(myTitlesDTO);
     }
 
-    @PutMapping("/{memberId}/title")
+    @PutMapping("/title")
     @Operation(summary = "마이페이지 칭호 변경 API", description = "마이페이지 홈에서 칭호를 변경하는 API입니다.")
-    public ApiResponse<Object> updateTitle(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateTitleDTO request) {
-        boolean success = titleService.updateUserTitle(memberId, request);
+    public ApiResponse<Object> updateTitle(@RequestBody @Valid UpdateTitleDTO request) {
+        boolean success = titleService.updateUserTitle(request);
         if (success) return ApiResponse.onSuccess("칭호가 성공적으로 변경되었습니다.");
         else return ApiResponse.onFailure("400", "칭호 변경에 실패하였습니다.", null);
     }

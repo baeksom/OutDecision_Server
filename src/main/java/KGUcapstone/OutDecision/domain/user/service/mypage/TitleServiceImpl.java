@@ -8,24 +8,33 @@ import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdateTitleDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
+import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class TitleServiceImpl implements TitleService{
     private final MemberRepository memberRepository;
+    private final FindMemberService findMemberService;
     private final TitleRepository titleRepository;
 
     // 칭호 변경
     @Override
-    public boolean updateUserTitle(Long memberId, UpdateTitleDTO request) {
-        Member member = memberRepository.findById(memberId).get();
+    public boolean updateUserTitle(UpdateTitleDTO request) {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         member.updateUserTitle(request.getTitle());
         memberRepository.save(member);
@@ -35,7 +44,12 @@ public class TitleServiceImpl implements TitleService{
 
     // 보유 칭호 조회
     @Override
-    public List<String> myTitlesDTO(Long memberId) {
+    public List<String> myTitlesDTO() {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         // 문자열로 컬럼 이름 받아오기
         String findTrueColumByMemberId = titleRepository.findTrueColumByMemberId(memberId);
         // 첫번째 글자 ',' 제거

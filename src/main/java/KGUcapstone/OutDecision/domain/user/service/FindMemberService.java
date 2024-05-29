@@ -1,8 +1,12 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
+import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.global.common.util.JwtUtil;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
+import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +21,7 @@ import java.util.Optional;
 public class FindMemberService {
 
     private final MemberRepository memberRepository;
+    private final TitleRepository titleRepository;
     private final JwtUtil jwtUtil;
     private final HttpServletRequest request;
 
@@ -59,5 +64,24 @@ public class FindMemberService {
                 .map(cookie -> cookie.getValue().replace("Bearer ", ""))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public MemberResponseDTO.LoginSuccessMemberDTO getLoginSuccessMember() {
+        Optional<Member> memberOptional = findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
+        int titleCnt = titleRepository.countTrueColumnsForMember(member.getId());
+
+        return MemberResponseDTO.LoginSuccessMemberDTO.builder()
+                .memberId(member.getId())
+                .nickname(member.getNickname())
+                .userImg(member.getUserImg())
+                .memberTitle(member.getUserTitle())
+                .titleCnt(titleCnt)
+                .point(member.getPoint())
+                .build();
     }
 }

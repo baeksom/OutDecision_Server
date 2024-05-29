@@ -5,6 +5,6 @@ import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO;
 import static KGUcapstone.OutDecision.domain.user.dto.UpdateResponseDTO.*;
 
 public interface MemberService {
-    MemberInfoDTO getMemberById(Long memberId);
     boolean updateMemberInfo(UpdateRequestDTO.UpdateMemberDTO request);
+    MemberInfoDTO getMemberById();
 }

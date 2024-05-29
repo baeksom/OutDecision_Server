@@ -5,9 +5,9 @@ import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepo
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
+import KGUcapstone.OutDecision.global.error.exception.handler.NotificationHandler;
 import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +51,9 @@ public class NotificationServiceImpl implements NotificationService{
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         Notifications notifications = notificationsRepository.findByMemberIdAndPostId(memberId, postId);
+        if (notifications == null) {
+            throw new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_FOUND);
+        }
         notificationsRepository.delete(notifications);
         return true;
     }

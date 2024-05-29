@@ -39,18 +39,18 @@ public class RegisterController {
         return ApiResponse.onSuccess(null);
     }
 
-    @GetMapping("/register/v1")
-    public ApiResponse<Object> showSocialRegisterForm(HttpServletRequest request,
-                                                      @CookieValue(name = "email") String email,
-                                                      @CookieValue(name = "provider") String provider) throws Exception {
-        System.out.println("controller joinSecret = " + joinSecret);
-
-        String join_token = request.getParameter("join_token");
-        System.out.println("controller receive join_token = " + join_token);
-        if(!AESUtil.decrypt(join_token, joinSecret).equals(email+provider)){
-            return ApiResponse.onFailure("400", "잘못된 접근입니다.", null);
-        }
-
-        return ApiResponse.onSuccess(join_token);
-    }
+//    @GetMapping("/register/v1")
+//    public ApiResponse<Object> showSocialRegisterForm(HttpServletRequest request,
+//                                                      @CookieValue(name = "email") String email,
+//                                                      @CookieValue(name = "provider") String provider) throws Exception {
+//        System.out.println("controller joinSecret = " + joinSecret);
+//
+//        String join_token = request.getParameter("join_token");
+//        System.out.println("controller receive join_token = " + join_token);
+//        if(!AESUtil.decrypt(join_token, joinSecret).equals(email+provider)){
+//            return ApiResponse.onFailure("400", "잘못된 접근입니다.", null);
+//        }
+//
+//        return ApiResponse.onSuccess(join_token);
+//    }
 }

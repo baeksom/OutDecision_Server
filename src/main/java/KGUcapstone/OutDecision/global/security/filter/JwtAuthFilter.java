@@ -18,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static KGUcapstone.OutDecision.global.common.util.CookieUtil.addCookie;
+import static KGUcapstone.OutDecision.global.common.util.CookieUtil.deleteCookie;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -59,28 +61,29 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (newAccessToken != null) {
                 log.info("토큰 발급 완료 필터 newAccessToken = {}", newAccessToken);
-
-                // 원래 요청을 새로 만든 토큰으로 다시 수행
-                HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request) {
-                    @Override
-                    public Cookie[] getCookies() {
-                        Cookie[] cookies = super.getCookies();
-                        for (Cookie cookie : cookies) {
-                            if ("Authorization".equals(cookie.getName())) {
-                                cookie.setValue(newAccessToken);
-                            }
-                        }
-                        return cookies;
-                    }
-                };
-
-                filterChain.doFilter(requestWrapper, response);
-                return;
+                addCookie(response, "Authorization", newAccessToken, 60*60);
             } else {
                 log.error("새로운 토큰 발급 실패");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰 재발급 실패");
-                return;
+                deleteCookie(response, "Authorization");
             }
+
+            // 원래 요청을 새로 만든 토큰으로 다시 수행
+            HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request) {
+                @Override
+                public Cookie[] getCookies() {
+                    Cookie[] cookies = super.getCookies();
+                    for (Cookie cookie : cookies) {
+                        if ("Authorization".equals(cookie.getName())) {
+                            cookie.setValue(newAccessToken);
+                        }
+                    }
+                    return cookies;
+                }
+            };
+
+            filterChain.doFilter(requestWrapper, response);
+            return;
         }
 
         // 아래 코드는 AccessToken이 유효할 때만 실행됨

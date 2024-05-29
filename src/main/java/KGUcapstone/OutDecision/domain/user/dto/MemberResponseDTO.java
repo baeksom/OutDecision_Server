@@ -24,4 +24,17 @@ public class MemberResponseDTO {
         List<PostDTO> postList;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginSuccessMemberDTO {
+        Long memberId;
+        String nickname;
+        String userImg;
+        String memberTitle;
+        Integer titleCnt;
+        Integer point;
+    }
+
 }

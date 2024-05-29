@@ -165,7 +165,9 @@ public class PostsServiceImpl implements PostsService{
         if (viewList.isEmpty()) {
             // 사용자의 조회 기록이 없는 경우, 모든 게시글을 반환
             Pageable pageable = PageRequest.of(0, 5); // 페이지와 사이즈 조정
-            return postRepository.findAll(pageable).getContent();
+            List<Post> posts = new ArrayList<>(postRepository.findAll(pageable).getContent()); // 수정 가능한 리스트로 변환
+            Collections.shuffle(posts); // 리스트를 랜덤하게 섞음
+            return posts;
         }
 
         // UserBasedCF를 사용하여 추천 시스템 실행

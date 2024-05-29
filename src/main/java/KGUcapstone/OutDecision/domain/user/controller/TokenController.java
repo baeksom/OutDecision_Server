@@ -28,7 +28,7 @@ public class TokenController {
     public ApiResponse<Object> logout(HttpServletResponse response) {
         String accessToken = findMemberService.getTokenFromCookies();
         // 엑세스 토큰으로 현재 Redis 정보 삭제
-        tokenService.removeRefreshToken(accessToken);
+        tokenService.removeRefreshToken(accessToken, response);
         // 쿠키에서 토큰 삭제
         deleteCookie(response, "Authorization");
         return ApiResponse.onSuccess(null);

@@ -2,24 +2,23 @@ package KGUcapstone.OutDecision.domain.comments.dto;
 
 
 import KGUcapstone.OutDecision.domain.comments.domain.Comments;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import KGUcapstone.OutDecision.domain.post.domain.Post;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
+import lombok.*;
 
+import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.formatCreatedAt2;
+
+@Builder
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentsResponseDto {
 
-    private Long id;
-    private String body;
-    private String nickname;
-    private Long postId;
-    private String profileUrl;
-
-    public CommentsResponseDto(Comments comments){
-        this.id = comments.getId();
-        this.body = comments.getBody();
-        this.nickname = comments.getMember().getNickname();
-        this.postId = comments.getPost().getId();
-        this.profileUrl = comments.getMember().getUserImg();
-    }
+    Long commentsId;
+    String body;
+    String nickname;
+    Long postId;
+    String profileUrl;
+    String createdAt;
+    Boolean isOwn;;
 }

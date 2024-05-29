@@ -21,8 +21,12 @@ public class MemberServiceImpl implements MemberService{
     private final FindMemberService findMemberService;
 
     @Override
-    public MemberInfoDTO getMemberById(Long memberId) {
-        Member member = memberRepository.findById(memberId).get();
+    public MemberInfoDTO getMemberById() {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         return MemberInfoDTO.builder()
                 .memberId(member.getId())

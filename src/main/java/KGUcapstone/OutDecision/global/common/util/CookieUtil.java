@@ -23,7 +23,7 @@ public class CookieUtil {
     }
 
     public static void deleteCookie(HttpServletResponse response, String name) {
-        System.out.println("CookieUtil.deleteCookie");
+        System.out.println("쿠키 삭제 메서드");
         ResponseCookie cookie = ResponseCookie.from(name, null)
                 .path("/")
                 .sameSite("None")
