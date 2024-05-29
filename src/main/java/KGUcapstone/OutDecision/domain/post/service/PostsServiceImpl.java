@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -162,12 +163,12 @@ public class PostsServiceImpl implements PostsService{
 
         // 사용자의 조회 기록 가져오기
         List<MemberView> viewList = memberViewRepository.findAll();
-        if (viewList.isEmpty()) {
+        List<MemberView> viewList2= memberViewRepository.findByMemberId(memberId);
+        if (viewList.isEmpty()||viewList2.isEmpty()) {
             // 사용자의 조회 기록이 없는 경우, 모든 게시글을 반환
-            Pageable pageable = PageRequest.of(0, 5); // 페이지와 사이즈 조정
-            List<Post> posts = new ArrayList<>(postRepository.findAll(pageable).getContent()); // 수정 가능한 리스트로 변환
+            List<Post> posts = new ArrayList<>(postRepository.findAll()); // 수정 가능한 리스트로 변환
             Collections.shuffle(posts); // 리스트를 랜덤하게 섞음
-            return posts;
+            return posts.stream().limit(5).collect(Collectors.toList());
         }
 
         // UserBasedCF를 사용하여 추천 시스템 실행
