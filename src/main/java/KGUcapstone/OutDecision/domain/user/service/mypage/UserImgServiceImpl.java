@@ -27,8 +27,12 @@ public class UserImgServiceImpl implements UserImgService{
 
     // 프로필 사진 변경
     @Override
-    public boolean updateUserImg(Long memberId, MultipartFile userImg) {
-        Member member = memberRepository.findById(memberId).get();
+    public boolean updateUserImg(MultipartFile userImg) {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         // 기본 이미지가 아니라면 기존 s3에 업로드된 사진 삭제
         if (!member.getUserImg().equals(defaultImg)) {
             s3Service.deleteImage(member.getUserImg());
