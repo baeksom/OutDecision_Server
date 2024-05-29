@@ -44,7 +44,12 @@ public class TitleServiceImpl implements TitleService{
 
     // 보유 칭호 조회
     @Override
-    public List<String> myTitlesDTO(Long memberId) {
+    public List<String> myTitlesDTO() {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         // 문자열로 컬럼 이름 받아오기
         String findTrueColumByMemberId = titleRepository.findTrueColumByMemberId(memberId);
         // 첫번째 글자 ',' 제거

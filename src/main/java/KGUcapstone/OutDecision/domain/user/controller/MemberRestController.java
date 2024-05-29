@@ -116,10 +116,10 @@ public class MemberRestController {
         return ApiResponse.onSuccess(myPageService.getMyPage(posts));
     }
 
-    @GetMapping("/{memberId}/title")
+    @GetMapping("/title")
     @Operation(summary = "마이페이지 칭호 조회 API", description = "마이페이지에서 보유 칭호를 조회하는 API입니다.")
-    public ApiResponse<List<String>> updateTitle(@PathVariable("memberId") Long memberId) {
-        List<String> myTitlesDTO = titleService.myTitlesDTO(memberId);
+    public ApiResponse<List<String>> updateTitle() {
+        List<String> myTitlesDTO = titleService.myTitlesDTO();
         return ApiResponse.onSuccess(myTitlesDTO);
     }
 
