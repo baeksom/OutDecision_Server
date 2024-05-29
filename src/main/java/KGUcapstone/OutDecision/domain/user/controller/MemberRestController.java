@@ -78,10 +78,10 @@ public class MemberRestController {
         return ApiResponse.onSuccess(memberDTO);
     }
 
-    @PatchMapping("/{memberId}/edit")
+    @PatchMapping("/edit")
     @Operation(summary = "마이페이지 개인정보수정 API", description = "마이페이지 개인정보수정 페이지에서 개인정보를 수정합니다.")
-    public ApiResponse<Object> updateMemberInfo(@PathVariable("memberId") Long memberId, @RequestBody @Valid UpdateMemberDTO request) {
-        boolean success = memberService.updateMemberInfo(memberId, request);
+    public ApiResponse<Object> updateMemberInfo(@RequestBody @Valid UpdateMemberDTO request) {
+        boolean success = memberService.updateMemberInfo(request);
         if (success) return ApiResponse.onSuccess("개인정보가 성공적으로 수정되었습니다.");
         else return ApiResponse.onFailure("400", "개인정보 수정에 실패하였습니다.", null);
     }

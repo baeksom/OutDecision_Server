@@ -40,8 +40,12 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public boolean updateMemberInfo(Long memberId, UpdateRequestDTO.UpdateMemberDTO request) {
-        Member member = memberRepository.findById(memberId).get();
+    public boolean updateMemberInfo(UpdateRequestDTO.UpdateMemberDTO request) {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         member.updateMember(request.getName(), request.getNickname());
 
