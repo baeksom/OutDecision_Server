@@ -5,18 +5,31 @@ import KGUcapstone.OutDecision.domain.title.domain.Missions;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.MemberMissionsDTO;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.TitleMissionsDTO;
 import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
+import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
+import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class MissionsServiceImpl implements MissionsService{
     private final MissionsRepository missionsRepository;
+    private final FindMemberService findMemberService;
 
     @Override
-    public MemberMissionsDTO getMemberMissions(Long memberId) {
+    public MemberMissionsDTO getMemberMissions() {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         return MemberMissionsDTO.builder()
                 .memberId(memberId)
                 .fashionista(getTitleByCategory(memberId, Category.fashion))

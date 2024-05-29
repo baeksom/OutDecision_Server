@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class MissionsRestController {
     private final MissionsService missionsService;
 
-    @GetMapping("/{memberId}/title/missions")
+    @GetMapping("/title/missions")
     @Operation(summary = "마이페이지 칭호 미션 조회 API", description = "사용자가 칭호를 얻기 위한 미션 진행도를 조회하는 API입니다.")
-    public ApiResponse<MemberMissionsDTO> getMemberMissions(@PathVariable(name = "memberId") Long memberId) {
-        MemberMissionsDTO missions = missionsService.getMemberMissions(memberId);
+    public ApiResponse<MemberMissionsDTO> getMemberMissions() {
+        MemberMissionsDTO missions = missionsService.getMemberMissions();
         return ApiResponse.onSuccess(missions);
     }
 }
