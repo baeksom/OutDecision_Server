@@ -235,7 +235,7 @@ public class PostServiceImpl implements PostService{
             boolean existsInOptionsList = optionsList.stream()
                     .anyMatch(option -> originImageUrl.equals(option.getPhotoUrl()));
             if (!existsInOptionsList && originImageUrl != null && !originImageUrl.isEmpty()) {
-                s3Service.deleteImage(originImageUrl);
+                s3Service.deleteImg(originImageUrl);
             }
         }
 
@@ -266,8 +266,8 @@ public class PostServiceImpl implements PostService{
         }
 
         for (Options options:post.getOptionsList()) {
-            if (options.getPhotoUrl() != null) {
-                s3Service.deleteImage(options.getPhotoUrl());
+            if (!options.getPhotoUrl().isEmpty()) {
+                s3Service.deleteImg(options.getPhotoUrl());
             }
         }
         postRepository.delete(post);
