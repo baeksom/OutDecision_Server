@@ -34,8 +34,8 @@ spring:
         secretKey: ${NCP_SECRET_KEY}
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 10GB
+      max-request-size: 10GB
 server:
   tomcat:
-    max-http-form-post-size: 104857600
+    max-http-form-post-size: 10737418240
