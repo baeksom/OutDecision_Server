@@ -14,7 +14,7 @@ import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.formatCreat
 @AllArgsConstructor
 public class CommentsResponseDto {
 
-    Long id;
+    Long commentsId;
     String body;
     String nickname;
     Long postId;

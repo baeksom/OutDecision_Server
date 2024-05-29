@@ -14,7 +14,7 @@ public class CommentsConverter {
     public CommentsResponseDto toCommentsResponseDto(Comments comments){
 
         return CommentsResponseDto.builder()
-                .id(comments.getId())
+                .commentsId(comments.getId())
                 .body(comments.getBody())
                 .nickname(comments.getMember().getNickname())
                 .postId(comments.getPost().getId())
