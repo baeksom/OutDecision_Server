@@ -29,6 +29,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Value("${JOIN_SECRET}")
     String joinSecret;
 
+    @Value("${IP}")
+    private String ip;
+
     @SneakyThrows
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -59,8 +62,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
             // 로그인 확인 페이지로 리다이렉트 시킨다.
             log.info("소셜 로그인 redirect 준비");
-            getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/");
-//            getRedirectStrategy().sendRedirect(request, response, "https://www.outdecision.com/");
+            getRedirectStrategy().sendRedirect(request, response, ip+"/");
         }
         else {
             log.info("소셜 회원가입 redirect 준비");
@@ -72,8 +74,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             addCookie(response, "email", email, 60*5);
             addCookie(response, "provider", provider, 60*5);  // 5분
 
-            getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/signup/social?join_token="+join_token);
-//            getRedirectStrategy().sendRedirect(request, response, "https://www.outdecision.com/signup/social?join_token="+join_token);
+            getRedirectStrategy().sendRedirect(request, response, ip+"/signup/social?join_token="+join_token);
         }
     }
 }
