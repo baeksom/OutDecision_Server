@@ -4,5 +4,5 @@ import KGUcapstone.OutDecision.domain.user.dto.UpdateRequestDTO.UpdatePasswordDT
 
 
 public interface PasswordService {
-    boolean updatePassword(Long memberId, UpdatePasswordDTO request);
+    boolean updatePassword(UpdatePasswordDTO request);
 }
