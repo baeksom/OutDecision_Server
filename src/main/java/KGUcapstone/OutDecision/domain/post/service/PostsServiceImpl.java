@@ -187,21 +187,12 @@ public class PostsServiceImpl implements PostsService{
             double score2 = recommendations.getOrDefault(category2, 0.0) + post2.getLikes() * 2 + post2.getViews();
             return Double.compare(score2, score1); // 내림차순 정렬
         });
-        // 상위 5개의 게시글 추천 리스트에 추가
-        List<Post> recommendPosts = new ArrayList<>();
-        int count = 0;
-        for (Post post : allPosts) {
-            double score = recommendations.getOrDefault(post.getCategory(), 0.0) + post.getLikes() * 2 + post.getViews();
-            if (!Double.isNaN(score)) {
-                recommendPosts.add(post);
-                count++;
-                if (count >= 5) {
-                    break;
-                }
-            }
-        }
-        // 추천된 게시글 반환
-        return recommendPosts;
+
+        List<Post> topPosts = allPosts.stream().limit(10).collect(Collectors.toList());
+        // 리스트를 랜덤하게 섞음
+        Collections.shuffle(topPosts);
+        // 상위 5개의 게시글을 반환
+        return topPosts.stream().limit(5).collect(Collectors.toList());
     }
 
 }
