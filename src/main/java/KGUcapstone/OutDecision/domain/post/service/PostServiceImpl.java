@@ -145,6 +145,7 @@ public class PostServiceImpl implements PostService{
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
                 .sorted(Comparator.comparing(Comments::getCreatedAt).reversed())
                 .map(comments -> CommentsDTO.builder()
+                        .commentsId(comments.getId())
                         .memberId(comments.getMember().getId())
                         .nickname(comments.getMember().getNickname())
                         .profileUrl(comments.getMember().getUserImg())
