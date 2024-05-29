@@ -31,16 +31,13 @@ public class MainServiceReImpl implements MainServiceRe{
 
     @Override
     public PostListReDTO getMainRe() {
-
-        Pageable pageable = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "createdAt"));
-
         Long memberId = findMemberService.findLoginMemberId();
         //추천 게시물 리스트
         List<PostDTO> recommendPostDTOList;
         if(memberId==0) {
-            List<Post> posts = new ArrayList<>(postRepository.findAll(pageable).getContent()); // 수정 가능한 리스트로 변환
+            List<Post> posts = new ArrayList<>(postRepository.findAll()); // 수정 가능한 리스트로 변환
             Collections.shuffle(posts); // 리스트를 랜덤하게 섞음
-            recommendPostDTOList = mapToDTO(posts);
+            recommendPostDTOList = mapToDTO(posts.stream().limit(5).collect(Collectors.toList()));
         }
         else{
             List<Post> recommendPosts = postsService.recommendPost(memberId);
