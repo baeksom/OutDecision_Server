@@ -46,12 +46,13 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CommentsDTO {
+        Long commentsId;
         Long memberId;
         String nickname;
         String profileUrl;
         String body;
         String createdAt;
-        boolean isOwn;
+        Boolean isOwn;
     }
 
     @Builder
