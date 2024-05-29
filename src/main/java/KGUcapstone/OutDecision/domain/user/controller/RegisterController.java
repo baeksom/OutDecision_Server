@@ -33,11 +33,9 @@ public class RegisterController {
     }
 
     @PostMapping(value = "/register/v2", consumes = "multipart/form-data")
-    public ApiResponse<Object> registerNormalUser(@CookieValue(name = "email") String email,
-                                                  @CookieValue(name = "provider") String provider,
-                                                  String nickname,
-                                                  @RequestPart(value = "userImg", required = false) MultipartFile userImg) throws Exception {
-        customUserDetailsService.saveMember(email, provider, nickname, userImg);
+    public ApiResponse<Object> registerNormalUser(@Valid @RequestPart RegisterRequestDto request,
+                                                  @RequestPart(value = "userImg", required = false) MultipartFile userImg) {
+        customUserDetailsService.saveMember(request, userImg);
         return ApiResponse.onSuccess(null);
     }
 
@@ -49,7 +47,7 @@ public class RegisterController {
 //
 //        String join_token = request.getParameter("join_token");
 //        System.out.println("controller receive join_token = " + join_token);
-//        if(!AESUtil.decrypt(join_token, joinSecret).equals(email+"&&"+provider)){
+//        if(!AESUtil.decrypt(join_token, joinSecret).equals(email+provider)){
 //            return ApiResponse.onFailure("400", "잘못된 접근입니다.", null);
 //        }
 //

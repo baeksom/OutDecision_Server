@@ -39,6 +39,6 @@ public class ProjectBeanConfig {
 
     @Bean
     public CustomUserDetailsService userService() {
-        return new CustomUserDetailsService(findMemberService, memberRepository, titleRepository, missionsRepository, s3Service);
+        return new CustomUserDetailsService(findMemberService, passwordEncoder(), memberRepository, titleRepository, missionsRepository, s3Service);
     }
 }
