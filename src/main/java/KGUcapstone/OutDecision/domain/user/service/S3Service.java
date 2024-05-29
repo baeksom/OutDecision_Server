@@ -78,4 +78,13 @@ public class S3Service {
             System.out.println(" 사진 삭제 완료 ");
         }
     }
+
+    // 게시글 삭제 시, 옵션이미지 삭제
+    public void deleteImg(String ImgUrl) {
+        String splitStr = ".com/" + bucket + "/";
+        String fileName = ImgUrl.substring(ImgUrl.lastIndexOf(splitStr) + splitStr.length());
+
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+        System.out.println(" 사진 삭제 완료 ");
+    }
 }
