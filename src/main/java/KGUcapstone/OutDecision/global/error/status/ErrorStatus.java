@@ -17,7 +17,7 @@ public enum ErrorStatus implements BaseErrorCode {
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON403", "금지된 요청입니다."),
 
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "존재하지 않는 사용자입니다."),
-
+    OPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "존재하지 않는 옵션입니다."),
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "존재하지 않는 게시글입니다."),
 
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "알림이 이미 off 상태입니다."),
