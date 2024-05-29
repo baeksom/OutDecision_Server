@@ -187,7 +187,6 @@ public class PostsServiceImpl implements PostsService{
             double score2 = recommendations.getOrDefault(category2, 0.0) + post2.getLikes() * 2 + post2.getViews();
             return Double.compare(score2, score1); // 내림차순 정렬
         });
-
         List<Post> topPosts = allPosts.stream().limit(10).collect(Collectors.toList());
         // 리스트를 랜덤하게 섞음
         Collections.shuffle(topPosts);
