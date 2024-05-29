@@ -187,7 +187,6 @@ public class PostsServiceImpl implements PostsService{
             double score2 = recommendations.getOrDefault(category2, 0.0) + post2.getLikes() * 2 + post2.getViews();
             return Double.compare(score2, score1); // 내림차순 정렬
         });
-
         // 상위 5개의 게시글 추천 리스트에 추가
         List<Post> recommendPosts = new ArrayList<>();
         int count = 0;
