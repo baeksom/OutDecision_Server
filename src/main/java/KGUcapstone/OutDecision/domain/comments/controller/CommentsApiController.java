@@ -27,17 +27,15 @@ public class CommentsApiController {
 
     @PostMapping("/{postId}/comments")
     @Operation(summary = "댓글 작성", description = "댓글을 작성하여 등록합니다.")
-    public ResponseEntity<ApiResponse<CommentsResponseDto>> createComment(@PathVariable Long postId, @RequestBody CommentsRequestDto dto) {
-        Comments comments = commentsService.save(postId, dto);
-        CommentsResponseDto responseDto = new CommentsResponseDto(comments);
-        responseDto.setCreatedAt(formatCreatedAt2(comments.getCreatedAt()));
-        return ResponseEntity.ok(ApiResponse.onSuccess(responseDto));
+    public ApiResponse<CommentsResponseDto> createComment(@PathVariable Long postId, @RequestBody CommentsRequestDto dto) {
+        CommentsResponseDto responseDto = commentsService.save(postId, dto);
+        return ApiResponse.onSuccess(responseDto);
     }
 
     @DeleteMapping("/{postId}/comments/{commentsId}")
     @Operation(summary = "댓글 삭제", description = "댓글을 삭제합니다.")
-    public ResponseEntity<ApiResponse<Long>> deleteComment(@PathVariable Long postId, @PathVariable Long commentsId) {
+    public ApiResponse<Long> deleteComment(@PathVariable Long postId, @PathVariable Long commentsId) {
         commentsService.delete(postId, commentsId);
-        return ResponseEntity.ok(ApiResponse.onSuccess(commentsId));
+        return ApiResponse.onSuccess(commentsId);
     }
 }

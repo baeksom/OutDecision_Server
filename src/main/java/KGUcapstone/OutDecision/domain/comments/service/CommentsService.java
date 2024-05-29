@@ -1,6 +1,7 @@
 package KGUcapstone.OutDecision.domain.comments.service;
 
 
+import KGUcapstone.OutDecision.domain.comments.converter.CommentsConverter;
 import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.comments.dto.CommentsRequestDto;
 import KGUcapstone.OutDecision.domain.comments.dto.CommentsResponseDto;
@@ -27,10 +28,11 @@ public class CommentsService {
     private final CommentsRepository commentsRepository;
     private final PostRepository postRepository;
     private final FindMemberService findMemberService;
+    private final CommentsConverter commentsConverter;
 
 
     @Transactional
-    public Comments save(Long id, CommentsRequestDto dto) {
+    public CommentsResponseDto save(Long id, CommentsRequestDto dto) {
 
         Optional<Member> member = findMemberService.findLoginMember();
 
@@ -41,7 +43,7 @@ public class CommentsService {
             Comments comment = dto.toEntity(member.get(), post);
             commentsRepository.save(comment);
 
-            return comment;
+            return commentsConverter.toCommentsResponseDto(comment);
         } else {
             throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         }
