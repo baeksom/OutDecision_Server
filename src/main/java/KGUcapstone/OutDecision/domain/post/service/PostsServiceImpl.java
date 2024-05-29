@@ -183,8 +183,8 @@ public class PostsServiceImpl implements PostsService{
         allPosts.sort((post1, post2) -> {
             Category category1 = post1.getCategory();
             Category category2 = post2.getCategory();
-            double score1 = recommendations.getOrDefault(category1, 0.0) + post1.getLikes() * 5 + post1.getViews();
-            double score2 = recommendations.getOrDefault(category2, 0.0) + post2.getLikes() * 5 + post2.getViews();
+            double score1 = recommendations.getOrDefault(category1, 0.0) + post1.getLikes() * 2 + post1.getViews();
+            double score2 = recommendations.getOrDefault(category2, 0.0) + post2.getLikes() * 2 + post2.getViews();
             return Double.compare(score2, score1); // 내림차순 정렬
         });
 
@@ -192,7 +192,7 @@ public class PostsServiceImpl implements PostsService{
         List<Post> recommendPosts = new ArrayList<>();
         int count = 0;
         for (Post post : allPosts) {
-            double score = recommendations.getOrDefault(post.getCategory(), 0.0) + post.getLikes() * 5 + post.getViews();
+            double score = recommendations.getOrDefault(post.getCategory(), 0.0) + post.getLikes() * 2 + post.getViews();
             if (!Double.isNaN(score)) {
                 recommendPosts.add(post);
                 count++;
