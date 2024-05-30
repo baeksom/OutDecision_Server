@@ -328,13 +328,13 @@ public class PostServiceImpl implements PostService{
     // 게시글 끌어올리기
     public boolean topPost(Long postId) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
-        if (memberOptional.isEmpty()) { // 로그인 하였는지 여부
-            System.out.println("로그인 하세요.");
-            return false;
-        }
-        Member member = memberOptional.get();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         Post post = postRepository.findById(postId).orElseThrow(() ->
-                new IllegalArgumentException("게시물이 존재하지 않습니다."));
+                new PostHandler(ErrorStatus.POST_NOT_FOUND));
 
         if (!member.getId().equals(post.getMember().getId())) { // 게시글을 작성한 유저 맞는지 확인
             System.out.println("작성자가 아닙니다.");
