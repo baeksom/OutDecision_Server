@@ -61,11 +61,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (newAccessToken != null) {
                 log.info("토큰 발급 완료 필터 newAccessToken = {}", newAccessToken);
-                addCookie(response, "Authorization", newAccessToken, 60*60);
             } else {
                 log.error("새로운 토큰 발급 실패");
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰 재발급 실패");
-                deleteCookie(response, "Authorization");
             }
 
             // 원래 요청을 새로 만든 토큰으로 다시 수행

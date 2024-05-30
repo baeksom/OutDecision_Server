@@ -39,6 +39,6 @@ public class CustomLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
         // 로그인 확인 페이지로 리다이렉트 시킨다.
         log.info("일반 로그인 redirect 준비");
-        getRedirectStrategy().sendRedirect(request, response, "/loginSuccess");
+        getRedirectStrategy().sendRedirect(request, response, "/");
     }
 }

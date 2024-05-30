@@ -1,8 +1,10 @@
 package KGUcapstone.OutDecision.global.security.handler;
 
+import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import KGUcapstone.OutDecision.global.security.dto.GeneratedToken;
 import KGUcapstone.OutDecision.global.common.util.AESUtil;
 import KGUcapstone.OutDecision.global.common.util.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import static KGUcapstone.OutDecision.global.common.util.CookieUtil.addCookie;
 public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${JOIN_SECRET}")
     String joinSecret;
@@ -51,6 +54,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .orElseThrow(IllegalAccessError::new) // 존재하지 않을 시 예외를 던진다.
                 .getAuthority(); // Role을 가져온다.
 
+//        response.setContentType("application/json;charset=UTF-8");
+//        response.setStatus(HttpServletResponse.SC_OK);
+
         // 회원이 존재할경우
         if (isExist) {
             // 회원이 존재하면 jwt token 발행을 시작한다.
@@ -63,6 +69,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             // 로그인 확인 페이지로 리다이렉트 시킨다.
             log.info("소셜 로그인 redirect 준비");
             getRedirectStrategy().sendRedirect(request, response, ip+"/");
+
+            // JSON 응답 생성
+//            objectMapper.writeValue(response.getWriter(), ApiResponse.onSuccess(null));
         }
         else {
             log.info("소셜 회원가입 redirect 준비");
@@ -75,6 +84,7 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             addCookie(response, "provider", provider, 60*5);  // 5분
 
             getRedirectStrategy().sendRedirect(request, response, ip+"/signup/social?join_token="+join_token);
+//            objectMapper.writeValue(response.getWriter(), ApiResponse.onFailure("401", "회원가입 필요", join_token));
         }
     }
 }
