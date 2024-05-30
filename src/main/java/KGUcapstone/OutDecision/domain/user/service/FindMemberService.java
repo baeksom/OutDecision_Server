@@ -1,22 +1,29 @@
 package KGUcapstone.OutDecision.domain.user.service;
 
+import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.dto.MemberResponseDTO;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
-import KGUcapstone.OutDecision.global.security.dto.SecurityUserDto;
+import KGUcapstone.OutDecision.global.common.util.JwtUtil;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
+import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
-@Transactional(readOnly = false)
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class FindMemberService {
 
     private final MemberRepository memberRepository;
+    private final TitleRepository titleRepository;
+    private final JwtUtil jwtUtil;
+    private final HttpServletRequest request;
 
     public Optional<Member> findByEmail(String email) {
         return Optional.ofNullable(memberRepository.findByEmail(email));
@@ -26,33 +33,55 @@ public class FindMemberService {
         memberRepository.delete(member);
     }
 
-    // 로그인한 사용자 id 찾기
     public Long findLoginMemberId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("authentication = " + authentication);
-//        System.out.println("Principal 객체: " + authentication.getPrincipal());
-//        System.out.println("Principal 객체 타입: " + authentication.getPrincipal().getClass().getName());
-
-        if (authentication.getPrincipal() instanceof SecurityUserDto securityUserDto) {
-            String email = securityUserDto.getEmail();
+        String token = getTokenFromCookies();
+        if (token != null && jwtUtil.verifyToken(token)) {
+            String email = jwtUtil.getUid(token);
             Member member = memberRepository.findByEmail(email);
-            Long memberId = member.getId();
-            return memberId;
+            if (member != null) {
+                return member.getId();
+            }
         }
-        else return 0L;
+        return 0L;
     }
 
     public Optional<Member> findLoginMember() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("authentication = " + authentication);
-//        System.out.println("Principal 객체: " + authentication.getPrincipal());
-//        System.out.println("Principal 객체 타입: " + authentication.getPrincipal().getClass().getName());
-
-        if (authentication.getPrincipal() instanceof SecurityUserDto securityUserDto) {
-            String email = securityUserDto.getEmail();
+        String token = getTokenFromCookies();
+        if (token != null && jwtUtil.verifyToken(token)) {
+            String email = jwtUtil.getUid(token);
             Member member = memberRepository.findByEmail(email);
             return Optional.ofNullable(member);
         }
         return Optional.empty();
+    }
+
+    public String getTokenFromCookies() {
+        if (request.getCookies() == null) {
+            return null;
+        }
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> "Authorization".equals(cookie.getName()))
+                .map(cookie -> cookie.getValue().replace("Bearer ", ""))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public MemberResponseDTO.LoginSuccessMemberDTO getLoginSuccessMember() {
+        Optional<Member> memberOptional = findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
+        int titleCnt = titleRepository.countTrueColumnsForMember(member.getId());
+
+        return MemberResponseDTO.LoginSuccessMemberDTO.builder()
+                .memberId(member.getId())
+                .nickname(member.getNickname())
+                .userImg(member.getUserImg())
+                .memberTitle(member.getUserTitle())
+                .titleCnt(titleCnt)
+                .point(member.getPoint())
+                .build();
     }
 }

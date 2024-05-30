@@ -3,12 +3,17 @@ package KGUcapstone.OutDecision.domain.user.service.auth;
 import KGUcapstone.OutDecision.domain.user.dto.RefreshToken;
 import KGUcapstone.OutDecision.domain.user.repository.TokenRepository;
 import KGUcapstone.OutDecision.global.common.util.JwtUtil;
+import io.jsonwebtoken.JwtException;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static KGUcapstone.OutDecision.global.common.util.CookieUtil.addCookie;
+import static KGUcapstone.OutDecision.global.common.util.CookieUtil.deleteCookie;
 
 @Slf4j
 @Service
@@ -21,7 +26,8 @@ public class TokenService {
 
     // Redis에서 토큰 삭제
     @Transactional
-    public void removeRefreshToken(String accessToken) {
+    public void removeRefreshToken(String accessToken, HttpServletResponse response) {
+        System.out.println("accessToken = " + accessToken);
 
         // 헤더에서 가져온 값 앞에 자동 생성되는 "Bearer "을 삭제한다.
         String cleanedToken = accessToken.replace("Bearer ", "");
@@ -30,14 +36,16 @@ public class TokenService {
         RefreshToken token = tokenRepository.findByAccessToken(cleanedToken)
                 .orElseThrow(() -> {
                     log.error("RefreshToken not found for accessToken: {}", cleanedToken);
-                    return new IllegalArgumentException("RefreshToken not found");
+                    // 쿠키 삭제
+                    deleteCookie(response, "Authorization");
+                    return new JwtException("RefreshToken not found");
                 });
         tokenRepository.delete(token);
     }
 
     // AccessToken 재생성
     @Transactional
-    public String republishAccessToken(String accessToken) {
+    public String republishAccessToken(String accessToken, HttpServletResponse response) {
         // 액세스 토큰으로 Refresh 토큰 객체를 조회
         Optional<RefreshToken> refreshToken = tokenRepository.findByAccessToken(accessToken.replace("Bearer ", ""));
 
@@ -50,11 +58,13 @@ public class TokenService {
             // 액세스 토큰의 값을 수정해준다.
             resultToken.updateAccessToken(newAccessToken);
             tokenRepository.save(resultToken);
+//            addCookie(response, "Authorization", newAccessToken, 60*60);
             log.info("Attempting to republish accessToken: {}", newAccessToken);
             // 새로운 액세스 토큰을 반환해준다.
             return newAccessToken;
         }
 
+//        deleteCookie(response, "Authorization");
         return null;
     }
 }

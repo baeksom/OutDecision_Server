@@ -5,24 +5,36 @@ import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepo
 import KGUcapstone.OutDecision.domain.post.domain.Post;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
-import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
+import KGUcapstone.OutDecision.global.error.exception.handler.NotificationHandler;
+import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
+import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class NotificationServiceImpl implements NotificationService{
     private final NotificationsRepository notificationsRepository;
-    private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final FindMemberService findMemberService;
 
     @Override
     public boolean addNotifications(Long postId) {
-        Long memberId = 2024L;
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("Member를 찾을 수 없습니다."));
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post를 찾을 수 없습니다."));
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
         Notifications notifications = Notifications.builder()
                 .post(post)
                 .member(member)
@@ -33,10 +45,19 @@ public class NotificationServiceImpl implements NotificationService{
 
     @Override
     public boolean deleteNotifications(Long postId) {
-        Long memberId = 2024L;
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post를 찾을 수 없습니다."));
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         Notifications notifications = notificationsRepository.findByMemberIdAndPostId(memberId, postId);
+        if (notifications == null) {
+            throw new NotificationHandler(ErrorStatus.NOTIFICATION_NOT_FOUND);
+        }
         notificationsRepository.delete(notifications);
         return true;
     }
 }
+

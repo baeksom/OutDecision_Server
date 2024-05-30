@@ -2,11 +2,15 @@ package KGUcapstone.OutDecision.global.security.filter;
 
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
+import KGUcapstone.OutDecision.domain.user.service.auth.TokenService;
 import KGUcapstone.OutDecision.global.security.dto.SecurityUserDto;
 import KGUcapstone.OutDecision.global.common.util.JwtUtil;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+import static KGUcapstone.OutDecision.global.common.util.CookieUtil.addCookie;
+import static KGUcapstone.OutDecision.global.common.util.CookieUtil.deleteCookie;
+
 @RequiredArgsConstructor
 @Slf4j
 @Component
@@ -29,45 +36,72 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final FindMemberService findMemberService;
+    private final TokenService tokenService;
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         return request.getRequestURI().contains("/token/");
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        // request Header에서 AccessToken을 가져온다.
-        String atc = request.getHeader("Authorization");
+        log.info("JwtAuthFilter is called for request URI: {}", request.getRequestURI());
+        String atc = findMemberService.getTokenFromCookies();
 
-        // 토큰 검사 생략(모두 허용 URL의 경우 토큰 검사 통과)
         if (!StringUtils.hasText(atc)) {
-            doFilter(request, response, filterChain);
+            filterChain.doFilter(request, response);
             return;
         }
 
-        // AccessToken을 검증하고, 만료되었을경우 예외를 발생시킨다.
-        if (!jwtUtil.verifyToken(atc)) {
-            throw new JwtException("Access Token 만료!");
+        boolean isTokenValid = jwtUtil.verifyToken(atc);
+
+        if (!isTokenValid) {
+            log.info("토큰 만료 -> 재발급");
+            String newAccessToken = tokenService.republishAccessToken(atc, response);
+
+            if (newAccessToken != null) {
+                log.info("토큰 발급 완료 필터 newAccessToken = {}", newAccessToken);
+                addCookie(response, "Authorization", newAccessToken, 60*60);
+            } else {
+                log.error("새로운 토큰 발급 실패");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "토큰 재발급 실패");
+                deleteCookie(response, "Authorization");
+            }
+
+            // 원래 요청을 새로 만든 토큰으로 다시 수행
+            HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request) {
+                @Override
+                public Cookie[] getCookies() {
+                    Cookie[] cookies = super.getCookies();
+                    for (Cookie cookie : cookies) {
+                        if ("Authorization".equals(cookie.getName())) {
+                            cookie.setValue(newAccessToken);
+                        }
+                    }
+                    return cookies;
+                }
+            };
+
+            filterChain.doFilter(requestWrapper, response);
+            return;
         }
 
-        // AccessToken의 값이 있고, 유효한 경우에 진행한다.
+        // 아래 코드는 AccessToken이 유효할 때만 실행됨
         if (jwtUtil.verifyToken(atc)) {
+            log.info("accessToken 유효 : " + atc);
+            Member findMember = findMemberService.findByEmail(jwtUtil.getUid(atc)).orElse(null);
 
-            // AccessToken 내부의 payload에 있는 email로 user를 조회한다.
-            Member findMember = findMemberService.findByEmail(jwtUtil.getUid(atc)).get();
+            if (findMember != null) {
+                SecurityUserDto userDto = SecurityUserDto.builder()
+                        .memberId(findMember.getId())
+                        .email(findMember.getEmail())
+                        .role("ROLE_".concat(findMember.getUserRole()))
+                        .nickname(findMember.getNickname())
+                        .build();
 
-            // SecurityContext에 등록할 User 객체를 만들어준다.
-            SecurityUserDto userDto = SecurityUserDto.builder()
-                    .memberId(findMember.getId())
-                    .email(findMember.getEmail())
-                    .role("ROLE_".concat(findMember.getUserRole()))
-                    .nickname(findMember.getNickname())
-                    .build();
-
-            // SecurityContext에 인증 객체를 등록해준다.
-            Authentication auth = getAuthentication(userDto);
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                Authentication auth = getAuthentication(userDto);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
         }
 
         filterChain.doFilter(request, response);

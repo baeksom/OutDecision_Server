@@ -199,6 +199,7 @@ public class RedisRankingServiceImpl implements RankingService {
     // member의 랭크 조회
     @Override
     public RankingDTO memberRankingDTO(Long memberId) {
+        updateRanking();
         ZSetOperations<String, String> zSetOperations = redisTemplate.opsForZSet();
         // 랭킹 정보 가져오기
         Set<ZSetOperations.TypedTuple<String>> topRankings = zSetOperations.reverseRangeWithScores(RANKING_KEY + ":point", 0, -1);
@@ -227,6 +228,7 @@ public class RedisRankingServiceImpl implements RankingService {
                 rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
                 break;
             }
+            prevScore = point;
         }
         return rankingDTO;
     }

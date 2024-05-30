@@ -1,5 +1,6 @@
 package KGUcapstone.OutDecision.domain.post.service;
 
+import KGUcapstone.OutDecision.domain.comments.domain.Comments;
 import KGUcapstone.OutDecision.domain.notifications.domain.Notifications;
 import KGUcapstone.OutDecision.domain.notifications.repository.NotificationsRepository;
 import KGUcapstone.OutDecision.domain.options.domain.Options;
@@ -15,11 +16,14 @@ import KGUcapstone.OutDecision.domain.post.dto.PostResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
+import KGUcapstone.OutDecision.domain.user.domain.MemberView;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
+import KGUcapstone.OutDecision.domain.user.repository.MemberViewRepository;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.domain.user.service.S3Service;
 import KGUcapstone.OutDecision.domain.vote.domain.Vote;
 import KGUcapstone.OutDecision.domain.vote.repository.VoteRepository;
+import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
 import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static KGUcapstone.OutDecision.global.util.DateTimeFormatUtil.*;
 
@@ -45,15 +47,19 @@ public class PostServiceImpl implements PostService{
     private final NotificationsRepository notificationsRepository;
     private final VoteRepository voteRepository;
     private final FindMemberService findMemberService;
+    private final MemberViewRepository memberViewRepository;
+
     private final S3Service s3Service;
     private final PostConverter postConverter;
 
     /* 등록 */
     @Override
     public boolean uploadPost(UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages) {
-        Long memberId = 2024L;
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member를 찾을 수 없습니다."));
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         Post post = Post.builder()
                 .title(request.getTitle())
@@ -87,7 +93,7 @@ public class PostServiceImpl implements PostService{
                         .photoUrl(photoUrl)
                         .post(post)
                         .build();
-//                // 옵션을 저장소에 저장
+                // 옵션을 저장소에 저장
                 optionsRepository.save(newOption);
                 optionsList.add(newOption); // 옵션 리스트에 새로운 옵션 추가
             }
@@ -106,9 +112,6 @@ public class PostServiceImpl implements PostService{
         return true;
     }
 
-
-
-
     /* 조회 */
     @Override
     public PostDTO viewPost(Long postId) {
@@ -123,17 +126,36 @@ public class PostServiceImpl implements PostService{
         post.incrementViews();
         postRepository.save(post);
 
+        if (!memberId.equals(0L)) {
+            MemberView memberView = memberViewRepository.findByMemberIdAndCategory(memberId, post.getCategory());
+            if (memberView != null) {
+                memberView.setViews(memberView.getViews() + 1);
+                memberViewRepository.save(memberView);
+            } else {
+                Member member = memberOptional.get();
+                memberView = MemberView.builder()
+                        .member(member)
+                        .category(post.getCategory())
+                        .views(1)
+                        .build();
+                memberViewRepository.save(memberView);
+            }
+        }
+
 
         List<CommentsDTO> commentsList = post.getCommentsList().stream()
-                .map(comments -> {
-                    return CommentsDTO.builder()
-                            .memberId(comments.getMember().getId())
-                            .nickname(comments.getMember().getNickname())
-                            .profileUrl(comments.getMember().getUserImg())
-                            .body(comments.getBody())
-                            .createdAt(formatCreatedAt2(comments.getCreatedAt()))
-                            .build();
-                }).toList();
+                .sorted(Comparator.comparing(Comments::getCreatedAt).reversed())
+                .map(comments -> CommentsDTO.builder()
+                        .commentsId(comments.getId())
+                        .memberId(comments.getMember().getId())
+                        .nickname(comments.getMember().getNickname())
+                        .profileUrl(comments.getMember().getUserImg())
+                        .body(comments.getBody())
+                        .createdAt(formatCreatedAt2(comments.getCreatedAt()))
+                        .isOwn(comments.getMember().getId().equals(memberId))
+                        .build())
+                .toList();
+
         CommentsListDTO commentsListDTO = CommentsListDTO.builder()
                 .commentsDTOList(commentsList)
                 .listSize(commentsList.size())
@@ -164,33 +186,42 @@ public class PostServiceImpl implements PostService{
 
     /* 수정 */
     @Override
-    public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames, List<MultipartFile> optionImages) {
-        Long memberId = 2024L;
+    public boolean updatePost(Long postId, UploadPostDTO request, List<String> optionNames,
+                              List<MultipartFile> optionImages, List<String> originImages) {
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         if (!memberId.equals(post.getMember().getId())) return false;
 
-        // 기존 옵션 및 이미지 삭제
-        for (Options option : post.getOptionsList()) {
-            if (option.getPhotoUrl() != null) {
-                // S3에서 이미지 삭제
-                s3Service.deleteImage(option.getPhotoUrl());
-            }
-            optionsRepository.delete(option);
-        }
-        post.getOptionsList().clear(); // 옵션 리스트 초기화
-        postRepository.save(post); // 변경사항 저장
+        // 기존 옵션 이미지 리스트를 수집
+        List<String> originOptionImgList = post.getOptionsList().stream()
+                .map(Options::getPhotoUrl)
+                .filter(url -> url != null && !url.isEmpty())
+                .toList();
+
+        // 기존 옵션 삭제
+        optionsRepository.deleteAll(post.getOptionsList());
+        post.getOptionsList().clear();
 
         // 새로운 옵션 추가
         List<Options> optionsList = new ArrayList<>();
         if (optionNames != null && optionImages != null && optionNames.size() == optionImages.size()) {
             for (int i = 0; i < optionNames.size(); i++) {
                 String optionName = optionNames.get(i);
-                MultipartFile imageFile = optionImages.get(i);
                 String photoUrl = "";
-                if (imageFile != null && !imageFile.isEmpty()) {
-                    photoUrl = s3Service.uploadFile(imageFile, "options");
+
+                // 새로운 이미지 업로드 또는 기존 이미지 사용
+                if (!optionImages.get(i).isEmpty()) {
+                    photoUrl = s3Service.uploadFile(optionImages.get(i), "options");
+                } else if (!originImages.get(i).isEmpty()) {
+                    photoUrl = originImages.get(i);
                 }
+
                 Options newOption = Options.builder()
                         .body(optionName)
                         .photoUrl(photoUrl)
@@ -200,6 +231,16 @@ public class PostServiceImpl implements PostService{
                 optionsList.add(newOption); // 옵션 리스트에 새로운 옵션 추가
             }
         }
+
+        // S3에서 사용되지 않는 기존 이미지 삭제
+        for (String originImageUrl : originOptionImgList) {
+            boolean existsInOptionsList = optionsList.stream()
+                    .anyMatch(option -> originImageUrl.equals(option.getPhotoUrl()));
+            if (!existsInOptionsList && originImageUrl != null && !originImageUrl.isEmpty()) {
+                s3Service.deleteImg(originImageUrl);
+            }
+        }
+
         // 포스트에 새로운 옵션 리스트 설정
         post.setOptionsList(optionsList);
         post.updatePost(request.getTitle(), request.getContent(), Category.fromValue(request.getCategory()),
@@ -213,16 +254,22 @@ public class PostServiceImpl implements PostService{
     /* 삭제 */
     @Override
     public boolean deletePost(Long postId) {
-        Long memberId = 2024L;
+        Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Long memberId;
+        // 로그인 체크
+        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
         if (!memberId.equals(post.getMember().getId())) {
             return false;
         }
 
         for (Options options:post.getOptionsList()) {
-            if (options.getPhotoUrl() != null) {
-                s3Service.deleteImage(options.getPhotoUrl());
+            if (!options.getPhotoUrl().isEmpty()) {
+                s3Service.deleteImg(options.getPhotoUrl());
             }
         }
         postRepository.delete(post);
@@ -282,24 +329,36 @@ public class PostServiceImpl implements PostService{
     // 게시글 끌어올리기
     public boolean topPost(Long postId) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
+        Member member;
+        // 로그인 체크
+        if(memberOptional.isPresent()) member = memberOptional.get();
+        else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
-        if (memberOptional.isPresent()) {
-            Member member = memberOptional.get();
-            Post post = postRepository.findById(postId).orElseThrow(() ->
-                    new IllegalArgumentException("게시물이 존재하지 않습니다."));
+        Post post = postRepository.findById(postId).orElseThrow(() ->
+                new PostHandler(ErrorStatus.POST_NOT_FOUND));
 
-            if (!(post.getPluralVoting())) return false; // 투표 중인 게시글만
-
-            if(member.getBumps() != 0) { // 끌올 1개이상
-                int bumpCount = member.getBumps() - 1;
-                member.updateBumps(bumpCount);
-                memberRepository.save(member);
-
-                post.updateBumpsTime();
-                postRepository.save(post);
-                return true;
-            }
+        if (!member.getId().equals(post.getMember().getId())) { // 게시글을 작성한 유저 맞는지 확인
+            System.out.println("작성자가 아닙니다.");
+            return false;
         }
-        return false;
+
+        if (post.getStatus().equals(Status.end)){  // 투표 중인 게시글만
+            System.out.println("투표가 마감 되었습니다.");
+            return false;
+        }
+
+        if(member.getBumps() == 0) { // 끌올 1개이상
+            System.out.println("끌어올리기 횟수가 부족합니다.");
+            return false;
+        }
+
+        int bumpCount = member.getBumps() - 1;
+        member.updateBumps(bumpCount);
+        memberRepository.save(member);
+
+        post.updateBumpsTime();
+        postRepository.save(post);
+
+        return true;
     }
 }

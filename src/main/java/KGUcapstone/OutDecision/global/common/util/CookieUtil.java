@@ -18,6 +18,20 @@ public class CookieUtil {
                 .maxAge(maxAge)
                 .build();
 
+        System.out.println("cookie = " + cookie);
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public static void deleteCookie(HttpServletResponse response, String name) {
+        System.out.println("쿠키 삭제 메서드");
+        ResponseCookie cookie = ResponseCookie.from(name, null)
+                .path("/")
+                .sameSite("None")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0)
+                .build();
+
         response.addHeader("Set-Cookie", cookie.toString());
     }
 }

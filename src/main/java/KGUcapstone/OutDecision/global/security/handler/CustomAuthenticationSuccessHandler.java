@@ -29,6 +29,9 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     @Value("${JOIN_SECRET}")
     String joinSecret;
 
+    @Value("${IP}")
+    private String ip;
+
     @SneakyThrows
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -55,23 +58,23 @@ public class CustomAuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             log.info("jwtToken = {}", token.getAccessToken());
 
             // 쿠키로 accessToken 전달
-            addCookie(response, "accessToken", token.getAccessToken(), 60*5);
+            addCookie(response, "Authorization", token.getAccessToken(), 60*60);
 
             // 로그인 확인 페이지로 리다이렉트 시킨다.
             log.info("소셜 로그인 redirect 준비");
-            getRedirectStrategy().sendRedirect(request, response, "/loginSuccess");
+            getRedirectStrategy().sendRedirect(request, response, ip+"/");
         }
         else {
             log.info("소셜 회원가입 redirect 준비");
 
             // join_token 생성
-            String join_token = AESUtil.encrypt(joinSecret, email+provider);
+            String join_token = AESUtil.encrypt(joinSecret, email+"&&"+provider);
             System.out.println("join_token = " + join_token);
 
             addCookie(response, "email", email, 60*5);
             addCookie(response, "provider", provider, 60*5);  // 5분
 
-            getRedirectStrategy().sendRedirect(request, response, "/register/v1?join_token="+join_token);
+            getRedirectStrategy().sendRedirect(request, response, ip+"/signup/social?join_token="+join_token);
         }
     }
 }
