@@ -52,10 +52,8 @@ public class TitleServiceImpl implements TitleService{
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         // 문자열로 컬럼 이름 받아오기
         String findTrueColumByMemberId = titleRepository.findTrueColumByMemberId(memberId);
-        // 첫번째 글자 ',' 제거
-        String titleStr = findTrueColumByMemberId.toString().substring(1);
         // ','로 문자열 분류하여 리스트 만들어 반환
-        return Arrays.asList(titleStr.split(","));
+        return Arrays.asList(findTrueColumByMemberId.split(","));
     }
 
     // 칭호 획득 가능 여부 확인
