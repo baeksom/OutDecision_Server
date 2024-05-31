@@ -17,6 +17,7 @@ public class CommentsResponseDto {
     Long commentsId;
     String body;
     String nickname;
+    String memberTitle;
     Long postId;
     String profileUrl;
     String createdAt;
