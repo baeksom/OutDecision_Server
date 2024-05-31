@@ -4,7 +4,9 @@ import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.title.domain.Missions;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.MemberMissionsDTO;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.TitleMissionsDTO;
+import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.TitleRankDTO;
 import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
+import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.service.FindMemberService;
 import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
@@ -20,6 +22,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class MissionsServiceImpl implements MissionsService{
     private final MissionsRepository missionsRepository;
+    private final TitleRepository titleRepository;
     private final FindMemberService findMemberService;
 
     @Override
@@ -39,6 +42,9 @@ public class MissionsServiceImpl implements MissionsService{
                 .romantist(getTitleByCategory(memberId, Category.love))
                 .hobbyist(getTitleByCategory(memberId, Category.hobby))
                 .greedy(getGreedyMission(memberId))
+                .first(getTitleByRank(memberId, "first"))
+                .second(getTitleByRank(memberId, "second"))
+                .third(getTitleByRank(memberId, "third"))
                 .build();
     }
 
@@ -74,12 +80,12 @@ public class MissionsServiceImpl implements MissionsService{
             case travel:
                 missionCnt = missions.getTraveler_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
-                title = "여행가";
+                title = "트래블러";
                 break;
             case work:
                 missionCnt = missions.getCeo_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
-                title = "일꾼";
+                title = "사장";
                 break;
             case love:
                 missionCnt = missions.getRomantist_cnt();
@@ -89,7 +95,7 @@ public class MissionsServiceImpl implements MissionsService{
             case hobby:
                 missionCnt = missions.getHobbyist_cnt();
                 if (missionCnt >= 10) missions.setGreedy_cnt(greedyCnt+ 1);
-                title = "취미가";
+                title = "취미부자";
                 break;
             default:
                 title = "";
@@ -97,6 +103,26 @@ public class MissionsServiceImpl implements MissionsService{
         return TitleMissionsDTO.builder()
                 .title(title)
                 .MissionCnt(missionCnt)
+                .build();
+    }
+
+    @Override
+    public TitleRankDTO getTitleByRank(Long memberId, String rank) {
+        String title = "";
+        boolean isOwn = false;
+        if (rank.equals("first")) {
+            title = "1위";
+            isOwn = titleRepository.findByMemberId(memberId).getFirst();
+        } else if (rank.equals("second")) {
+            title = "2위";
+            isOwn = titleRepository.findByMemberId(memberId).getSecond();
+        } else if (rank.equals("third")) {
+            title = "3위";
+            isOwn = titleRepository.findByMemberId(memberId).getThird();
+        }
+        return TitleRankDTO.builder()
+                .title(title)
+                .isOwn(isOwn)
                 .build();
     }
 }
