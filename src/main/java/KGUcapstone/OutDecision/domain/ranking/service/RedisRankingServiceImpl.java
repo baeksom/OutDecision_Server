@@ -176,6 +176,7 @@ public class RedisRankingServiceImpl implements RankingService {
             Member member = memberRepository.findById(memberId).get();
             String nickname = member.getNickname();
             String userImg = member.getUserImg();
+            String memberTitle = member.getUserTitle();
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -188,7 +189,7 @@ public class RedisRankingServiceImpl implements RankingService {
                 break; // 100위 이후의 데이터는 처리하지 않음
             }
 
-            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
+            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, memberTitle, point);
             rankingDTOList.add(rankingDTO);
             prevScore = point;
         }
@@ -216,6 +217,7 @@ public class RedisRankingServiceImpl implements RankingService {
             Member member = memberRepository.findById(memberId).get();
             String nickname = member.getNickname();
             String userImg = member.getUserImg();
+            String memberTitle = member.getUserTitle();
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -225,7 +227,7 @@ public class RedisRankingServiceImpl implements RankingService {
             }
 
             if (reqId.equals(id)) {
-                rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
+                rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, memberTitle, point);
                 break;
             }
             prevScore = point;
@@ -256,6 +258,7 @@ public class RedisRankingServiceImpl implements RankingService {
             Member member = memberRepository.findById(memberId).get();
             String nickname = member.getNickname();
             String userImg = member.getUserImg();
+            String memberTitle = member.getUserTitle();
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -268,7 +271,7 @@ public class RedisRankingServiceImpl implements RankingService {
                 break; // 10위 이후의 데이터는 처리하지 않음
             }
 
-            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
+            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, memberTitle, point);
             rankingDTOList.add(rankingDTO);
             prevScore = point;
         }
