@@ -28,7 +28,7 @@ public interface TitleRepository extends JpaRepository<Title, Long> {
 
     @Query("SELECT " +
             "GROUP_CONCAT(" +
-            "   CASE WHEN t.ceo = true THEN '💸사장' ELSE '' END, " +
+            "   CASE WHEN t.ceo = true THEN ',💸사장' ELSE '' END, " +
             "   CASE WHEN t.fashionista = true THEN ',🕶️패셔니스타' ELSE '' END, " +
             "   CASE WHEN t.foodie = true THEN ',🍴미식가' ELSE '' END, " +
             "   CASE WHEN t.greedy = true THEN ',😏욕심쟁이' ELSE '' END, " +
