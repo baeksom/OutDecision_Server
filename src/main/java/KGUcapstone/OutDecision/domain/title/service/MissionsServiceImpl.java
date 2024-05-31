@@ -4,7 +4,6 @@ import KGUcapstone.OutDecision.domain.post.domain.enums.Category;
 import KGUcapstone.OutDecision.domain.title.domain.Missions;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.MemberMissionsDTO;
 import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.TitleMissionsDTO;
-import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.TitleRankDTO;
 import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
 import KGUcapstone.OutDecision.domain.title.repository.TitleRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
@@ -56,7 +55,7 @@ public class MissionsServiceImpl implements MissionsService{
 
         return TitleMissionsDTO.builder()
                 .title(title)
-                .MissionCnt(greedyCnt)
+                .missionCnt(greedyCnt)
                 .build();
     }
 
@@ -102,27 +101,27 @@ public class MissionsServiceImpl implements MissionsService{
         }
         return TitleMissionsDTO.builder()
                 .title(title)
-                .MissionCnt(missionCnt)
+                .missionCnt(missionCnt)
                 .build();
     }
 
     @Override
-    public TitleRankDTO getTitleByRank(Long memberId, String rank) {
+    public TitleMissionsDTO getTitleByRank(Long memberId, String rank) {
         String title = "";
-        boolean isOwn = false;
-        if (rank.equals("first")) {
+        int missionCnt = 0;
+        if (rank.equals("first") && titleRepository.findByMemberId(memberId).getFirst()) {
             title = "1위";
-            isOwn = titleRepository.findByMemberId(memberId).getFirst();
-        } else if (rank.equals("second")) {
+            missionCnt = 1;
+        } else if (rank.equals("second") && titleRepository.findByMemberId(memberId).getSecond()) {
             title = "2위";
-            isOwn = titleRepository.findByMemberId(memberId).getSecond();
-        } else if (rank.equals("third")) {
+            missionCnt = 1;
+        } else if (rank.equals("third") && titleRepository.findByMemberId(memberId).getThird()) {
             title = "3위";
-            isOwn = titleRepository.findByMemberId(memberId).getThird();
+            missionCnt = 1;
         }
-        return TitleRankDTO.builder()
+        return TitleMissionsDTO.builder()
                 .title(title)
-                .isOwn(isOwn)
+                .missionCnt(missionCnt)
                 .build();
     }
 }

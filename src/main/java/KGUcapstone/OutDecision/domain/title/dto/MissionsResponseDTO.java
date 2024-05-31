@@ -19,9 +19,9 @@ public class MissionsResponseDTO {
         TitleMissionsDTO romantist;
         TitleMissionsDTO hobbyist;
         TitleMissionsDTO greedy;
-        TitleRankDTO first;
-        TitleRankDTO second;
-        TitleRankDTO third;
+        TitleMissionsDTO first;
+        TitleMissionsDTO second;
+        TitleMissionsDTO third;
     }
 
     @Builder
@@ -30,15 +30,7 @@ public class MissionsResponseDTO {
     @AllArgsConstructor
     public static class TitleMissionsDTO{
         String title;
-        Integer MissionCnt;
+        Integer missionCnt;
     }
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class TitleRankDTO{
-        String title;
-        boolean isOwn;
-    }
 }
