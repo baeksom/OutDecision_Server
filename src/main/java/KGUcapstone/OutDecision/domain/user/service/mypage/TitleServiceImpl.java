@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,8 +53,10 @@ public class TitleServiceImpl implements TitleService{
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
         // 문자열로 컬럼 이름 받아오기
         String findTrueColumByMemberId = titleRepository.findTrueColumByMemberId(memberId);
-        // ','로 문자열 분류하여 리스트 만들어 반환
-        return Arrays.asList(findTrueColumByMemberId.split(","));
+        // ','로 문자열 분류하여 리스트 만들어 반환 및 빈 문자열 제거
+        return Arrays.stream(findTrueColumByMemberId.split(","))
+                .filter(s -> !s.trim().isEmpty())
+                .collect(Collectors.toList());
     }
 
     // 칭호 획득 가능 여부 확인
