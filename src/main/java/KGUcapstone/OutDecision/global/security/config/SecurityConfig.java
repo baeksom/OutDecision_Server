@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 @Configuration
 @EnableWebSecurity
@@ -28,13 +28,14 @@ public class SecurityConfig {
     private final CustomLoginSuccessHandler customLoginSuccessHandler;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable() // HTTP 기본 인증을 비활성화
-                .cors().and() // CORS 활성화
-                .csrf().disable() // CSRF 보호 기능 비활성화
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // 세션관리 정책을 STATELESS(세션이 있으면 쓰지도 않고, 없으면 만들지도 않는다)
+                .httpBasic(AbstractHttpConfigurer::disable) // HTTP 기본 인증 비활성화
+                .cors(cors -> {}) // CORS 활성화
+                .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 세션 관리 정책 설정
+                );
 
         http
                 .formLogin(form -> form
@@ -44,35 +45,39 @@ public class SecurityConfig {
                 );
 
         http
-                .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .permitAll();
-
-        http
-                .authorizeHttpRequests()
-                .anyRequest().permitAll();
-
-        http
-                .exceptionHandling()
-                .accessDeniedPage("/error");
-
-        http
-                .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
-                        .userInfoEndpoint()
-                        .userService(customOAuth2UserService) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
-                        .and()
-                        .failureHandler(oAuth2LoginFailureHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정해준다.
-                        .successHandler(oAuth2LoginSuccessHandler) // OAuth2 로그인 성공시 처리할 핸들러를 지정해준다.
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
                         .permitAll()
                 );
 
+        http
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/public/**", "/login", "/signup").permitAll() // 특정 경로만 허용
+                                .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                );
 
-        // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 앞에 추가한다.
-        return http
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
-                .build();
+        http
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling.accessDeniedPage("/error")
+                );
+
+        http
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/oauth2/authorization") // OAuth2 로그인 페이지 설정
+                        .userInfoEndpoint(userInfoEndpoint ->
+                                userInfoEndpoint.userService(customOAuth2UserService)
+                        )
+                        .failureHandler(oAuth2LoginFailureHandler)
+                        .successHandler(oAuth2LoginSuccessHandler)
+                        .permitAll()
+                );
+
+        // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 앞에 추가
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
+
+        return http.build();
     }
 }
