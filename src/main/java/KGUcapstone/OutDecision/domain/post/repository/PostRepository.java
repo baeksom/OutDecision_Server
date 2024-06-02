@@ -22,7 +22,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByMember(Member member, PageRequest pageRequest);
     Page<Post> findAllByMemberAndStatus(Member member, Status status, PageRequest of);
     Page<Post> findAllByIdIn(List<Long> postIds, PageRequest of);
-    Page<Post> findAllByIdInAndStatus(List<Long> postIds, Status status, PageRequest of);
+    List<Post> findAllByIdInAndStatus(List<Long> postIds, Status status);
     List<Post> findByHotTrue(Pageable p);
     List<Post> findTop6ByStatusOrderByDeadlineDesc(Status status, Pageable p);
     List<Post> findTop6ByStatusOrderByDeadlineAsc(Status status, Pageable p);

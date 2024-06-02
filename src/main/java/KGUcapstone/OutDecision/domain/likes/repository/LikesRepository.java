@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LikesRepository extends JpaRepository<Likes, Long> {
-    @Query("SELECT post.id FROM Likes WHERE member.id = :memberId")
-    List<Long> findPostIdsByMemberId(Long memberId);
+    @Query("SELECT l.post.id FROM Likes l WHERE l.member.id = :memberId ORDER BY l.createdAt DESC")
+    List<Long> findPostIdsByMemberIdOrderByCreatedAtDesc(Long memberId);
 
     Optional<Likes> findByPostAndMember(Post post, Member member);
 }
