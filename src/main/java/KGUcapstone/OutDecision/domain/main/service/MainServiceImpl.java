@@ -30,7 +30,7 @@ public class MainServiceImpl implements MainService{
     @Override
     public PostListDTO getMain() {
 
-        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "bumpsTime"));
         // HOT 게시물 리스트
         List<PostDTO> hotPostDTOList = mapToDTO(postRepository.findByHotTrue(pageable));
         // 최신 게시물 리스트
