@@ -149,7 +149,7 @@ public class PostServiceImpl implements PostService{
                         .memberId(comments.getMember().getId())
                         .nickname(comments.getMember().getNickname())
                         .profileUrl(comments.getMember().getUserImg())
-                        .title(comments.getMember().getUserTitle())
+                        .memberTitle(comments.getMember().getUserTitle())
                         .body(comments.getBody())
                         .createdAt(formatCreatedAt2(comments.getCreatedAt()))
                         .isOwn(comments.getMember().getId().equals(currentMemberId))
