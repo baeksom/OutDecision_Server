@@ -25,4 +25,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByIdInAndStatus(List<Long> postIds, Status status, PageRequest of);
     List<Post> findByHotTrue(Pageable p);
     List<Post> findTop6ByStatusOrderByDeadlineDesc(Status status, Pageable p);
+    List<Post> findTop6ByStatusOrderByDeadlineAsc(Status status, Pageable p);
 }
