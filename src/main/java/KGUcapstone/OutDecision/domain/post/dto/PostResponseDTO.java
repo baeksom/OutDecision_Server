@@ -51,6 +51,7 @@ public class PostResponseDTO {
         Long memberId;
         String nickname;
         String profileUrl;
+        String title;
         String body;
         String createdAt;
         Boolean isOwn;
