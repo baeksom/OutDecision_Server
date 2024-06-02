@@ -15,6 +15,6 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     @Query("SELECT DISTINCT v.options.id FROM Vote v WHERE v.member = :member AND v.options.post = :post")
     List<Long> findOptionIdsByMemberAndPost(Member member, Post post);
 
-    @Query("SELECT v.options.post.id FROM Vote v WHERE v.member.id = :memberId ORDER BY v.createdAt DESC")
-    List<Long> findPostIdsByMemberIdOrderByCreatedAtDesc(Long memberId);
+    @Query("SELECT DISTINCT v.options.post.id, v.createdAt FROM Vote v WHERE v.member.id = :memberId ORDER BY v.createdAt DESC")
+    List<Object[]> findDistinctPostIdsByMemberIdOrderByCreatedAtDesc(Long memberId);
 }

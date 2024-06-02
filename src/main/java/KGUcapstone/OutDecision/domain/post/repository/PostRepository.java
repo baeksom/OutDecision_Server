@@ -18,11 +18,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("SELECT DISTINCT p FROM Post p JOIN p.optionsList o WHERE o.body LIKE %:keyword%")
     List<Post> findByOptionsContaining(String keyword);
     List<Post> findAllByMemberId(Long memberId, Sort bumpsTime);
-    List<Post> findAllByIdIn(List<Long> ids, Sort sort);
     Page<Post> findAllByMember(Member member, PageRequest pageRequest);
     Page<Post> findAllByMemberAndStatus(Member member, Status status, PageRequest of);
-    Page<Post> findAllByIdIn(List<Long> postIds, PageRequest of);
-    List<Post> findAllByIdInAndStatus(List<Long> postIds, Status status);
     List<Post> findByHotTrue(Pageable p);
     List<Post> findTop6ByStatusOrderByDeadlineDesc(Status status, Pageable p);
     List<Post> findTop6ByStatusOrderByDeadlineAsc(Status status, Pageable p);

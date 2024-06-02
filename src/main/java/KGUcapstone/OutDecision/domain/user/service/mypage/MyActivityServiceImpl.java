@@ -91,8 +91,19 @@ public class MyActivityServiceImpl implements MyActivityService {
         if (memberOptional.isPresent()) memberId = memberOptional.get().getId();
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
-        List<Long> votedPostIds = voteRepository.findPostIdsByMemberIdOrderByCreatedAtDesc(memberId);
-        List<Post> votedPosts = votedPostIds.stream()
+        List<Object[]> votedPostData = voteRepository.findDistinctPostIdsByMemberIdOrderByCreatedAtDesc(memberId);
+
+        // 게시글 ID만 추출하여 리스트에 저장
+        List<Long> votedPostIds = votedPostData.stream()
+                .map(data -> (Long) data[0])
+                .collect(Collectors.toList());
+
+        // 페이지 처리를 수동으로 수행
+        int start = page * 10;
+        int end = Math.min((page + 1) * 10, votedPostIds.size());
+
+        List<Long> subList = votedPostIds.subList(start, end);
+        List<Post> votedPosts = subList.stream()
                 .map(postRepository::findById)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -105,11 +116,7 @@ public class MyActivityServiceImpl implements MyActivityService {
                     .collect(Collectors.toList());
         }
 
-        // 페이지 처리를 수동으로 수행
-        int start = Math.min(page * 10, votedPosts.size());
-        int end = Math.min((page + 1) * 10, votedPosts.size());
-        List<Post> subList = votedPosts.subList(start, end);
-        return new PageImpl<>(subList, PageRequest.of(page, 10), votedPosts.size());
+        return new PageImpl<>(votedPosts, PageRequest.of(page, 10), votedPostIds.size());
     }
 
 }

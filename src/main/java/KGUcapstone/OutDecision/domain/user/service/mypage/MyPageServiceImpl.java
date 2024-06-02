@@ -82,7 +82,11 @@ public class MyPageServiceImpl implements MyPageService{
                     .collect(Collectors.toList());
         } else if (posts.equals("voted")) {
             // 투표한 최신 게시글 2개 조회
-            List<Long> votedPostIds = voteRepository.findPostIdsByMemberIdOrderByCreatedAtDesc(memberId);
+            List<Object[]> votedPostData = voteRepository.findDistinctPostIdsByMemberIdOrderByCreatedAtDesc(memberId);
+            List<Long> votedPostIds = votedPostData.stream()
+                    .map(data -> (Long) data[0])
+                    .toList();
+
             return votedPostIds.stream()
                     .map(postRepository::findById)
                     .filter(Optional::isPresent)
