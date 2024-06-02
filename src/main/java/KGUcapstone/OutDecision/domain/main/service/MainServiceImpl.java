@@ -32,6 +32,7 @@ public class MainServiceImpl implements MainService{
 
         Pageable pageable = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "bumpsTime"));
         Pageable pageable2 = PageRequest.of(0, 6, Sort.by(Sort.Direction.DESC, "deadline"));
+        Pageable pageable3 = PageRequest.of(0, 6, Sort.by(Sort.Direction.ASC, "deadline"));
         // HOT 게시물 리스트
         List<PostDTO> hotPostDTOList = mapToDTO(postRepository.findByHotTrue(pageable));
         // 최신 게시물 리스트
@@ -39,7 +40,7 @@ public class MainServiceImpl implements MainService{
         // 투표 마감 게시물 리스트
         List<PostDTO> closedPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByDeadlineDesc(Status.end, pageable2));
         // 투표 임박 게시글 리스트
-        List<PostDTO> imminentPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByDeadlineDesc(Status.progress, pageable2));
+        List<PostDTO> imminentPostDTOList = mapToDTO(postRepository.findTop6ByStatusOrderByDeadlineAsc(Status.progress, pageable3));
 
         RankingListDTO top10Rankings = rankingService.getTop10Rankings();
 
