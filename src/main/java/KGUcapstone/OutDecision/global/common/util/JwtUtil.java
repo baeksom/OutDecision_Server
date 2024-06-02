@@ -11,7 +11,6 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Base64;
 import java.util.Date;
@@ -67,8 +66,8 @@ public class JwtUtil {
 
 
     public String generateAccessToken(String email, String role) {
-//        long tokenPeriod = 1000L * 60L * 30L; // 30분
-        long tokenPeriod = 1000L * 10L;
+        long tokenPeriod = 1000L * 60L * 30L; // 30분
+//        long tokenPeriod = 1000L * 10L;
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("role", role);
 
@@ -88,7 +87,6 @@ public class JwtUtil {
     }
 
 
-    @Transactional
     public boolean verifyToken(String token) {
         token = token.replace("Bearer ", "");
         try {
