@@ -28,7 +28,7 @@ public class RedisRankingServiceImpl implements RankingService {
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
 
-//        @Scheduled(cron = "0 6 4 ? * THU") // 테스트용 매주 목요일 04:6분에 실행
+//        @Scheduled(cron = "0 53 15 ? * MON") // 테스트용
     // 매주 월요일 00:00에 포인트 0으로 세팅되도록 스케줄링
     @Scheduled(cron = "0 0 0 * * MON")
     public void resetWeeklyPoints() {
@@ -60,6 +60,7 @@ public class RedisRankingServiceImpl implements RankingService {
             for (Title title :previousFirstTitleList) {
                 title.setFirst(false);
                 titleRepository.save(title);
+                if(title.getMember().getUserTitle().equals("\uD83E\uDD471위")) title.getMember().updateUserTitle(null);
             }
         }
 
@@ -68,6 +69,7 @@ public class RedisRankingServiceImpl implements RankingService {
             for (Title title :previousSecondTitleList) {
                 title.setSecond(false);
                 titleRepository.save(title);
+                if(title.getMember().getUserTitle().equals("\uD83E\uDD482위")) title.getMember().updateUserTitle(null);
             }
         }
 
@@ -76,6 +78,7 @@ public class RedisRankingServiceImpl implements RankingService {
             for (Title title :previousThirdTitleList) {
                 title.setThird(false);
                 titleRepository.save(title);
+                if(title.getMember().getUserTitle().equals("\uD83E\uDD493위")) title.getMember().updateUserTitle(null);
             }
         }
 
@@ -176,6 +179,7 @@ public class RedisRankingServiceImpl implements RankingService {
             Member member = memberRepository.findById(memberId).get();
             String nickname = member.getNickname();
             String userImg = member.getUserImg();
+            String memberTitle = member.getUserTitle();
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -188,7 +192,7 @@ public class RedisRankingServiceImpl implements RankingService {
                 break; // 100위 이후의 데이터는 처리하지 않음
             }
 
-            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
+            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, memberTitle, point);
             rankingDTOList.add(rankingDTO);
             prevScore = point;
         }
@@ -216,6 +220,7 @@ public class RedisRankingServiceImpl implements RankingService {
             Member member = memberRepository.findById(memberId).get();
             String nickname = member.getNickname();
             String userImg = member.getUserImg();
+            String memberTitle = member.getUserTitle();
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -225,7 +230,7 @@ public class RedisRankingServiceImpl implements RankingService {
             }
 
             if (reqId.equals(id)) {
-                rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
+                rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, memberTitle, point);
                 break;
             }
             prevScore = point;
@@ -256,6 +261,7 @@ public class RedisRankingServiceImpl implements RankingService {
             Member member = memberRepository.findById(memberId).get();
             String nickname = member.getNickname();
             String userImg = member.getUserImg();
+            String memberTitle = member.getUserTitle();
 
             if (point != prevScore) {
                 rank += sameRankCount;
@@ -268,7 +274,7 @@ public class RedisRankingServiceImpl implements RankingService {
                 break; // 10위 이후의 데이터는 처리하지 않음
             }
 
-            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, point);
+            RankingDTO rankingDTO = new RankingDTO(rank, memberId, userImg, nickname, memberTitle, point);
             rankingDTOList.add(rankingDTO);
             prevScore = point;
         }

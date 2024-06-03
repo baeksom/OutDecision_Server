@@ -116,18 +116,18 @@ public class PostServiceImpl implements PostService{
     @Override
     public PostDTO viewPost(Long postId) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
-        Long memberId;
+        Long currentMemberId;
         // 로그인 체크
-        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
-        else memberId = 0L;
+        if(memberOptional.isPresent()) currentMemberId = memberOptional.get().getId();
+        else currentMemberId = 0L;
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
         post.incrementViews();
         postRepository.save(post);
 
-        if (!memberId.equals(0L)) {
-            MemberView memberView = memberViewRepository.findByMemberIdAndCategory(memberId, post.getCategory());
+        if (!currentMemberId.equals(0L)) {
+            MemberView memberView = memberViewRepository.findByMemberIdAndCategory(currentMemberId, post.getCategory());
             if (memberView != null) {
                 memberView.setViews(memberView.getViews() + 1);
                 memberViewRepository.save(memberView);
@@ -150,9 +150,10 @@ public class PostServiceImpl implements PostService{
                         .memberId(comments.getMember().getId())
                         .nickname(comments.getMember().getNickname())
                         .profileUrl(comments.getMember().getUserImg())
+                        .memberTitle(comments.getMember().getUserTitle())
                         .body(comments.getBody())
                         .createdAt(formatCreatedAt2(comments.getCreatedAt()))
-                        .isOwn(comments.getMember().getId().equals(memberId))
+                        .isOwn(comments.getMember().getId().equals(currentMemberId))
                         .build())
                 .toList();
 
@@ -161,16 +162,19 @@ public class PostServiceImpl implements PostService{
                 .listSize(commentsList.size())
                 .build();
 
+        Member postMember = post.getMember();
+
         return PostDTO.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
                 .category(post.getCategory())
                 .status(post.getStatus())
                 .gender(post.getGender())
-                .userId(post.getMember().getId())
-                .nickname(post.getMember().getNickname())
-                .profileUrl(post.getMember().getUserImg())
-                .bumps(memberId.equals(post.getMember().getId()) ? post.getMember().getBumps() : null)
+                .userId(postMember.getId())
+                .nickname(postMember.getNickname())
+                .memberTitle(postMember.getUserTitle())
+                .profileUrl(postMember.getUserImg())
+                .bumps(currentMemberId.equals(postMember.getId()) ? postMember.getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
                 .createdAt(formatCreatedAt(post.getCreatedAt()))
                 .bumpsTime(formatCreatedAt(post.getBumpsTime()))

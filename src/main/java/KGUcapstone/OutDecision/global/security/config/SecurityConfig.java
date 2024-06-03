@@ -49,15 +49,6 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/")
                 .permitAll();
 
-//        http
-//            .authorizeRequests() // 요청에 대한 인증 설정
-//                .requestMatchers("/swagger-ui/**","/v3/api-docs/**").permitAll()
-//                .requestMatchers("/token/**").permitAll() // 토큰 발급을 위한 경로는 모두 허용
-//                .requestMatchers("/register/**").permitAll()
-//                .requestMatchers("/loginSuccess").permitAll()
-//                .requestMatchers("/", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/h2-console/**").permitAll()
-//                .anyRequest().authenticated(); // 그 외의 모든 요청은 인증이 필요하다.
-
         http
                 .authorizeHttpRequests()
                 .anyRequest().permitAll();
@@ -67,13 +58,15 @@ public class SecurityConfig {
                 .accessDeniedPage("/error");
 
         http
-                .oauth2Login() // OAuth2 로그인 설정시작
-                .loginPage("/login")
-                .userInfoEndpoint().userService(customOAuth2UserService) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
-                .and()
-                .failureHandler(oAuth2LoginFailureHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정해준다.
-                .successHandler(oAuth2LoginSuccessHandler)
-                .permitAll(); // OAuth2 로그인 성공시 처리할 핸들러를 지정해준다.
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .userInfoEndpoint()
+                        .userService(customOAuth2UserService) // OAuth2 로그인시 사용자 정보를 가져오는 엔드포인트와 사용자 서비스를 설정
+                        .and()
+                        .failureHandler(oAuth2LoginFailureHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정해준다.
+                        .successHandler(oAuth2LoginSuccessHandler) // OAuth2 로그인 성공시 처리할 핸들러를 지정해준다.
+                        .permitAll()
+                );
 
 
         // JWT 인증 필터를 UsernamePasswordAuthenticationFilter 앞에 추가한다.

@@ -18,6 +18,7 @@ public class MainResponseDTO {
         List<PostDTO> hotPostList;
         List<PostDTO> latestPostList;
         List<PostDTO> closedPostList;
+        List<PostDTO> imminentPostList;
         RankingListDTO rankingListDTO;
     }
 

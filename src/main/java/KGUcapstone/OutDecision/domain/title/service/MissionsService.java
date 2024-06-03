@@ -9,4 +9,5 @@ public interface MissionsService {
     MemberMissionsDTO getMemberMissions();
     TitleMissionsDTO getGreedyMission(Long membeId);
     TitleMissionsDTO getTitleByCategory(Long memberId, Category category);
+    TitleMissionsDTO getTitleByRank(Long memberId, String rank);
 }

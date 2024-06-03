@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-
-import java.util.Date;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -26,6 +24,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByIdIn(List<Long> postIds, PageRequest of);
     Page<Post> findAllByIdInAndStatus(List<Long> postIds, Status status, PageRequest of);
     List<Post> findByHotTrue(Pageable p);
-    List<Post> findTop6ByStatusOrderByCreatedAtDesc(Status status, Pageable p);
-    List<Post> findByStatusAndDeadlineBefore(Status status, Date deadline);
+    List<Post> findTop6ByStatusOrderByDeadlineDesc(Status status, Pageable p);
+    List<Post> findTop6ByStatusOrderByDeadlineAsc(Status status, Pageable p);
 }

@@ -17,6 +17,7 @@ public class CommentsConverter {
                 .commentsId(comments.getId())
                 .body(comments.getBody())
                 .nickname(comments.getMember().getNickname())
+                .memberTitle(comments.getMember().getUserTitle())
                 .postId(comments.getPost().getId())
                 .profileUrl(comments.getMember().getUserImg())
                 .createdAt(formatCreatedAt2(comments.getCreatedAt()))

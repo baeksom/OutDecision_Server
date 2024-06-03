@@ -27,7 +27,7 @@ public class UserImgServiceImpl implements UserImgService{
 
     // 프로필 사진 변경
     @Override
-    public boolean updateUserImg(MultipartFile userImg) {
+    public String updateUserImg(MultipartFile userImg) {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
         Member member;
         if(memberOptional.isPresent()) member = memberOptional.get();
@@ -43,12 +43,12 @@ public class UserImgServiceImpl implements UserImgService{
         member.updateUserImg(profileImage);
         memberRepository.save(member);
 
-        return true;
+        return profileImage;
     }
 
     // 프로필 사진 삭제 -> 기본 이미지 변경
     @Override
-    public boolean deleteUserImg() {
+    public String deleteUserImg() {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
         Member member;
         // 로그인 체크
@@ -63,6 +63,6 @@ public class UserImgServiceImpl implements UserImgService{
         member.updateUserImg(defaultImg);
         memberRepository.save(member);
 
-        return true;
+        return defaultImg;
     }
 }

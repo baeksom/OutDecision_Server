@@ -15,6 +15,7 @@ public class RankingResponseDTO {
         Long memberId;
         String userImg;
         String nickname;
+        String memberTitle;
         Integer point;
     }
 
