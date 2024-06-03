@@ -74,6 +74,8 @@ jobs:
             BUCKET_NAME=${{ secrets.BUCKET_NAME }}
             IP=${{ secrets.IP }}
             DEFAULT_PROFILE_IMG=${{ secrets.DEFAULT_PROFILE_IMG }}
+            MAIL_PASS=${{ secrets.MAIL_PASS }}
+            MAIL_ADDR=${{ secrets.MAIL_ADDR }}
   
 
   pull_from_registry:
