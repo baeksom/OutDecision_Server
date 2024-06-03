@@ -20,6 +20,17 @@ spring:
   profiles:
     active: local
     include: oauth, app
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ADDR}
+    password: ${MAIL_PASS}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
   cloud:
     aws:
       s3:
@@ -39,3 +50,4 @@ spring:
 server:
   tomcat:
     max-http-form-post-size: 10737418240
+

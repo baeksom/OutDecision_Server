@@ -10,6 +10,7 @@ import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
 import KGUcapstone.OutDecision.global.error.exception.handler.NotificationHandler;
 import KGUcapstone.OutDecision.global.error.exception.handler.PostHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,7 @@ public class NotificationServiceImpl implements NotificationService{
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostHandler(ErrorStatus.POST_NOT_FOUND));
+
         Notifications notifications = Notifications.builder()
                 .post(post)
                 .member(member)
@@ -58,3 +60,4 @@ public class NotificationServiceImpl implements NotificationService{
         return true;
     }
 }
+
