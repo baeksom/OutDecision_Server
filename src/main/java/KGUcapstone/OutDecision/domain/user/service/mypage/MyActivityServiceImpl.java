@@ -12,6 +12,7 @@ import KGUcapstone.OutDecision.global.error.exception.handler.MemberHandler;
 import KGUcapstone.OutDecision.global.error.status.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -56,18 +58,28 @@ public class MyActivityServiceImpl implements MyActivityService {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
         Long memberId;
         // 로그인 체크
-        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        if (memberOptional.isPresent()) memberId = memberOptional.get().getId();
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
-        List<Long> likedPostIds = likesRepository.findPostIdsByMemberId(memberId);
-        Page<Post> likedPosts;
-        Sort sort = Sort.by(Sort.Direction.DESC, "bumpsTime"); // bumpsTime으로 내림차순 정렬
-        if (status == null) {
-            likedPosts = postRepository.findAllByIdIn(likedPostIds, PageRequest.of(page, 10, sort));
-        } else {
-            likedPosts = postRepository.findAllByIdInAndStatus(likedPostIds, status, PageRequest.of(page, 10, sort));
+        List<Long> likedPostIds = likesRepository.findPostIdsByMemberIdOrderByCreatedAtDesc(memberId);
+        List<Post> likedPosts = likedPostIds.stream()
+                .map(postRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        // 상태 필터링
+        if (status != null) {
+            likedPosts = likedPosts.stream()
+                    .filter(post -> post.getStatus().equals(status))
+                    .collect(Collectors.toList());
         }
-        return likedPosts;
+
+        // 페이지 처리를 수동으로 수행
+        int start = Math.min(page * 10, likedPosts.size());
+        int end = Math.min((page + 1) * 10, likedPosts.size());
+        List<Post> subList = likedPosts.subList(start, end);
+        return new PageImpl<>(subList, PageRequest.of(page, 10), likedPosts.size());
     }
 
     // 투표한 글
@@ -76,18 +88,35 @@ public class MyActivityServiceImpl implements MyActivityService {
         Optional<Member> memberOptional = findMemberService.findLoginMember();
         Long memberId;
         // 로그인 체크
-        if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
+        if (memberOptional.isPresent()) memberId = memberOptional.get().getId();
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
-        List<Long> votedPostIds = voteRepository.findPostIdsByMemberId(memberId);
-        Page<Post> votedPosts;
-        Sort sort = Sort.by(Sort.Direction.DESC, "bumpsTime"); // bumpsTime으로 내림차순 정렬
-        if (status == null) {
-            votedPosts = postRepository.findAllByIdIn(votedPostIds, PageRequest.of(page, 10, sort));
-        } else {
-            votedPosts = postRepository.findAllByIdInAndStatus(votedPostIds, status, PageRequest.of(page, 10, sort));
+        List<Object[]> votedPostData = voteRepository.findDistinctPostIdsByMemberIdOrderByCreatedAtDesc(memberId);
+
+        // 게시글 ID만 추출하여 리스트에 저장
+        List<Long> votedPostIds = votedPostData.stream()
+                .map(data -> (Long) data[0])
+                .collect(Collectors.toList());
+
+        // 페이지 처리를 수동으로 수행
+        int start = page * 10;
+        int end = Math.min((page + 1) * 10, votedPostIds.size());
+
+        List<Long> subList = votedPostIds.subList(start, end);
+        List<Post> votedPosts = subList.stream()
+                .map(postRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
+        // 상태 필터링
+        if (status != null) {
+            votedPosts = votedPosts.stream()
+                    .filter(post -> post.getStatus().equals(status))
+                    .collect(Collectors.toList());
         }
-        return votedPosts;
+
+        return new PageImpl<>(votedPosts, PageRequest.of(page, 10), votedPostIds.size());
     }
 
 }
