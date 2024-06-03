@@ -6,6 +6,7 @@ import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
@@ -25,7 +26,7 @@ public class TokenController {
     private final FindMemberService findMemberService;
 
     @PostMapping("/token/logout")
-    public ApiResponse<Object> logout(HttpServletResponse response) {
+    public ApiResponse<Object> logout(HttpServletResponse response) throws BadRequestException {
         String accessToken = findMemberService.getTokenFromCookies();
         // 엑세스 토큰으로 현재 Redis 정보 삭제
         tokenService.removeRefreshToken(accessToken, response);

@@ -7,6 +7,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +27,12 @@ public class TokenService {
 
     // Redis에서 토큰 삭제
     @Transactional
-    public void removeRefreshToken(String accessToken, HttpServletResponse response) {
+    public void removeRefreshToken(String accessToken, HttpServletResponse response) throws BadRequestException {
         System.out.println("accessToken = " + accessToken);
+
+        if(accessToken == null) {
+            throw new BadRequestException("엑세스 토큰이 존재하지 않습니다.");
+        }
 
         // 헤더에서 가져온 값 앞에 자동 생성되는 "Bearer "을 삭제한다.
         String cleanedToken = accessToken.replace("Bearer ", "");
