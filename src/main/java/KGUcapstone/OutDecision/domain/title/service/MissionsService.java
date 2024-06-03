@@ -7,7 +7,7 @@ import KGUcapstone.OutDecision.domain.title.dto.MissionsResponseDTO.TitleMission
 public interface MissionsService {
 
     MemberMissionsDTO getMemberMissions();
-    TitleMissionsDTO getGreedyMission(Long membeId);
+    TitleMissionsDTO getGreedyMission(Long memberId);
     TitleMissionsDTO getTitleByCategory(Long memberId, Category category);
     TitleMissionsDTO getTitleByRank(Long memberId, String rank);
 }

@@ -43,6 +43,17 @@ public class VoteServiceImpl implements VoteService{
 
         List<Options> options = new ArrayList<>();
 
+        Post post = null;
+        for(Long id : optionsIds) {
+            Optional<Options> options1 = optionsRepository.findById(id);
+            post = options1.get().getPost();
+            break;
+        }
+
+        if (!voteRepository.findByMemberIdAndPostId(member.getId(), post.getId()).isEmpty()) {
+            throw new OptionHandler(ErrorStatus.VOTE_FORBIDDEN);
+        }
+
         for (Long id : optionsIds) {
             Optional<Options> option = optionsRepository.findById(id);
 
@@ -63,7 +74,7 @@ public class VoteServiceImpl implements VoteService{
             }
         }
 
-        Post post = options.get(0).getPost();
+        post = options.get(0).getPost();
 
         // 총 투표 수 계산
         long totalVoteCnt = post.getOptionsList().stream()

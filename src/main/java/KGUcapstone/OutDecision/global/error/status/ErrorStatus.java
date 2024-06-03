@@ -21,6 +21,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "존재하지 않는 게시글입니다."),
 
     NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "알림이 이미 off 상태입니다."),
+    VOTE_FORBIDDEN(HttpStatus.FORBIDDEN, "403", "이미 투표한 게시글입니다."),
 
     // For test
     TEMP_EXCEPTION(HttpStatus.BAD_REQUEST, "TEMP4001", "이거는 테스트");
