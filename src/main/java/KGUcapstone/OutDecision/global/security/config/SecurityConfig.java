@@ -50,8 +50,10 @@ public class SecurityConfig {
                 .permitAll();
 
         http
-                .authorizeHttpRequests()
-                .anyRequest().permitAll();
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/", "/login", "/logout", "/oauth2/**", "/error").permitAll()
+                        .anyRequest().authenticated()
+                );
 
         http
                 .exceptionHandling()
@@ -65,7 +67,6 @@ public class SecurityConfig {
                         .and()
                         .failureHandler(oAuth2LoginFailureHandler) // OAuth2 로그인 실패시 처리할 핸들러를 지정해준다.
                         .successHandler(oAuth2LoginSuccessHandler) // OAuth2 로그인 성공시 처리할 핸들러를 지정해준다.
-                        .permitAll()
                 );
 
 
