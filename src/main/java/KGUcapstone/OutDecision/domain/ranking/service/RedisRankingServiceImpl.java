@@ -28,7 +28,7 @@ public class RedisRankingServiceImpl implements RankingService {
     private final MemberRepository memberRepository;
     private final TitleRepository titleRepository;
 
-//        @Scheduled(cron = "0 6 4 ? * THU") // 테스트용 매주 목요일 04:6분에 실행
+//        @Scheduled(cron = "0 53 15 ? * MON") // 테스트용
     // 매주 월요일 00:00에 포인트 0으로 세팅되도록 스케줄링
     @Scheduled(cron = "0 0 0 * * MON")
     public void resetWeeklyPoints() {
@@ -60,6 +60,7 @@ public class RedisRankingServiceImpl implements RankingService {
             for (Title title :previousFirstTitleList) {
                 title.setFirst(false);
                 titleRepository.save(title);
+                if(title.getMember().getUserTitle().equals("\uD83E\uDD471위")) title.getMember().updateUserTitle(null);
             }
         }
 
@@ -68,6 +69,7 @@ public class RedisRankingServiceImpl implements RankingService {
             for (Title title :previousSecondTitleList) {
                 title.setSecond(false);
                 titleRepository.save(title);
+                if(title.getMember().getUserTitle().equals("\uD83E\uDD482위")) title.getMember().updateUserTitle(null);
             }
         }
 
@@ -76,6 +78,7 @@ public class RedisRankingServiceImpl implements RankingService {
             for (Title title :previousThirdTitleList) {
                 title.setThird(false);
                 titleRepository.save(title);
+                if(title.getMember().getUserTitle().equals("\uD83E\uDD493위")) title.getMember().updateUserTitle(null);
             }
         }
 
