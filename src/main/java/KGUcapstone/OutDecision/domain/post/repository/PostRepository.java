@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Date;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
@@ -23,4 +24,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByHotTrue(Pageable p);
     List<Post> findTop6ByStatusOrderByDeadlineDesc(Status status, Pageable p);
     List<Post> findTop6ByStatusOrderByDeadlineAsc(Status status, Pageable p);
+    List<Post> findByStatusAndDeadlineBefore(Status status, Date currentDate);
 }
