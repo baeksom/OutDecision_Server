@@ -176,7 +176,7 @@ public class PostServiceImpl implements PostService{
                 .profileUrl(postMember.getUserImg())
                 .bumps(currentMemberId.equals(postMember.getId()) ? postMember.getBumps() : null)
                 .pluralVoting(post.getPluralVoting())
-                .createdAt(formatCreatedAt(post.getCreatedAt()))
+                .createdAt(formatCreatedAt2(post.getCreatedAt()))
                 .bumpsTime(formatCreatedAt(post.getBumpsTime()))
                 .deadline(formatDeadline(post.getDeadline()))
                 .participationCnt(getParticipationCnt(post))
