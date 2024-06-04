@@ -17,6 +17,13 @@ public class UpdateRequestDTO {
     }
 
     @Getter
+    public static class UpdateNewPasswordDTO {
+        Long memberId;
+        String newPassword;
+        String confirmNewPassword;
+    }
+
+    @Getter
     public static class UpdateTitleDTO{
         String title;
     }
