@@ -6,7 +6,7 @@ import KGUcapstone.OutDecision.global.error.exception.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +16,7 @@ public class UpdateController {
 
     private final PasswordService passwordService;
 
-    @PostMapping("/update/password")
+    @PatchMapping("/update/password")
     @Operation(summary = "새 비밀번호 설정", description = "새 비밀번호로 설정합니다.")
     public ApiResponse<Object> updatePassword(@RequestBody @Valid UpdateRequestDTO.UpdateNewPasswordDTO request) {
         boolean success = passwordService.updateNewPassword(request);

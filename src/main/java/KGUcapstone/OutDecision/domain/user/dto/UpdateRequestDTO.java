@@ -20,7 +20,6 @@ public class UpdateRequestDTO {
     public static class UpdateNewPasswordDTO {
         Long memberId;
         String newPassword;
-        String confirmNewPassword;
     }
 
     @Getter
