@@ -15,6 +15,8 @@ import KGUcapstone.OutDecision.domain.post.dto.PostResponseDTO.CommentsListDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostResponseDTO.PostDTO;
 import KGUcapstone.OutDecision.domain.post.dto.PostsResponseDTO.OptionsDTO;
 import KGUcapstone.OutDecision.domain.post.repository.PostRepository;
+import KGUcapstone.OutDecision.domain.title.domain.Missions;
+import KGUcapstone.OutDecision.domain.title.repository.MissionsRepository;
 import KGUcapstone.OutDecision.domain.user.domain.Member;
 import KGUcapstone.OutDecision.domain.user.domain.MemberView;
 import KGUcapstone.OutDecision.domain.user.repository.MemberRepository;
@@ -48,6 +50,7 @@ public class PostServiceImpl implements PostService{
     private final VoteRepository voteRepository;
     private final FindMemberService findMemberService;
     private final MemberViewRepository memberViewRepository;
+    private final MissionsRepository missionsRepository;
 
     private final S3Service s3Service;
     private final PostConverter postConverter;
@@ -324,6 +327,29 @@ public class PostServiceImpl implements PostService{
         if (!post.getHot() && post.getLikes()>=10 && votes.size() >= 20) {
             // 좋아요가 10 이상, 투표한 사람이 20 이상일 경우에 핫 게시글
             post.updateHot(true);
+            Missions missions = missionsRepository.findAllByMemberId(post.getMember().getId());
+            switch (post.getCategory()){
+                case food:
+                    missions.setFoodie_cnt(missions.getFoodie_cnt()+1);
+                    break;
+                case love:
+                    missions.setRomantist_cnt(missions.getRomantist_cnt()+1);
+                    break;
+                case work:
+                    missions.setCeo_cnt(missions.getCeo_cnt()+1);
+                    break;
+                case hobby:
+                    missions.setHobbyist_cnt(missions.getHobbyist_cnt()+1);
+                    break;
+                case travel:
+                    missions.setTraveler_cnt(missions.getTraveler_cnt()+1);
+                    break;
+                case fashion:
+                    missions.setFashionista_cnt(missions.getFashionista_cnt()+1);
+                    break;
+                case other:
+                    break;
+            }
 
             // 포인트 +300 적립
             post.getMember().updatePoint(post.getMember().getPoint()+300);

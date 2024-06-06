@@ -32,6 +32,10 @@ public class MissionsServiceImpl implements MissionsService{
         if(memberOptional.isPresent()) memberId = memberOptional.get().getId();
         else throw new MemberHandler(ErrorStatus.MEMBER_NOT_FOUND);
 
+        // 욕심쟁이 초기화 설정
+        Missions missions = missionsRepository.findAllByMemberId(memberId);
+        missions.setGreedy_cnt(0);
+
         return MemberMissionsDTO.builder()
                 .memberId(memberId)
                 .fashionista(getTitleByCategory(memberId, Category.fashion))
