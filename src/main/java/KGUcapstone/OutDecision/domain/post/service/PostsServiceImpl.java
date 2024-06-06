@@ -191,7 +191,7 @@ public class PostsServiceImpl implements PostsService{
         // 리스트를 랜덤하게 섞음
         Collections.shuffle(topPosts);
         // 상위 5개의 게시글을 반환
-        return topPosts.stream().limit(5).collect(Collectors.toList());
+        return topPosts.stream().limit(6).collect(Collectors.toList());
     }
 
 }
