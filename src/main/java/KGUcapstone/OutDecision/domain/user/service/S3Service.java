@@ -73,7 +73,7 @@ public class S3Service {
         String fileName = ImgUrl.substring(ImgUrl.lastIndexOf(splitStr) + splitStr.length());
 
         // 기본 프로필 이미지가 아닐 때, 삭제
-        if (!fileName.equals(defaultImg)) {
+        if (!ImgUrl.equals(defaultImg)) {
             amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
             System.out.println(" 사진 삭제 완료 ");
         }
