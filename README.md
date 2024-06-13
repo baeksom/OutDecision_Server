@@ -100,7 +100,7 @@ OutDecision - 결정 장애들을 위한 고민 투표 커뮤니티, 결정잘�
 ![시스템아키텍쳐_배경](https://github.com/OutDecision/OutDecision_Server/assets/97323941/9ca96a94-3882-4501-ad9a-da261c1ef0dc)
 
 
-### 📦프로젝트 구조
+### 프로젝트 구조
 ```
 📦 OutDesicion_Server
 ├─ .github
