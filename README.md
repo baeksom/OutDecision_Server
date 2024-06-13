@@ -46,7 +46,7 @@ OutDecision - 결정 장애들을 위한 고민 투표 커뮤니티, 결정잘�
 
 **AI**
 
-<img src="https://img.shields.io/badge/tensorflow-FF6F00?style=for-the-badge&logo=tensorflow&logoColor=white">
+<img src="https://img.shields.io/badge/pytorch-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white">
 
 **RELEASE** 
 
